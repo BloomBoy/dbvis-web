@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "src/*": [
+        "./*"
+      ],
+      "src": [
+        "."
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    ".eslintrc.js",
+    ".stylelint.js",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
