@@ -1,7 +1,7 @@
-import React from 'react';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
+import React from 'react';
 
-const BASE_URL = process.env.NEXT_STATIC_BASE_URL;
+const BASE_URL = process.env.BASE_URL;
 
 class MyDocument extends Document {
   render(): JSX.Element {
@@ -12,32 +12,32 @@ class MyDocument extends Document {
           <link
             rel="icon"
             type="image/x-icon"
-            href={`${String(BASE_URL)}/favicon.ico`}
+            href={`${String(BASE_URL)}/favicon/favicon.ico`}
           />
           <link
             rel="icon"
-            href={`${String(BASE_URL)}/icon.svg`}
+            href={`${String(BASE_URL)}/favicon/icon.svg`}
             type="image/svg+xml"
           />
           <link
             rel="apple-touch-icon"
-            href={`${String(BASE_URL)}/apple-touch-icon.png`}
+            href={`${String(BASE_URL)}/favicon/apple-touch-icon.png`}
           />
           <link
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href={`${String(BASE_URL)}/favicon-32x32.png`}
+            href={`${String(BASE_URL)}/favicon/favicon-32x32.png`}
           />
           <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href={`${String(BASE_URL)}/favicon-16x16.png`}
+            href={`${String(BASE_URL)}/favicon/favicon-16x16.png`}
           />
           <link
             rel="mask-icon"
-            href={`${String(BASE_URL)}/icon.svg`}
+            href={`${String(BASE_URL)}/favicon/icon.svg`}
             color="#ffffff"
           />
           <meta name="msapplication-TileColor" content="#ec4a58" />
