@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import type { NextPage } from 'next';
 
 const Home: NextPage = () => {
@@ -72,10 +71,7 @@ const Home: NextPage = () => {
           rel="noopener noreferrer"
           className="flex justify-center items-center flex-grow"
         >
-          Powered by{' '}
-          <span className="h-4 ms-2">
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by Vercel
         </a>
       </footer>
     </div>

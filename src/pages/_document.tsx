@@ -37,7 +37,7 @@ class MyDocument extends Document {
           />
           <link
             rel="mask-icon"
-            href={`${String(BASE_URL)}/favicon/icon.svg`}
+            href={`${String(BASE_URL)}/favicon/safari-pinned-tab.svg`}
             color="#ffffff"
           />
           <meta name="msapplication-TileColor" content="#ec4a58" />
