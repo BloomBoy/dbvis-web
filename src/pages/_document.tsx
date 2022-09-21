@@ -21,7 +21,7 @@ class MyDocument extends Document {
           />
           <link
             rel="apple-touch-icon"
-            href={`${String(BASE_URL)}/favicon/apple-touch-icon.png`}
+            href={`${String(BASE_URL)}/favicon/favicon-180.png`}
           />
           <link
             rel="icon"

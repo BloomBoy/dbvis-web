@@ -39,6 +39,7 @@
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.18",
     "@types/react": "^18.0.20",
+    "@types/web-app-manifest": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "autoprefixer": "^10.4.11",
