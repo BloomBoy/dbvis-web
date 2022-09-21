@@ -20,6 +20,17 @@ module.exports = {
     ],
     '@next/next/no-img-element': ['off'],
     'class-methods-use-this': ['off'],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        // mjs: '',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
     'jsx-a11y/anchor-is-valid': [
       'error',
       {
@@ -57,6 +68,11 @@ module.exports = {
       'error',
       { ignoreFunctionalComponents: true, forbidDefaultForRequired: true },
     ],
-    'sort-imports': ['error', { allowSeparatedGroups: true }],
+    'sort-imports': [
+      'error',
+      {
+        allowSeparatedGroups: true,
+      },
+    ],
   },
 };
