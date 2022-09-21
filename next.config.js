@@ -11,12 +11,22 @@ const BASE_URL = (() => {
   return 'http://localhost:3000';
 })();
 
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  env: {
-    BASE_URL,
-  },
+/**
+ * @param {string} phase
+ * @param {{ defaultConfig: import('next').NextConfig }} ctx
+ * @returns {Promise<NextConfig>}
+ */
+module.exports = async function nextConfig() {
+  const { default: generateBuildtimeData } = await import(
+    './buildtimeData/index.mjs'
+  );
+  const { publicRuntimeConfig } = await generateBuildtimeData();
+  return {
+    reactStrictMode: true,
+    swcMinify: true,
+    env: {
+      BASE_URL,
+    },
+    publicRuntimeConfig,
+  };
 };
-
-module.exports = nextConfig;
