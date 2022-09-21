@@ -921,7 +921,7 @@ contentful-resolve-response@^1.3.0:
   dependencies:
     fast-copy "^2.1.3"
 
-contentful-sdk-core@^7.0.1, contentful-sdk-core@^7.0.2:
+contentful-sdk-core@^7.0.1:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/contentful-sdk-core/-/contentful-sdk-core-7.0.2.tgz#5585880f546772246209de25256635ce31fd8d8e"
   integrity sha512-HkBzzzJ3UGqOIJiTd4qMEMvn44ccrN7a75gEej28X1srGn05myRgJ/pWbmXJhtgpq/5gU7IURnynyKx/ecsOfg==
