@@ -1,8 +1,12 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
+import getConfig from 'next/config';
 
 const BASE_URL = process.env.BASE_URL;
 
+const {
+  publicRuntimeConfig: { contentfulAppParameters },
+} = getConfig();
 class MyDocument extends Document {
   render(): JSX.Element {
     return (
@@ -40,10 +44,16 @@ class MyDocument extends Document {
             href={`${String(BASE_URL)}/favicon/safari-pinned-tab.svg`}
             color="#ffffff"
           />
-          <meta name="msapplication-TileColor" content="#ec4a58" />
+          <meta
+            name="msapplication-TileColor"
+            content={contentfulAppParameters.themeBrandColor}
+          />
           <meta name="MobileOptimized" content="width" />
           <meta name="HandheldFriendly" content="true" />
-          <meta name="theme-color" content="#ec4a58" />
+          <meta
+            name="theme-color"
+            content={contentfulAppParameters.themeBrandColor}
+          />
           <link rel="manifest" href={`${String(BASE_URL)}/manifest.json`} />
         </Head>
         <body className="preload">
