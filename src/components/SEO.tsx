@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 const SEOContext = createContext({
   siteName: '',
@@ -19,7 +20,7 @@ const SEOContext = createContext({
 type InitialSEOProps = {
   description: string;
   image: string;
-  url: string;
+  url?: string;
   type: string;
   date?: string;
   twitterCard: 'summary_large_image' | 'summary';
@@ -115,6 +116,8 @@ export function SEOProvider({
   children,
   ...props
 }: SEOProviderProps): JSX.Element {
+  const { asPath } = useRouter();
+  const currentUrl = `${process.env.BASE_URL}${asPath}`;
   const value = useMemo(
     () => ({
       siteName,
@@ -123,7 +126,7 @@ export function SEOProvider({
   );
   return (
     <SEOContext.Provider value={value}>
-      <InitialSEO {...props}>
+      <InitialSEO url={currentUrl} {...props}>
         <title>{siteName}</title>
         <meta name="twitter:site" content={siteTwitterHandle} />
         <meta property="og:site_name" content={siteName} />

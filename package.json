@@ -19,9 +19,6 @@
       "next.config.js",
       "fetchlangpacks.js",
       ".env"
-    ],
-    "ignore": [
-      "src/buildtimeData/*.json"
     ]
   },
   "dependencies": {

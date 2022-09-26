@@ -1,7 +1,8 @@
 import type { ComponentType } from 'react';
 
 export default function componentDisplayName(
-  Component: ComponentType | string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Component: ComponentType<any> | string,
 ) {
   return typeof Component === 'string'
     ? Component
