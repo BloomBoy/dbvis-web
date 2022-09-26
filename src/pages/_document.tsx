@@ -5,7 +5,7 @@ import getConfig from 'next/config';
 const BASE_URL = process.env.BASE_URL;
 
 const {
-  publicRuntimeConfig: { contentfulAppParameters },
+  publicRuntimeConfig: { brandColor },
 } = getConfig();
 class MyDocument extends Document {
   render(): JSX.Element {
@@ -44,16 +44,10 @@ class MyDocument extends Document {
             href={`${String(BASE_URL)}/favicon/safari-pinned-tab.svg`}
             color="#ffffff"
           />
-          <meta
-            name="msapplication-TileColor"
-            content={contentfulAppParameters.themeBrandColor}
-          />
+          <meta name="msapplication-TileColor" content={brandColor} />
           <meta name="MobileOptimized" content="width" />
           <meta name="HandheldFriendly" content="true" />
-          <meta
-            name="theme-color"
-            content={contentfulAppParameters.themeBrandColor}
-          />
+          <meta name="theme-color" content={brandColor} />
           <link rel="manifest" href={`${String(BASE_URL)}/manifest.json`} />
         </Head>
         <body className="preload">

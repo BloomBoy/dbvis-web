@@ -15,6 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 const withProviders = composeHOCs(
   asHOC(SEOProvider, {
+    title: contentfulAppParameters.siteTagline,
     description: contentfulAppParameters.siteDescription,
     image: contentfulAppParameters.siteImage,
     type: 'website',

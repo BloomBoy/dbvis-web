@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 
-const brandprimaryColors = {
+const brandPrimaryColors = {
   100: '#D2FCD9',
   200: '#A7F9BD',
   300: '#79EEA3',
@@ -13,7 +13,7 @@ const brandprimaryColors = {
   900: '#065F5C',
 };
 
-brandprimaryColors.DEFAULT = brandprimaryColors[500];
+brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
 
 module.exports = {
   content: [
@@ -26,7 +26,7 @@ module.exports = {
         center: true,
       },
       colors: {
-        primary: brandprimaryColors,
+        primary: brandPrimaryColors,
       },
     },
   },

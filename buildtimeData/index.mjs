@@ -1,4 +1,13 @@
 import getAppClient from '../src/utils/getAppClient.mjs';
+import resolveConfig from 'tailwindcss/resolveConfig.js';
+import tailwindConfig from '../tailwind.config.js';
+
+const resolvedTailwindConfig = resolveConfig(tailwindConfig);
+
+const primaryBrandColors = resolvedTailwindConfig.theme.colors.primary;
+
+const primaryBrandColor =
+  primaryBrandColors?.DEFAULT || primaryBrandColors?.[500];
 
 /**
  * @returns {Promise<{ publicRuntimeConfig: { [key: string]: string } }>}
@@ -12,6 +21,7 @@ export default async function generateBuildtimeData() {
   return {
     publicRuntimeConfig: {
       contentfulAppParameters,
+      brandColor: primaryBrandColor,
     },
   };
 }
