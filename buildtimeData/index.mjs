@@ -9,6 +9,8 @@ const primaryBrandColors = resolvedTailwindConfig.theme.colors.primary;
 const primaryBrandColor =
   primaryBrandColors?.DEFAULT || primaryBrandColors?.[500];
 
+const bodyBackground = resolvedTailwindConfig.theme.colors.bodyBackground;
+
 /**
  * @returns {Promise<{ publicRuntimeConfig: { [key: string]: string } }>}
  */
@@ -22,6 +24,7 @@ export default async function generateBuildtimeData() {
     publicRuntimeConfig: {
       contentfulAppParameters,
       brandColor: primaryBrandColor,
+      bodyBackground,
     },
   };
 }

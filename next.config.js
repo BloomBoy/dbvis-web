@@ -28,5 +28,15 @@ module.exports = async function nextConfig() {
       BASE_URL,
     },
     publicRuntimeConfig,
+    async rewrites() {
+      return {
+        beforeFiles: [
+          {
+            source: '/manifest.json',
+            destination: '/api/manifest',
+          },
+        ],
+      };
+    },
   };
 };

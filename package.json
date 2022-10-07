@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "nodemon -w buildtimeData,.env,.env.\\*,next.config.js -x \"next dev\"",
     "dev:prod": "nodemon -x \"NODE_ENV=production next build && NODE_ENV=production next start\"",
     "build": "next build",
     "start": "next start",
@@ -13,11 +13,11 @@
     "lint:tsc": "NODE_ENV=production tsc --noEmit --pretty"
   },
   "nodemonConfig": {
-    "ext": "js,jsx,ts,tsx,json,css,scss,svg",
+    "ext": "js,jsx,ts,tsx,json,css,svg",
     "watch": [
+      "buildtimeData",
       "src",
       "next.config.js",
-      "fetchlangpacks.js",
       ".env"
     ]
   },
