@@ -2,15 +2,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon -w buildtimeData,.env,.env.\\*,next.config.js -x \"next dev\"",
-    "dev:prod": "nodemon -x \"NODE_ENV=production next build && NODE_ENV=production next start\"",
+    "dev": "nodemon -w buildtimeData -w .env -w .env.\\* -wnext.config.js -x \"next dev\"",
+    "dev:prod": "nodemon -x \"cross-env NODE_ENV=production next build && cross-env NODE_ENV=production next start\"",
     "build": "next build",
     "start": "next start",
-    "lint": "NODE_ENV=production run-p -cls --aggregate-output lint:*",
-    "lint:eslint-check": "NODE_ENV=production eslint-config-prettier 'src/**/*.js'",
-    "lint:prettier": "NODE_ENV=production prettier -c 'src/**/*.{js,jsx,ts,tsx,json}'",
-    "lint:eslint": "NODE_ENV=production eslint src --report-unused-disable-directives --color",
-    "lint:tsc": "NODE_ENV=production tsc --noEmit --pretty"
+    "lint": "cross-env NODE_ENV=production run-p -cls --aggregate-output lint:*",
+    "lint:eslint-check": "cross-env NODE_ENV=production eslint-config-prettier 'src/**/*.js'",
+    "lint:prettier": "cross-env NODE_ENV=production prettier -c 'src/**/*.{js,jsx,ts,tsx,json}'",
+    "lint:eslint": "cross-env NODE_ENV=production eslint src --report-unused-disable-directives --color",
+    "lint:tsc": "cross-env NODE_ENV=production tsc --noEmit --pretty"
   },
   "nodemonConfig": {
     "ext": "js,jsx,ts,tsx,json,css,svg",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/typography": "^0.5.7",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.18",
     "@types/react": "^18.0.20",
@@ -44,6 +45,7 @@
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "autoprefixer": "^10.4.11",
+    "cross-env": "^7.0.3",
     "eslint": "^8.23.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",

@@ -6,6 +6,7 @@ import {
   MARKS,
 } from '@contentful/rich-text-types';
 import EmbeddedAsset from './embedded-asset';
+import MaybeLink from 'src/components/contentful/MaybeLink';
 import React from 'react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
@@ -29,11 +30,7 @@ export function Hyperlink({
     data: {},
     nodeType: 'document',
   });
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer">
-      {linkText}
-    </a>
-  );
+  return <MaybeLink href={href}>{linkText}</MaybeLink>;
 }
 
 const PlainHyperlink = (props: Block | Inline): React.ReactNode => (
@@ -43,7 +40,7 @@ const AssetHyperlink = (props: Block | Inline): React.ReactNode => (
   <Hyperlink {...props} type="AssetLink" />
 );
 const Bold = ({ children }: React.PropsWithChildren): React.ReactElement => (
-  <span className="font-bold">{children}</span>
+  <b>{children}</b>
 );
 const Text = ({ children }: React.PropsWithChildren): React.ReactElement => (
   <p className="align-center mb-2">{children}</p>

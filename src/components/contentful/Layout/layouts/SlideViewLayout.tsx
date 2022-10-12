@@ -1,20 +1,69 @@
-import * as Contentful from 'contentful';
 import { HeaderData, LayoutHeader } from '../common';
+import Component from '../../Component';
+import { EntryFields } from 'contentful';
 import type { LayoutProps } from '..';
+import RichText from 'src/components/RichText';
 
-type Data = HeaderData;
+interface Data extends HeaderData {
+  colorScheme?: 'light' | 'dark';
+}
 
-type SlotData = {
-  button: Contentful.EntryFields.RichText;
-};
+interface SlotData {
+  button: EntryFields.RichText;
+}
 
-export default function SlideViewLayout({
-  data,
-}: LayoutProps<Data, SlotData>): JSX.Element {
+function SelectButtons({ slots }: LayoutProps<Data, SlotData>) {
+  return (
+    <div className="flex justify-center items-stretch">
+      {slots.map((slot) => (
+        <div
+          key={slot.id}
+          className="px-14 py-9 rounded-2xl border border-neutral-200"
+        >
+          <RichText className="w-72" content={slot.data.button} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function ColumnLayout(
+  props: LayoutProps<Data, SlotData>,
+): JSX.Element {
+  const { slots, data } = props;
+  const columnCount = slots.length;
+
+  const columns =
+    columnCount > 1 ? (
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+        }}
+      >
+        {slots.map((slot) => (
+          <div key={slot.id}>
+            {slot.components.map((componentProps) => (
+              <Component key={componentProps.id} {...componentProps} />
+            ))}
+          </div>
+        ))}
+      </div>
+    ) : (
+      columnCount === 1 && (
+        <div>
+          {slots[0].components.map((componentProps) => (
+            <Component key={componentProps.id} {...componentProps} />
+          ))}
+        </div>
+      )
+    );
+
   return (
     <>
       {data.renderHeader && <LayoutHeader {...data} />}
-      <div>SlideView Layout</div>
+      <SelectButtons {...props} />
+      {columns}
     </>
   );
 }

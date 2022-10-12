@@ -12,9 +12,8 @@ export default function ColumnLayout({
 }: LayoutProps<Data, SlotData>): JSX.Element {
   const columnCount = slots.length;
 
-  return (
-    <>
-      {data.renderHeader && <LayoutHeader {...data} />}
+  const columns =
+    columnCount > 1 ? (
       <div
         className="grid"
         style={{
@@ -29,6 +28,20 @@ export default function ColumnLayout({
           </div>
         ))}
       </div>
+    ) : (
+      columnCount === 1 && (
+        <div>
+          {slots[0].components.map((componentProps) => (
+            <Component key={componentProps.id} {...componentProps} />
+          ))}
+        </div>
+      )
+    );
+
+  return (
+    <>
+      {data.renderHeader && <LayoutHeader {...data} />}
+      {columns}
     </>
   );
 }

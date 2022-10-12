@@ -9,9 +9,5 @@ type TextData = {
 export default function text(
   props: ComponentProps<TextData>,
 ): JSX.Element | null {
-  return (
-    <div>
-      <RichText content={props.data.text} />
-    </div>
-  );
+  return <RichText content={props.data.text} />;
 }
