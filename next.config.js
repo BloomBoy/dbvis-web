@@ -28,5 +28,10 @@ module.exports = async function nextConfig() {
       BASE_URL,
     },
     publicRuntimeConfig,
+    serverRuntimeConfig: {
+      CF_SPACE_ID: process.env.CF_SPACE_ID,
+      CF_DELIVERY_ACCESS_TOKEN: process.env.CF_DELIVERY_ACCESS_TOKEN,
+      CF_PREVIEW_ACCESS_TOKEN: process.env.CF_PREVIEW_ACCESS_TOKEN,
+    },
   };
 };
