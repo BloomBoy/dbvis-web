@@ -1,5 +1,20 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
+const colors = require('tailwindcss/colors');
+
+const brandPrimaryColors = {
+  100: '#D2FCD9',
+  200: '#A7F9BD',
+  300: '#79EEA3',
+  400: '#55DD94',
+  500: '#24C780',
+  600: '#1AAB7A',
+  700: '#128F71',
+  800: '#0B7365',
+  900: '#065F5C',
+};
+
+brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
 
 module.exports = {
   content: [
@@ -11,7 +26,10 @@ module.exports = {
       container: {
         center: true,
       },
-      colors: {},
+      colors: {
+        primary: brandPrimaryColors,
+        bodyBackground: colors.white,
+      },
     },
   },
   variants: {

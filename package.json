@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "nodemon -w buildtimeData,.env,.env.\\*,next.config.js -x \"next dev\"",
     "dev:prod": "nodemon -x \"NODE_ENV=production next build && NODE_ENV=production next start\"",
     "build": "next build",
     "start": "next start",
@@ -13,15 +13,12 @@
     "lint:tsc": "NODE_ENV=production tsc --noEmit --pretty"
   },
   "nodemonConfig": {
-    "ext": "js,jsx,ts,tsx,json,css,scss,svg",
+    "ext": "js,jsx,ts,tsx,json,css,svg",
     "watch": [
+      "buildtimeData",
       "src",
       "next.config.js",
-      "fetchlangpacks.js",
       ".env"
-    ],
-    "ignore": [
-      "src/buildtimeData/*.json"
     ]
   },
   "dependencies": {
@@ -35,7 +32,8 @@
     "jsonwebtoken": "^8.5.1",
     "next": "^12.3.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.1.8"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
@@ -61,7 +59,6 @@
     "postcss": "^8.4.16",
     "postcss-import": "^15.0.0",
     "prettier": "^2.7.1",
-    "tailwindcss": "^3.1.8",
     "tailwindcss-rtl": "^0.9.0",
     "typescript": "^4.8.3",
     "vercel": "^28.2.5"

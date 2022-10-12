@@ -33,5 +33,15 @@ module.exports = async function nextConfig() {
       CF_DELIVERY_ACCESS_TOKEN: process.env.CF_DELIVERY_ACCESS_TOKEN,
       CF_PREVIEW_ACCESS_TOKEN: process.env.CF_PREVIEW_ACCESS_TOKEN,
     },
+    async rewrites() {
+      return {
+        beforeFiles: [
+          {
+            source: '/manifest.json',
+            destination: '/api/manifest',
+          },
+        ],
+      };
+    },
   };
 };

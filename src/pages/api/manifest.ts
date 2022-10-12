@@ -3,23 +3,24 @@ import getConfig from 'next/config';
 import simpleApiRoute from 'src/utils/simpleApiRoute';
 
 const {
-  publicRuntimeConfig: { contentfulAppParameters },
+  publicRuntimeConfig: { contentfulAppParameters, brandColor, bodyBackground },
 } = getConfig();
 
-const TAGLINE = 'SQL Client and Editor';
-const THEME_COLOR = '#24c780';
-const BACKGROUND_COLOR = '#ffffff';
+const handler = simpleApiRoute<WebAppManifest>((_, headers) => {
+  headers(
+    'Cache-Control',
+    'public, max-age=604800, stale-while-revalidate=86400',
+  );
 
-const handler = simpleApiRoute<WebAppManifest>(() => {
   return {
     $schema: 'https://json.schemastore.org/web-manifest-combined.json',
-    name: `${TAGLINE} - ${contentfulAppParameters.siteName}`,
+    name: `${contentfulAppParameters.siteTagline} - ${contentfulAppParameters.siteName}`,
     short_name: contentfulAppParameters.siteName,
     start_url: './',
     display: 'browser',
-    theme_color: THEME_COLOR,
-    background_color: BACKGROUND_COLOR,
-    description: TAGLINE,
+    theme_color: brandColor,
+    background_color: bodyBackground,
+    description: contentfulAppParameters.siteDescription,
     icons: [
       {
         src: '/favicon/favicon-16.png',

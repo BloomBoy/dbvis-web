@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 const SEOContext = createContext({
   siteName: '',
@@ -19,7 +20,8 @@ const SEOContext = createContext({
 type InitialSEOProps = {
   description: string;
   image: string;
-  url: string;
+  title?: string;
+  url?: string;
   type: string;
   date?: string;
   twitterCard: 'summary_large_image' | 'summary';
@@ -32,11 +34,7 @@ type InitialSEOProps = {
  * They are optinal and will be used
  * to override the default values.
  */
-export type SEOProps = {
-  [key in 'title' | keyof InitialSEOProps]?: (InitialSEOProps & {
-    title: string;
-  })[key];
-};
+export type SEOProps = Partial<InitialSEOProps>;
 
 /**
  * The SEO component implementation
@@ -115,6 +113,8 @@ export function SEOProvider({
   children,
   ...props
 }: SEOProviderProps): JSX.Element {
+  const { asPath } = useRouter();
+  const currentUrl = `${process.env.BASE_URL}${asPath}`;
   const value = useMemo(
     () => ({
       siteName,
@@ -123,11 +123,12 @@ export function SEOProvider({
   );
   return (
     <SEOContext.Provider value={value}>
-      <InitialSEO {...props}>
-        <title>{siteName}</title>
+      <Head>
         <meta name="twitter:site" content={siteTwitterHandle} />
         <meta property="og:site_name" content={siteName} />
-      </InitialSEO>
+        <title>{siteName}</title>
+      </Head>
+      <InitialSEO url={currentUrl} {...props} />
       {children}
     </SEOContext.Provider>
   );
