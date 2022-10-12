@@ -100,7 +100,7 @@ export default function ColumnLayout(
         {slots.map((slot) => (
           <div
             key={slot.id}
-            className="flex-grow flex-shrink-0 w-full flex flex-col p-10"
+            className="flex-grow flex-shrink-0 w-full flex flex-col items-center justify-center p-10"
           >
             {slot.components.map((componentProps) => (
               <Component key={componentProps.id} {...componentProps} />
