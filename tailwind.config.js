@@ -30,6 +30,13 @@ module.exports = {
         primary: brandPrimaryColors,
         bodyBackground: colors.white,
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            lineHeight: 1.2,
+          },
+        },
+      },
     },
   },
   variants: {
