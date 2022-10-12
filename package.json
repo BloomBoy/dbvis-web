@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon -w buildtimeData -w .env -w .env.\\* -wnext.config.js -x \"next dev\"",
+    "dev": "nodemon -w buildtimeData -w .env -w .env.\\* -w next.config.js -x \"next dev\"",
     "dev:prod": "nodemon -x \"cross-env NODE_ENV=production next build && cross-env NODE_ENV=production next start\"",
     "build": "next build",
     "start": "next start",
