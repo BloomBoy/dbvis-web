@@ -38,7 +38,7 @@ export function LayoutHeader({
         <HeaderComp
           className={classNames(
             mainHeaderIndex === 0 ? 'text-8xl' : 'text-7xl',
-            'font-bold font-gotham',
+            'font-bold',
             textAlign,
           )}
         >

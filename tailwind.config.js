@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires, import/no-extraneous-dependencies */
 const path = require('path');
 const colors = require('tailwindcss/colors');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 const brandPrimaryColors = {
   50: '#E9FEEC',
@@ -72,6 +73,7 @@ module.exports = {
     },
     fontFamily: {
       mono: ['jetbrainsmono', 'mono'],
+      sans: ['HCo Gotham SSm', ...defaultTheme.fontFamily.sans],
     },
   },
   variants: {
