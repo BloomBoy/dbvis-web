@@ -73,7 +73,7 @@ module.exports = {
     },
     fontFamily: {
       mono: ['jetbrainsmono', 'mono'],
-      sans: ['gotham', ...defaultTheme.fontFamily.sans],
+      sans: ['HCo Gotham SSm', ...defaultTheme.fontFamily.sans],
     },
   },
   variants: {
