@@ -30,7 +30,7 @@ export default function ColumnLayout({
       </div>
     ) : (
       columnCount === 1 && (
-        <div>
+        <div className="flex flex-col">
           {slots[0].components.map((componentProps) => (
             <Component key={componentProps.id} {...componentProps} />
           ))}

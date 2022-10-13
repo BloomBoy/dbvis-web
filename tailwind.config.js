@@ -14,6 +14,11 @@ const brandPrimaryColors = {
   900: '#065F5C',
 };
 
+const brandGreyScale = {
+  500: '#7B7B7B',
+  900: '#2B2B2B',
+};
+
 brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
 
 module.exports = {
@@ -29,6 +34,7 @@ module.exports = {
       colors: {
         primary: brandPrimaryColors,
         bodyBackground: colors.white,
+        grey: brandGreyScale,
       },
       typography: {
         DEFAULT: {
@@ -37,6 +43,9 @@ module.exports = {
           },
         },
       },
+    },
+    fontFamily: {
+      mono: ['jetbrainsmono', 'mono'],
     },
   },
   variants: {
