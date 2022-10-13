@@ -7,31 +7,31 @@
 }
 @font-face {
     font-family: "gotham";
-    src: url("/fonts/gotham/GothamSSm-Light_Web") format("woff2");
+    src: url("/fonts/gotham/GothamSSm-Light_Web.woff2") format("woff2");
     font-weight: 200;
     font-style: normal;
 }
 @font-face {
     font-family: "gotham";
-    src: url("/fonts/gotham/GothamSSm-LightItalic_Web") format("woff2");
+    src: url("/fonts/gotham/GothamSSm-LightItalic_Web.woff2") format("woff2");
     font-weight: 200;
     font-style: italic;
 }
 @font-face {
     font-family: "gotham";
-    src: url("/fonts/gotham/GothamSSm-Book") format("woff2");
+    src: url("/fonts/gotham/GothamSSm-Book.woff2") format("woff2");
     font-weight: 300;
     font-style: normal;
 }
 @font-face {
     font-family: "gotham";
-    src: url("/fonts/gotham/GothamSSm-Bold_Web") format("woff2");
+    src: url("/fonts/gotham/GothamSSm-Bold_Web.woff2") format("woff2");
     font-weight: 700;
     font-style: normal;
 }
 @font-face {
     font-family: "gotham";
-    src: url("/fonts/gotham/GothamSSm-Black_Web") format("woff2");
+    src: url("/fonts/gotham/GothamSSm-Black_Web.woff2") format("woff2");
     font-weight: 800;
     font-style: normal;
 }
