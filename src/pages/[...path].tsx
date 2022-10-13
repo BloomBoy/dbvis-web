@@ -30,7 +30,7 @@ export async function getStaticProps(
   if (path == null) {
     slug = '/';
   } else {
-    slug = `/${path.join('/')}`;
+    slug = `${path.join('/')}`;
   }
   const preview = ctx.preview || false;
   try {
