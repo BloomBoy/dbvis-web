@@ -17,9 +17,9 @@
 
 
   .quote-decoration::before {
-    content: '/* ';
+    content: "\/​* ";
   }
   .quote-decoration::after {
-    content: ' */';
+    content: " *​\/";
   }
 }
