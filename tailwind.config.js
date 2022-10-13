@@ -3,6 +3,7 @@ const path = require('path');
 const colors = require('tailwindcss/colors');
 
 const brandPrimaryColors = {
+  50: '#E9FEEC',
   100: '#D2FCD9',
   200: '#A7F9BD',
   300: '#79EEA3',
@@ -26,6 +27,25 @@ module.exports = {
     path.join(__dirname, 'src', 'components', '**', '*.{js,ts,jsx,tsx}'),
     path.join(__dirname, 'src', 'pages', '**', '*.{js,ts,jsx,tsx}'),
   ],
+  // Tailwind statically analyze the codebase for used classes and generates
+  // the CSS file based on that. These overrides are used to tell Tailwind
+  // to always include certain classes that are used dynamically.
+  safelist: [
+    'text-start',
+    'text-end',
+    'text-center',
+    'max-w-xs',
+    'max-w-sm',
+    'max-w-md',
+    'max-w-lg',
+    'max-w-xl',
+    'max-w-2xl',
+    'max-w-3xl',
+    'max-w-4xl',
+    'max-w-5xl',
+    'max-w-6xl',
+    'max-w-7xl',
+  ],
   theme: {
     extend: {
       container: {
@@ -40,6 +60,12 @@ module.exports = {
         DEFAULT: {
           css: {
             lineHeight: 1.2,
+            a: {
+              color: brandPrimaryColors.DEFAULT,
+              '&:hover': {
+                color: brandPrimaryColors[700],
+              },
+            },
           },
         },
       },

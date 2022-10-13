@@ -14,4 +14,12 @@
   [dir="ltr"] .shadow-start {
     @apply shadow-left; 
   }
+
+
+  .quote-decoration::before {
+    content: '/* ';
+  }
+  .quote-decoration::after {
+    content: ' */';
+  }
 }
