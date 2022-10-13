@@ -20,7 +20,7 @@ export function LayoutHeader({
           {subTitle}
         </h2>
       )}
-      <h1 className={`${textAlign}`}>{title}</h1>
+      <h1 className={`${textAlign} font-gotham font-bold text-3xl`}>{title}</h1>
     </div>
   );
 }
