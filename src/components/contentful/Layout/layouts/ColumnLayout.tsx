@@ -1,17 +1,24 @@
-import { HeaderData, LayoutHeader } from '../common';
+import {
+  Container,
+  HeaderData,
+  LayoutHeader,
+  ThemeData,
+  Wrapper,
+  canRenderMainHeader,
+} from '../common';
 import Component from '../../Component';
 import type { LayoutProps } from '..';
 
-type Data = HeaderData;
+interface Data extends HeaderData, ThemeData {}
 
 type SlotData = Record<string, never>;
 
-export default function ColumnLayout({
+function ColumnLayoutComp({
   slots,
   data,
+  mainHeaderIndex,
 }: LayoutProps<Data, SlotData>): JSX.Element {
   const columnCount = slots.length;
-
   const columns =
     columnCount > 1 ? (
       <div
@@ -39,9 +46,21 @@ export default function ColumnLayout({
     );
 
   return (
-    <>
-      {data.renderHeader && <LayoutHeader {...data} />}
-      {columns}
-    </>
+    <Wrapper data={data}>
+      <Container data={data}>
+        {data.renderHeader && (
+          <LayoutHeader {...data} mainHeaderIndex={mainHeaderIndex} />
+        )}
+        {columns}
+      </Container>
+    </Wrapper>
   );
 }
+
+const ColumnLayout = Object.assign(ColumnLayoutComp, {
+  canRenderMainHeader(props: LayoutProps<Data, SlotData>) {
+    return canRenderMainHeader(props.data);
+  },
+});
+
+export default ColumnLayout;

@@ -1,4 +1,11 @@
-import { HeaderData, LayoutHeader } from '../common';
+import {
+  Container,
+  HeaderData,
+  LayoutHeader,
+  ThemeData,
+  Wrapper,
+  canRenderMainHeader,
+} from '../common';
 import React, { useCallback, useEffect, useState } from 'react';
 import Component from '../../Component';
 import { EntryFields } from 'contentful';
@@ -6,9 +13,7 @@ import type { LayoutProps } from '..';
 import RichText from 'src/components/RichText';
 import classNames from 'classnames';
 
-interface Data extends HeaderData {
-  colorScheme?: 'light' | 'dark';
-}
+interface Data extends HeaderData, ThemeData {}
 
 interface SlotData {
   button: EntryFields.RichText;
@@ -24,7 +29,6 @@ function SelectButtons({
 }) {
   const onClick = useCallback(
     (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
-      console.log(ev.defaultPrevented);
       if (ev.defaultPrevented) return;
       if (ev.target === ev.currentTarget) {
         setSelectedIndex(index);
@@ -62,17 +66,17 @@ function SelectButtons({
           )}
           onClick={(ev) => onClick(ev, index)}
         >
-          <RichText className="w-72" content={slot.data.button} />
+          {slot.data.button && (
+            <RichText className="w-72" content={slot.data.button} />
+          )}
         </button>
       ))}
     </div>
   );
 }
 
-export default function ColumnLayout(
-  props: LayoutProps<Data, SlotData>,
-): JSX.Element {
-  const { slots, data } = props;
+function SlideViewLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
+  const { slots, data, mainHeaderIndex } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
 
@@ -86,28 +90,40 @@ export default function ColumnLayout(
   }, [containerRef, selectedIndex]);
 
   return (
-    <div className="px-10 w-full">
-      {data.renderHeader && <LayoutHeader {...data} />}
-      <SelectButtons
-        {...props}
-        selectedIndex={selectedIndex}
-        setSelectedIndex={setSelectedIndex}
-      />
-      <div
-        className="my-3 w-full flex flex-nowrap rounded-2xl bg-slate-500 overflow-hidden"
-        ref={setContainerRef}
-      >
-        {slots.map((slot) => (
-          <div
-            key={slot.id}
-            className="flex-grow flex-shrink-0 w-full flex flex-col items-center justify-center p-10"
-          >
-            {slot.components.map((componentProps) => (
-              <Component key={componentProps.id} {...componentProps} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
+    <Wrapper data={data}>
+      <Container data={data}>
+        {data.renderHeader && (
+          <LayoutHeader {...data} mainHeaderIndex={mainHeaderIndex} />
+        )}
+        <SelectButtons
+          {...props}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+        />
+        <div
+          className="my-3 w-full flex flex-nowrap rounded-2xl bg-slate-500 overflow-hidden"
+          ref={setContainerRef}
+        >
+          {slots.map((slot) => (
+            <div
+              key={slot.id}
+              className="flex-grow flex-shrink-0 w-full flex flex-col items-center justify-center p-10"
+            >
+              {slot.components.map((componentProps) => (
+                <Component key={componentProps.id} {...componentProps} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Wrapper>
   );
 }
+
+const SlideViewLayout = Object.assign(SlideViewLayoutComp, {
+  canRenderMainHeader(props: LayoutProps<Data, SlotData>) {
+    return canRenderMainHeader(props.data);
+  },
+});
+
+export default SlideViewLayout;
