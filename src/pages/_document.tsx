@@ -37,7 +37,7 @@ class MyDocument extends Document {
           <meta name="theme-color" content={brandColor} />
           <link rel="manifest" href="/manifest.json" />
         </Head>
-        <body className="preload font-gotham">
+        <body className="preload">
           <Main />
           <NextScript />
         </body>
