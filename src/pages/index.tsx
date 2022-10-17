@@ -4,6 +4,7 @@ import type {
   NextPage,
 } from 'next';
 import { StandardPageEntry, getPage } from 'src/utils/contentful/standardPage';
+import Header from 'src/components/layouts/Header';
 import Layout from 'src/components/contentful/Layout';
 import { WithGlobals } from 'src/utils/types';
 
@@ -14,6 +15,8 @@ type Props = {
 const Home: NextPage<Props> = (props) => {
   return (
     <>
+      <Header />
+      {/* <TopNavigationHeader /> */}
       {props.page.fields.pageLayout.map((layoutProps) => (
         <Layout key={layoutProps.id} {...layoutProps} />
       ))}
