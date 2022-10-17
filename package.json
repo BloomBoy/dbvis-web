@@ -13,7 +13,7 @@
     "lint:tsc": "cross-env NODE_ENV=production tsc --noEmit --pretty"
   },
   "nodemonConfig": {
-    "ext": "js,jsx,ts,tsx,json,css,svg",
+    "ext": "js,jsx,ts,tsx,json,css,svg,mjs",
     "watch": [
       "buildtimeData",
       "src",
