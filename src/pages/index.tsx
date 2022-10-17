@@ -16,7 +16,6 @@ const Home: NextPage<Props> = (props) => {
   return (
     <>
       <Header />
-      {/* <TopNavigationHeader /> */}
       {props.page.fields.pageLayout.map((layoutProps) => (
         <Layout key={layoutProps.id} {...layoutProps} />
       ))}
