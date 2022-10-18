@@ -2,6 +2,7 @@ import { EntryFields } from 'contentful';
 import getConfig from 'next/config';
 
 export type MenuItem = {
+  id: EntryFields.Symbol;
   title: EntryFields.Symbol;
   targetUrl?: EntryFields.Symbol;
   styles: EntryFields.Symbol[];
