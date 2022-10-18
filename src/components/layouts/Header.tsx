@@ -1,13 +1,16 @@
-import Link from 'next/link';
 import { useState } from 'react';
 
 import HeaderLogo from './HeaderLogo';
+import MaybeLink from '../contentful/MaybeLink';
 import NavLinks from './NavLinks';
 import SideBar from './SideBar';
+import getMenu from '../../utils/menues';
 
 interface IMenuIcon {
   className: string;
 }
+
+const navigation = getMenu('main-menu');
 
 const MenuIcon: React.FC<IMenuIcon> = (props) => {
   return (
@@ -32,13 +35,13 @@ const Header = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-0 lg:px-8">
         <div className="relative z-10 flex items-center justify-between bg-white lg:bg-transparent">
           <div className="lg:flex lg:gap-10 lg:items-center">
-            <Link href="/" aria-label="Home">
+            <MaybeLink href="/" aria-label="Home">
               <HeaderLogo className="h-14 md:h-15 lg:h-20 w-auto" />
-            </Link>
-            <NavLinks />
+            </MaybeLink>
+            <NavLinks navigation={navigation} />
           </div>
           <div className="lg:w-4/12 lg:flex lg:items-center lg:justify-end">
-            <a
+            <MaybeLink
               href="/download"
               className="
                 hidden lg:block lg:px-4 xl:px-5 2xl:px-6 lg:py-1 xl:py-2 2xl:py-3 
@@ -47,7 +50,7 @@ const Header = () => {
               "
             >
               DOWNLOAD FOR FREE
-            </a>
+            </MaybeLink>
           </div>
           <div className="flex items-center gap-6">
             <button
