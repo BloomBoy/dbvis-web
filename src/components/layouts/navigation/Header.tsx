@@ -6,7 +6,7 @@ import SideBar from './SideBar';
 import XMarkIcon from './XMarkIcon';
 
 import { Popover } from '@headlessui/react';
-import getMenu from '../../../utils/menues';
+import getMenu from '../../../utils/menus';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -58,8 +58,8 @@ export default function Example() {
                 <MaybeLink
                   href="/download"
                   className="
-                hidden lg:block lg:px-4 xl:px-5 2xl:px-6 lg:py-1 xl:py-2 2xl:py-3 
-                border border-transparent text-xs xl:text-sm 2xl:text-base font-medium 
+                hidden lg:block lg:px-4 xl:px-5 2xl:px-6 lg:py-1 xl:py-2 2xl:py-3
+                border border-transparent text-xs xl:text-sm 2xl:text-base font-medium
                 rounded-full text-white bg-black
               "
                 >

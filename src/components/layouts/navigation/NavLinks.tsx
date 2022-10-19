@@ -1,5 +1,5 @@
 import MaybeLink from '../../contentful/MaybeLink';
-import type { Menu } from '../../../utils/menues';
+import type { Menu } from '../../../utils/menus';
 
 interface INavLinks {
   navigation: Menu;

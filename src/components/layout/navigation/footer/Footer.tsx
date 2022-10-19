@@ -1,7 +1,7 @@
 import FooterFlagLogo from './FooterFlagLogo';
 import FooterLogo from './FooterLogo';
 import FooterNavLinks from './FooterNavLinks';
-import getMenu from '../../../../utils/menues';
+import getMenu from '../../../../utils/menus';
 
 const navigation = getMenu('footer');
 
