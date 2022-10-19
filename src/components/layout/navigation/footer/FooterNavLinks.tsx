@@ -1,5 +1,6 @@
 import MaybeLink from '../../../contentful/MaybeLink';
 import type { Menu } from '../../../../utils/menues';
+import React from 'react';
 
 interface IFooterNavLinks {
   navigation: Menu;

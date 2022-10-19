@@ -1,7 +1,6 @@
-import MaybeLink from '../../contentful/MaybeLink';
-
 import { Popover, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
+import MaybeLink from '../../contentful/MaybeLink';
 import type { Menu } from '../../../utils/menues';
 
 interface ISideBar {
