@@ -15,7 +15,7 @@ export default function text(
   return (
     <RichText
       content={props.data.text}
-      className={`${textAlign} self-center`}
+      className={`${textAlign} self-center mb-12`}
     />
   );
 }

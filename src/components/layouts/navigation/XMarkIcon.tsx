@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
+import React, { ComponentPropsWithoutRef } from 'react';
 
 const XMarkIcon: React.FC<ComponentPropsWithoutRef<'svg'>> = (props) => {
   return (

@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
+import React, { ComponentPropsWithoutRef } from 'react';
 
 const Bars3Icon: React.FC<ComponentPropsWithoutRef<'svg'>> = (props) => {
   return (

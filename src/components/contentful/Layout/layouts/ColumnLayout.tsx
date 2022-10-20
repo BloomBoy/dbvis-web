@@ -21,12 +21,7 @@ function ColumnLayoutComp({
   const columnCount = slots.length;
   const columns =
     columnCount > 1 ? (
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
-        }}
-      >
+      <div className={`flex flex-col md:grid grid-cols-${columnCount}`}>
         {slots.map((slot) => (
           <div key={slot.id}>
             {slot.components.map((componentProps) => (

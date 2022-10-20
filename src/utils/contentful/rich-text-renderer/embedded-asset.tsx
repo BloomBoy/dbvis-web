@@ -1,27 +1,26 @@
 import { Block, Inline } from '@contentful/rich-text-types';
 import ContentfulImage from './image';
 import React from 'react';
-
-const noop = () => {};
+import useImage from 'src/utils/useImage';
 
 export default function EmbeddedAsset({
-  data: {
-    target: { sys, fields, metadata },
-  },
+  data: { target },
 }: Block | Inline): React.ReactNode {
-  const isImage = fields.file.contentType.includes('image');
+  const image = useImage(target);
+  if (image == null) return null;
+  const isImage = true;
   if (isImage) {
     return (
       <ContentfulImage
-        sys={sys}
+        sys={image.sys}
         // Change fields format to what <Image /> expects
         fields={{
-          title: fields.title,
-          image: { fields } as any,
+          title: image.fields.title,
+          image: image,
         }}
-        toPlainObject={noop as any}
-        update={noop as any}
-        metadata={metadata}
+        toPlainObject={image.toPlainObject}
+        update={(() => {}) as any}
+        metadata={image.metadata}
       />
     );
   }

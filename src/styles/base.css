@@ -1,6 +1,6 @@
 @layer base {
   body {
-    @apply bg-neutral-50 text-neutral-600;
+    @apply text-black;
   }
   body.dark {
     @apply bg-neutral-800 text-neutral-300;
