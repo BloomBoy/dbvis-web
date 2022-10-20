@@ -1,17 +1,20 @@
 import * as Contentful from 'contentful';
 import type { ComponentProps } from '..';
+import useImage from 'src/utils/useImage';
 
 type TextData = {
   asset: Contentful.Asset;
 };
 
-export default function button(
+export default function Button(
   props: ComponentProps<TextData>,
 ): JSX.Element | null {
-  const assetUrl = props.data.asset.fields.file.url;
-  const assetType = props.data.asset.fields.file.contentType;
+  const image = useImage(props.data.asset);
+  if (image == null) return null;
+  const assetUrl = image.fields.file.url;
+  const assetType = image.fields.file.contentType;
   if (assetType.startsWith('image/')) {
-    return <img src={assetUrl} alt={props.data.asset.fields.title} />;
+    return <img src={assetUrl} alt={image.fields.title} />;
   }
   return null;
 }
