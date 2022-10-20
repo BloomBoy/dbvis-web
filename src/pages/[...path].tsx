@@ -4,8 +4,6 @@ import type {
   NextPage,
 } from 'next';
 import { StandardPageEntry, getPage } from 'src/utils/contentful/standardPage';
-import Footer from '../components/layout/navigation/footer/Footer';
-import Header from '../components/layouts/navigation/Header';
 import { LayoutList } from 'src/components/contentful/Layout';
 import { SafeValue } from 'src/utils/contentful';
 import { WithGlobals } from 'src/utils/types';
@@ -15,13 +13,7 @@ type Props = {
 };
 
 const Home: NextPage<Props> = (props) => {
-  return (
-    <>
-      <Header />
-      <LayoutList layouts={props.page.fields.pageLayout} />
-      <Footer />
-    </>
-  );
+  return <LayoutList layouts={props.page.fields.pageLayout} />;
 };
 
 export default Home;

@@ -88,12 +88,17 @@ export default function parseLayout(
   assetListFieldId = 'pageAssetReferences',
   referenceListFieldId = 'pageEntryReferences',
 ): LayoutListEntryProps[] {
-  const layouts = entry.fields[layoutFieldId] as LayoutProps[];
+  const layouts = entry.fields[layoutFieldId] as
+    | LayoutListEntryProps[]
+    | undefined;
+  if (layouts == null) return [];
   const assetList = (
-    entry.fields[assetListFieldId] as Contentful.Asset[]
+    (entry.fields[assetListFieldId] as Contentful.Asset[] | undefined) ?? []
   ).filter(isNotLink);
   const referenceList = (
-    entry.fields[referenceListFieldId] as Contentful.Entry<unknown>[]
+    (entry.fields[referenceListFieldId] as
+      | Contentful.Entry<unknown>[]
+      | undefined) ?? []
   ).filter(isNotLink);
 
   const linkMap = Object.fromEntries([
