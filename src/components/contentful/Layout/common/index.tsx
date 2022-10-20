@@ -1,6 +1,8 @@
 import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 import getTextAlignment from 'src/utils/getTextAlignment';
+import ShowDatabases from 'src/components/ShowDatabases';
+
 export type HeaderData = {
   title?: SafeEntryFields.Symbol;
   subTitle?: SafeEntryFields.Symbol;
@@ -134,6 +136,7 @@ export function Container({
       style={style}
     >
       {children}
+      <ShowDatabases />
     </div>
   );
 }
