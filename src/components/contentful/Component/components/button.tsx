@@ -13,7 +13,7 @@ export default function button(
   return (
     <MaybeLink
       href={props.data.target}
-      className="bg-black self-center text-white rounded-3xl p-2 px-4"
+      className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono font-light uppercase"
     >
       {props.data.buttonText}
     </MaybeLink>

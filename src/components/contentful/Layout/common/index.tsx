@@ -29,7 +29,7 @@ export function LayoutHeader({
     <div className="flex flex-col mb-10">
       {hasSubTitle && (
         <h3
-          className={`font-mono quote-decoration uppercase text-grey-500 ${textAlign}`}
+          className={`font-mono font-light quote-decoration uppercase text-grey-500 ${textAlign} mb-6`}
         >
           {subTitle}
         </h3>
@@ -37,8 +37,10 @@ export function LayoutHeader({
       {hasTitle && (
         <HeaderComp
           className={classNames(
-            mainHeaderIndex === 0 ? 'text-8xl' : 'text-7xl',
-            'font-bold',
+            mainHeaderIndex === 0
+              ? 'text-5xl md:text-8xl'
+              : 'text-5xl md:text-7xl',
+            'font-bold px-28 text-gray-900',
             textAlign,
           )}
         >
