@@ -18,7 +18,7 @@ const { publicRuntimeConfig } = getConfig();
 
 export const menus: {
   [menuId: string]: Menu | undefined;
-} = publicRuntimeConfig.menues;
+} = publicRuntimeConfig.menus;
 
 export default function getMenu(id: string): Menu {
   const menu = menus[id];
