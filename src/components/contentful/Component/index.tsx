@@ -1,26 +1,51 @@
 import React from 'react';
-import button from './components/button';
-import image from './components/image';
-import text from './components/text';
+import buttonComponent from './components/button';
+import imageComponent from './components/image';
+import textComponent from './components/text';
 
-export type ComponentProps<Data = any> = {
+export interface ComponentProps<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Data extends Record<string, unknown> = Record<string, any>,
+> {
   id: string;
-  type: string;
-  data: Data;
+  type: `${string}Component`;
+  data: Partial<Data>;
+}
+
+interface ComponentRenderer<Props> extends React.FC<Props> {
+  headerCount?: number | ((props: Props) => number);
+}
+
+const components: Record<
+  `${string}Component`,
+  ComponentRenderer<ComponentProps> | undefined
+> = {
+  textComponent,
+  buttonComponent,
+  imageComponent,
 };
 
-const layouts: Record<string, React.ComponentType<ComponentProps> | undefined> =
-  {
-    text,
-    button,
-    image,
-  };
-
-export default function Component(props: ComponentProps): JSX.Element | null {
+function ComponentComp(props: ComponentProps): JSX.Element | null {
   const { type } = props;
-  const Comp = layouts[type];
+  const Comp = components[type];
   if (Comp == null) {
     return null;
   }
   return <Comp {...props} />;
 }
+
+const Component = Object.assign(ComponentComp, {
+  headerCount(props: ComponentProps) {
+    const { type } = props;
+    const Comp = components[type];
+    if (Comp == null) {
+      return 0;
+    }
+    if (typeof Comp.headerCount === 'function') {
+      return Comp.headerCount(props);
+    }
+    return Comp.headerCount ?? 0;
+  },
+});
+
+export default Component;

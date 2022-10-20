@@ -8,13 +8,15 @@ type TextData = {
   alignment?: Contentful.EntryFields.Symbol;
 };
 
-export default function text(
+export default function Text(
   props: ComponentProps<TextData>,
 ): JSX.Element | null {
+  const { text } = props.data;
+  if (text == null) return null;
   const textAlign = getTextAlignment(props.data.alignment);
   return (
     <RichText
-      content={props.data.text}
+      content={text}
       className={`${textAlign} self-center mb-12 max-w-[612px]`}
     />
   );

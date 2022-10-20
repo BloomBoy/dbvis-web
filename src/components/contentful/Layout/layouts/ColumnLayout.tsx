@@ -8,10 +8,14 @@ import {
 } from '../common';
 import Component from '../../Component';
 import type { LayoutProps } from '..';
+import { SafeEntryFields } from 'src/utils/contentful';
 
-interface Data extends HeaderData, ThemeData {}
+type Data = HeaderData & ThemeData;
 
-type SlotData = Record<string, never>;
+type SlotData = {
+  title?: SafeEntryFields.Symbol;
+  subTitle?: SafeEntryFields.Symbol;
+};
 
 function ColumnLayoutComp({
   slots,
@@ -55,8 +59,16 @@ function ColumnLayoutComp({
 }
 
 const ColumnLayout = Object.assign(ColumnLayoutComp, {
-  canRenderMainHeader(props: LayoutProps<Data, SlotData>) {
-    return canRenderMainHeader(props.data);
+  headerCount(props: LayoutProps<Data, SlotData>) {
+    let count = 0;
+    if (canRenderMainHeader(props.data)) count += 1;
+    props.slots.forEach((slot) => {
+      if (slot.data.title) count += 1;
+      slot.components.forEach((component) => {
+        count += Component.headerCount(component);
+      });
+    });
+    return count;
   },
 });
 

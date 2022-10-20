@@ -1,20 +1,19 @@
-import * as Contentful from 'contentful';
 import type { ComponentProps } from '..';
-import useImage from 'src/utils/useImage';
+import { SafeEntryFields } from 'src/utils/contentful';
 
-type TextData = {
-  asset: Contentful.Asset;
+type ImageData = {
+  asset: SafeEntryFields.Asset;
 };
 
-export default function Button(
-  props: ComponentProps<TextData>,
+export default function Image(
+  props: ComponentProps<ImageData>,
 ): JSX.Element | null {
-  const image = useImage(props.data.asset);
-  if (image == null) return null;
-  const assetUrl = image.fields.file.url;
-  const assetType = image.fields.file.contentType;
+  const { asset } = props.data;
+  if (asset == null) return null;
+  const assetUrl = asset.fields.file.url;
+  const assetType = asset.fields.file.contentType;
   if (assetType.startsWith('image/')) {
-    return <img src={assetUrl} alt={image.fields.title} />;
+    return <img src={assetUrl} alt={asset.fields.title} />;
   }
   return null;
 }
