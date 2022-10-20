@@ -1,7 +1,7 @@
 import { SafeEntryFields } from 'src/utils/contentful';
+import ShowDatabases from 'src/components/ShowDatabases';
 import classNames from 'classnames';
 import getTextAlignment from 'src/utils/getTextAlignment';
-import ShowDatabases from 'src/components/ShowDatabases';
 
 export type HeaderData = {
   title?: SafeEntryFields.Symbol;

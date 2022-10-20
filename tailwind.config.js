@@ -17,6 +17,7 @@ const brandPrimaryColors = {
 };
 
 const brandGreyScale = {
+  300: '#F3F3F3',
   500: '#7B7B7B',
   900: '#2B2B2B',
 };
@@ -56,6 +57,13 @@ module.exports = {
         primary: brandPrimaryColors,
         bodyBackground: colors.white,
         grey: brandGreyScale,
+      },
+      backgroundImage: {
+        buttonBackground:
+          'linear-gradient(360deg, #FCFCFC -48.75%, #F3F3F3 100%)',
+      },
+      boxShadow: {
+        imageShadow: '0px 0px 6px rgba(0, 0, 0, 0.05)',
       },
       typography: {
         DEFAULT: {

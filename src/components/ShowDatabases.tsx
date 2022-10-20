@@ -39,20 +39,18 @@ export default function ShowDatabases(): JSX.Element {
         {databases.map(({ label }) => (
           <button
             key={label}
-            className="w-full flex justify-between px-4 py-5 rounded-lg"
-            style={{
-              backgroundColor:
-                'linear-gradient(360deg, #FCFCFC -48.75%, #F3F3F3 100%)',
+            className="w-full flex justify-between px-4 py-5 rounded-lg shadow-imageShadow border border-grey-300 bg-buttonBackground font-mono uppercase cursor-pointer"
+            onClick={() => {
+              console.log('click item');
             }}
           >
-            <div
-              className="h-6 w-6"
-              style={{
-                backgroundColor:
-                  'linear-gradient(360deg, #FCFCFC -48.75%, #F3F3F3 100%)',
-              }}
-            ></div>
-            <label>{label}</label> <div>arrow</div>
+            <div className="flex items-center">
+              <div className="h-6 w-6 rounded-[5px] bg-buttonBackground border px-1 flex items-center">
+                <img src={'/images/azure.png'} alt={label} />
+              </div>
+              <label className="ml-2 cursor-pointer">{label}</label>
+            </div>
+            <label className="cursor-pointer text-primary-500">{'->'}</label>
           </button>
         ))}
       </div>
