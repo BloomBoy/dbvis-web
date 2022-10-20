@@ -1,6 +1,7 @@
 import FooterFlagLogo from './FooterFlagLogo';
 import FooterLogo from './FooterLogo';
 import FooterNavLinks from './FooterNavLinks';
+import React from 'react';
 import getMenu from '../../../../utils/menues';
 
 const navigation = getMenu('footer');
