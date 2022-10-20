@@ -4,18 +4,18 @@ export default function ShowDatabases(): JSX.Element {
   const [searchValue, setSearchValue] = useState<string | null>(null);
 
   const databases = [
-    { label: 'oracle', imageUrl: 'some url' },
-    { label: 'sql', imageUrl: 'some url' },
-    { label: 'AZURE SQL DB', imageUrl: 'some url' },
-    { label: 'mysql', imageUrl: 'some url' },
-    { label: 'mongo db', imageUrl: 'some url' },
-    { label: 'db2', imageUrl: 'some url' },
-    { label: 'postgresql', imageUrl: 'some url' },
-    { label: 'oracle cloud', imageUrl: 'some url' },
-    { label: 'derby', imageUrl: 'some url' },
-    { label: 'microsoft sql server', imageUrl: 'some url' },
-    { label: 'amazon redshift', imageUrl: 'some url' },
-    { label: 'elasticsearch', imageUrl: 'some url' },
+    { label: 'oracle', imageUrl: '/images/azure.png' },
+    { label: 'sql', imageUrl: '/images/azure.png' },
+    { label: 'AZURE SQL DB', imageUrl: '/images/azure.png' },
+    { label: 'mysql', imageUrl: '/images/azure.png' },
+    { label: 'mongo db', imageUrl: '/images/azure.png' },
+    { label: 'db2', imageUrl: '/images/azure.png' },
+    { label: 'postgresql', imageUrl: '/images/azure.png' },
+    { label: 'oracle cloud', imageUrl: '/images/azure.png' },
+    { label: 'derby', imageUrl: '/images/azure.png' },
+    { label: 'microsoft sql server', imageUrl: '/images/azure.png' },
+    { label: 'amazon redshift', imageUrl: '/images/azure.png' },
+    { label: 'elasticsearch', imageUrl: '/images/azure.png' },
   ];
   return (
     <div className="flex flex-wrap">
@@ -36,7 +36,7 @@ export default function ShowDatabases(): JSX.Element {
         </button>
       </div>
       <div className="w-full grid gap-4 grid-cols-4">
-        {databases.map(({ label }) => (
+        {databases.map(({ label, imageUrl }) => (
           <button
             key={label}
             className="w-full flex justify-between px-4 py-5 rounded-lg shadow-imageShadow border border-grey-300 bg-buttonBackground font-mono uppercase cursor-pointer"
@@ -46,7 +46,7 @@ export default function ShowDatabases(): JSX.Element {
           >
             <div className="flex items-center">
               <div className="h-6 w-6 rounded-[5px] bg-buttonBackground border px-1 flex items-center">
-                <img src={'/images/azure.png'} alt={label} />
+                <img src={imageUrl} alt={label} />
               </div>
               <label className="ml-2 cursor-pointer">{label}</label>
             </div>
