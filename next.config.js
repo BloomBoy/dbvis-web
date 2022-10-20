@@ -26,6 +26,8 @@ module.exports = async function nextConfig() {
     swcMinify: true,
     env: {
       BASE_URL,
+      CF_DELIVERY_ACCESS_TOKEN: process.env.CF_DELIVERY_ACCESS_TOKEN,
+      CF_SPACE_ID: process.env.CF_SPACE_ID,
     },
     publicRuntimeConfig,
     async rewrites() {
