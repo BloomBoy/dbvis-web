@@ -9,7 +9,6 @@ import { Popover } from '@headlessui/react';
 import React from 'react';
 import getMenu from '../../../utils/menus';
 
-
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }

@@ -2,7 +2,6 @@ import MaybeLink from '../../contentful/MaybeLink';
 import type { Menu } from '../../../utils/menus';
 import React from 'react';
 
-
 interface INavLinks {
   navigation: Menu;
 }
