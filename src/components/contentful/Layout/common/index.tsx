@@ -40,7 +40,7 @@ export function LayoutHeader({
             mainHeaderIndex === 0
               ? 'text-5xl md:text-8xl'
               : 'text-5xl md:text-7xl',
-            'font-bold px-28 text-gray-900',
+            'font-bold px-5 md:px-10 lg:px-28 text-gray-900',
             textAlign,
           )}
         >
