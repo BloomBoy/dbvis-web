@@ -68,11 +68,5 @@ module.exports = {
       'error',
       { ignoreFunctionalComponents: true, forbidDefaultForRequired: true },
     ],
-    'sort-imports': [
-      'error',
-      {
-        allowSeparatedGroups: true,
-      },
-    ],
   },
 };

@@ -1,5 +1,5 @@
 import Footer from './navigation/footer/Footer';
-import Header from './navigation/Header';
+import Header from './navigation/Header/Header';
 import React from 'react';
 
 export default function PageLayout({
@@ -9,7 +9,7 @@ export default function PageLayout({
 }): JSX.Element {
   return (
     <>
-      <Header />
+      <Header behavior="sticky" className="h-20" />
       <div className="min-h-screen flex flex-col items-stretch">
         <main className="flex-grow flex-shrink-0">{children}</main>
         <Footer className="flex-grow-0 flex-shrink-0" />
