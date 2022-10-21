@@ -21,7 +21,9 @@ function ColumnLayoutComp({
   const columnCount = slots.length;
   const columns =
     columnCount > 1 ? (
-      <div className={`flex flex-col md:grid grid-cols-${columnCount}`}>
+      <div
+        className={`flex flex-col md:grid grid-cols-${columnCount} gap-x-28`}
+      >
         {slots.map((slot) => (
           <div key={slot.id}>
             {slot.components.map((componentProps) => (
