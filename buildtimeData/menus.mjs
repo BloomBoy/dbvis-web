@@ -44,7 +44,7 @@ function convertMenu({ menuId, menuItems: rawMenuItems, ...rawMenu }) {
   };
 }
 
-export default async function getMenues() {
+export default async function getMenus() {
   const client = getClient();
   let total = 0;
   let skip = 0;
@@ -73,6 +73,6 @@ export default async function getMenues() {
 /**
  * @typedef {import('../src/utils/contentful').ContentfulEntry<'menuItem'>} ContentfulMenuItem
  * @typedef {import('../src/utils/contentful').ContentfulFields<'menu'>} ContentfulMenuFields
- * @typedef {import('../src/utils/menues').Menu} Menu
- * @typedef {import('../src/utils/menues').MenuItem} MenuItem
+ * @typedef {import('../src/utils/menus').Menu} Menu
+ * @typedef {import('../src/utils/menus').MenuItem} MenuItem
  */

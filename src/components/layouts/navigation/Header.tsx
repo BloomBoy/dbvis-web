@@ -7,7 +7,7 @@ import XMarkIcon from './XMarkIcon';
 
 import { Popover } from '@headlessui/react';
 import React from 'react';
-import getMenu from '../../../utils/menues';
+import getMenu from '../../../utils/menus';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -55,7 +55,6 @@ export default function Header() {
                 <Popover.Group as="nav" className="flex space-x-5">
                   <NavLinks navigation={navigation} />
                 </Popover.Group>
-
                 <div className="flex items-center lg:ml-12">
                   <MaybeLink
                     href="/download"

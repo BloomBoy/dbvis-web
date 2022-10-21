@@ -16,12 +16,12 @@ export type Menu = {
 
 const { publicRuntimeConfig } = getConfig();
 
-export const menues: {
+export const menus: {
   [menuId: string]: Menu | undefined;
-} = publicRuntimeConfig.menues;
+} = publicRuntimeConfig.menus;
 
 export default function getMenu(id: string): Menu {
-  const menu = menues[id];
+  const menu = menus[id];
   if (!menu) {
     const err = new Error(`Menu with id ${id} not found`);
     console.error(err);

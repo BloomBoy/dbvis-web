@@ -1,5 +1,5 @@
 import type { Entry, EntryFields } from 'contentful';
-import type { Menu, MenuItem } from '../../menues';
+import type { Menu, MenuItem } from '../../menus';
 import type { LayoutProps } from '../../../components/contentful/Layout';
 
 export type ContentTypeFieldsMap = {
