@@ -1,5 +1,5 @@
-import Footer from './navigation/footer/Footer';
-import Header from './navigation/Header/Header';
+import Footer from './navigation/Footer';
+import Header from './navigation/Header';
 import React from 'react';
 
 export default function PageLayout({
