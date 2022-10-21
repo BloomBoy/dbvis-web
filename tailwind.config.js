@@ -64,6 +64,9 @@ module.exports = {
             color: colors.black,
             fontSize: '20px',
             fontWeight: 300,
+            h1: {
+              fontWeight: 400,
+            },
             a: {
               color: brandPrimaryColors.DEFAULT,
               '&:hover': {
@@ -76,7 +79,7 @@ module.exports = {
     },
     fontFamily: {
       mono: ['jetbrainsmono', 'mono'],
-      sans: ['HCo Gotham SSm', ...defaultTheme.fontFamily.sans],
+      sans: ['AUTHENTIC Sans', ...defaultTheme.fontFamily.sans],
     },
   },
   variants: {
