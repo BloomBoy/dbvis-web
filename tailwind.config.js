@@ -63,6 +63,7 @@ module.exports = {
             lineHeight: 1.2,
             color: colors.black,
             fontSize: '20px',
+            fontWeight: 300,
             a: {
               color: brandPrimaryColors.DEFAULT,
               '&:hover': {

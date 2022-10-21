@@ -103,7 +103,7 @@
     font-family: "AUTHENTIC Sans";
     src: url("/fonts/authentic_sans/woff/AUTHENTICSans-60.woff") format("woff"),
         url("/fonts/authentic_sans/woff/AUTHENTICSans-60.woff2") format("woff2");
-    font-weight: 400;
+    font-weight: 300;
     font-style: normal;
 }
 
@@ -112,7 +112,7 @@
     font-family: "AUTHENTIC Sans";
     src: url("/fonts/authentic_sans/woff/AUTHENTICSans-90.woff") format("woff"),
         url("/fonts/authentic_sans/woff/AUTHENTICSans-90.woff2") format("woff2");
-    font-weight: 500;
+    font-weight: 400;
     font-style: normal;
 }
 
@@ -120,7 +120,7 @@
     font-family: "AUTHENTIC Sans";
     src: url("/fonts/authentic_sans/woff/AUTHENTICSans-130.woff") format("woff"),
         url("/fonts/authentic_sans/woff/AUTHENTICSans-130.woff2") format("woff2");
-    font-weight: 600;
+    font-weight: 500;
     font-style: normal;
 }
 
@@ -128,6 +128,6 @@
     font-family: "AUTHENTIC Sans";
     src: url("/fonts/authentic_sans/woff/AUTHENTICSans-150.woff") format("woff"),
         url("/fonts/authentic_sans/woff/AUTHENTICSans-150.woff2") format("woff2");
-    font-weight: 700;
+    font-weight: 600;
     font-style: normal;
 }
