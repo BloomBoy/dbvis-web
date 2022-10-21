@@ -1,13 +1,13 @@
-import * as Contentful from 'contentful';
 import type { ComponentProps } from '..';
 import MaybeLink from 'src/components/contentful/MaybeLink';
+import { SafeEntryFields } from 'src/utils/contentful';
 
 type TextData = {
-  buttonText: Contentful.EntryFields.Symbol;
-  target: Contentful.EntryFields.Symbol;
+  buttonText: SafeEntryFields.Symbol;
+  target: SafeEntryFields.Symbol;
 };
 
-export default function button(
+export default function Button(
   props: ComponentProps<TextData>,
 ): JSX.Element | null {
   return (

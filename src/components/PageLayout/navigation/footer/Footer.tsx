@@ -2,13 +2,17 @@ import FooterFlagLogo from './FooterFlagLogo';
 import FooterLogo from './FooterLogo';
 import FooterNavLinks from './FooterNavLinks';
 import React from 'react';
+import classNames from 'classnames';
 import getMenu from '../../../../utils/menus';
 
 const navigation = getMenu('footer');
 
-const Footer = () => {
+const Footer = ({ className }: { className?: string }) => {
   return (
-    <footer className="bg-white" aria-labelledby="footer-heading">
+    <footer
+      className={classNames('bg-white', className)}
+      aria-labelledby="footer-heading"
+    >
       <div className="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">

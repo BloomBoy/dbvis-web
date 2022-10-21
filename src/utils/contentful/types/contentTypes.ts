@@ -1,18 +1,15 @@
-import type { Entry, EntryFields } from 'contentful';
 import type { Menu, MenuItem } from '../../menus';
-import type { LayoutProps } from '../../../components/contentful/Layout';
+import type { EntryFields } from 'contentful';
+import type { SafeEntry } from './contentfulTypes';
+import type { StandardPageFields } from '../standardPage';
 
 export type ContentTypeFieldsMap = {
-  standardPage: {
-    title: EntryFields.Symbol;
-    slug: EntryFields.Symbol;
-    pageLayout: EntryFields.Object<LayoutProps>[];
-  };
+  standardPage: StandardPageFields;
   menu: Omit<Menu, 'menuItems' | 'id'> & {
     menuId: EntryFields.Symbol;
-    menuItems: Entry<ContentTypeFieldsMap['menuItem']>[];
+    menuItems: SafeEntry<ContentTypeFieldsMap['menuItem']>[];
   };
   menuItem: Omit<MenuItem, 'subItems'> & {
-    subItems?: Entry<ContentTypeFieldsMap['menuItem']>[];
+    subItems?: SafeEntry<ContentTypeFieldsMap['menuItem']>[];
   };
 };

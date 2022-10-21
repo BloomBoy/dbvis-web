@@ -1,17 +1,39 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { SafeEntryFields, SafeValue } from 'src/utils/contentful';
 import { ComponentProps } from '../Component';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SlotProps<Data = any> = {
+export type SlotProps<
+  Data extends Record<string, unknown> = Record<string, any>,
+> = {
   components: ComponentProps[];
   id: string;
   data: Partial<Data>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type LayoutProps<Data = any, SlotData = any> = {
+export type BlockFields = {
+  pageLayout: LayoutListEntryProps[];
+  title: SafeEntryFields.Symbol;
+};
+
+export interface LayoutProps<
+  Data extends Record<string, unknown> = Record<string, any>,
+  SlotData extends Record<string, unknown> = Record<string, any>,
+> {
   data: Partial<Data>;
-  type: string;
+  type: `${string}Layout`;
   slots: SlotProps<SlotData>[];
   id: string;
   mainHeaderIndex?: number;
-};
+}
+
+export interface LayoutLinkProps {
+  target: SafeEntryFields.SafeEntry<BlockFields>;
+  type: `${string}Link`;
+  id: string;
+  mainHeaderIndex?: number;
+}
+
+export type LayoutListEntryProps<
+  Data extends Record<string, unknown> = Record<string, any>,
+  SlotData extends Record<string, unknown> = Record<string, any>,
+> = SafeValue<LayoutProps<Data, SlotData>> | SafeValue<LayoutLinkProps>;

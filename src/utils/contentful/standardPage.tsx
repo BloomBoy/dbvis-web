@@ -1,19 +1,25 @@
 import * as Contentful from 'contentful';
 import { ContentTypeFieldsMap, GetBaseEntryParams } from './types';
-import type { LayoutProps } from 'src/components/contentful/Layout';
-import { getClient } from './client';
+import parseLayout, { LayoutFields } from './parseLayout';
+import getClient from '../getContentfulClient.mjs';
+import { safeValue } from './helpers';
 
 const getStandardPageQuery = (params: GetBaseEntryParams) => ({
   limit: 1,
-  include: 1,
+  include: 3,
   locale: params.locale,
   'fields.slug': params.slug,
   content_type: 'standardPage',
 });
 
-export function parseLayout(layout: LayoutProps[]): Promise<LayoutProps[]> {
-  return Promise.resolve(layout);
-}
+type Fields = {
+  title: Contentful.EntryFields.Symbol;
+  slug: Contentful.EntryFields.Symbol;
+};
+
+export type StandardPageFields = {
+  [key in keyof LayoutFields | keyof Fields]: (LayoutFields & Fields)[key];
+};
 
 export async function getPage(params: GetBaseEntryParams) {
   const query = getStandardPageQuery(params);
@@ -24,10 +30,10 @@ export async function getPage(params: GetBaseEntryParams) {
   if (!rawPage) return null;
   return {
     ...rawPage,
-    fields: {
+    fields: safeValue<typeof rawPage.fields>({
       ...rawPage.fields,
-      pageLayout: await parseLayout(rawPage.fields.pageLayout),
-    },
+      pageLayout: parseLayout(rawPage),
+    }),
   };
 }
 

@@ -5,7 +5,7 @@ import SlideViewLayout from './layouts/SlideViewLayout';
 import type { LayoutProps } from './types';
 
 interface LayoutComponent<Props> extends React.FC<Props> {
-  canRenderMainHeader?: boolean | ((props: Props) => boolean);
+  headerCount?: number | ((props: Props) => number);
 }
 
 const layouts: Record<string, LayoutComponent<LayoutProps> | undefined> = {
@@ -23,16 +23,16 @@ function LayoutComp(props: LayoutProps): JSX.Element | null {
 }
 
 const Layout = Object.assign(LayoutComp, {
-  canRenderMainHeader(props: LayoutProps) {
+  headerCount(props: LayoutProps) {
     const { type } = props;
     const LayoutComponent = layouts[type];
     if (LayoutComponent == null) {
-      return false;
+      return 0;
     }
-    if (typeof LayoutComponent.canRenderMainHeader === 'function') {
-      return LayoutComponent.canRenderMainHeader(props);
+    if (typeof LayoutComponent.headerCount === 'function') {
+      return LayoutComponent.headerCount(props);
     }
-    return LayoutComponent.canRenderMainHeader ?? false;
+    return LayoutComponent.headerCount ?? 0;
   },
 });
 

@@ -1,12 +1,12 @@
-import * as Contentful from 'contentful';
+import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 import getTextAlignment from 'src/utils/getTextAlignment';
-export interface HeaderData {
-  title?: Contentful.EntryFields.Symbol;
-  subTitle?: Contentful.EntryFields.Symbol;
-  renderHeader: Contentful.EntryFields.Boolean;
-  alignment?: Contentful.EntryFields.Symbol;
-}
+export type HeaderData = {
+  title?: SafeEntryFields.Symbol;
+  subTitle?: SafeEntryFields.Symbol;
+  renderHeader: SafeEntryFields.Boolean;
+  alignment?: SafeEntryFields.Symbol;
+};
 
 export function canRenderMainHeader(data: Partial<HeaderData>): boolean {
   return data.renderHeader === true && data.title != null && data.title !== '';
@@ -51,10 +51,10 @@ export function LayoutHeader({
   );
 }
 
-export interface ThemeData {
-  backgroundColor?: string;
-  containerBgColor?: string;
-  textColor?: string;
+export type ThemeData = {
+  backgroundColor?: SafeEntryFields.Symbol;
+  containerBgColor?: SafeEntryFields.Symbol;
+  textColor?: SafeEntryFields.Symbol;
   sizing?:
     | 'xs'
     | 'sm'
@@ -68,7 +68,7 @@ export interface ThemeData {
     | '6xl'
     | '7xl'
     | 'full';
-}
+};
 
 export function Wrapper({
   data,

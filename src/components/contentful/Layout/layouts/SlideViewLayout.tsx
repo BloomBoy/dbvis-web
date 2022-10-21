@@ -13,11 +13,11 @@ import type { LayoutProps } from '..';
 import RichText from 'src/components/RichText';
 import classNames from 'classnames';
 
-interface Data extends HeaderData, ThemeData {}
+type Data = HeaderData & ThemeData;
 
-interface SlotData {
+type SlotData = {
   button: EntryFields.RichText;
-}
+};
 
 function SelectButtons({
   slots,
@@ -121,8 +121,15 @@ function SlideViewLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
 }
 
 const SlideViewLayout = Object.assign(SlideViewLayoutComp, {
-  canRenderMainHeader(props: LayoutProps<Data, SlotData>) {
-    return canRenderMainHeader(props.data);
+  headerCount(props: LayoutProps<Data, SlotData>) {
+    let count = 0;
+    if (canRenderMainHeader(props.data)) count += 1;
+    props.slots.forEach((slot) => {
+      slot.components.forEach((component) => {
+        count += Component.headerCount(component);
+      });
+    });
+    return count;
   },
 });
 
