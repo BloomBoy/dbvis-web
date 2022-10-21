@@ -9,7 +9,7 @@ const getStandardPageQuery = (params: GetBaseEntryParams) => ({
   include: 3,
   locale: params.locale,
   'fields.slug': params.slug,
-  content_type: 'standardPageDev',
+  content_type: 'standardPage',
 });
 
 type Fields = {

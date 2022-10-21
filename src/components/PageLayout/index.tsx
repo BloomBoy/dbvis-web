@@ -8,10 +8,12 @@ export default function PageLayout({
   children: React.ReactNode;
 }): JSX.Element {
   return (
-    <div className="min-h-screen flex flex-col items-stretch">
+    <>
       <Header />
-      <main className="flex-grow flex-shrink-0">{children}</main>
-      <Footer className="flex-grow-0 flex-shrink-0" />
-    </div>
+      <div className="min-h-screen flex flex-col items-stretch">
+        <main className="flex-grow flex-shrink-0">{children}</main>
+        <Footer className="flex-grow-0 flex-shrink-0" />
+      </div>
+    </>
   );
 }
