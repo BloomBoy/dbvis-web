@@ -5,15 +5,19 @@ import { SEOProvider } from 'src/components/SEO';
 import asHOC from 'src/utils/asHOC';
 import composeHOCs from 'src/utils/composeHOCs';
 import getConfig from 'next/config';
+import { CollectedDataProvider } from 'src/hooks/useCollectedData';
 const {
   publicRuntimeConfig: { contentfulAppParameters },
 } = getConfig();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { collectedData } = pageProps as { collectedData?: unknown };
   return (
-    <PageLayout>
-      <Component {...pageProps} />
-    </PageLayout>
+    <CollectedDataProvider data={collectedData}>
+      <PageLayout>
+        <Component {...pageProps} />
+      </PageLayout>
+    </CollectedDataProvider>
   );
 }
 

@@ -6,7 +6,8 @@ import type {
 import { StandardPageEntry, getPage } from 'src/utils/contentful/standardPage';
 import { LayoutList } from 'src/components/contentful/Layout';
 import { SafeValue } from 'src/utils/contentful';
-import { WithGlobals } from 'src/utils/types';
+import { WithCollectedData, WithGlobals } from 'src/utils/types';
+import { getGlobalData } from 'src/utils/getGlobalData';
 
 type Props = {
   page: SafeValue<StandardPageEntry>;
@@ -20,7 +21,7 @@ export default Home;
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
-): Promise<GetStaticPropsResult<WithGlobals<Props>>> {
+): Promise<GetStaticPropsResult<WithGlobals<WithCollectedData<Props>>>> {
   const path =
     typeof ctx.params?.path === 'string' ? [ctx.params.path] : ctx.params?.path;
   let slug: string;
@@ -31,7 +32,7 @@ export async function getStaticProps(
   }
   const preview = ctx.preview || false;
   try {
-    const page = await getPage({
+    const { page, collectedData } = await getPage({
       slug,
       locale: ctx.locale,
       preview,
@@ -43,7 +44,7 @@ export async function getStaticProps(
       };
     }
     return {
-      props: { page, preview },
+      props: { page, collectedData, ...(await getGlobalData(ctx)) },
       revalidate: 12,
     };
   } catch (err) {

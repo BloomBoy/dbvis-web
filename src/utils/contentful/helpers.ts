@@ -310,26 +310,47 @@ export type SafeValue<T> = T extends object
     : SafeMap<T>
   : T;
 
+function isClean<T>(val: T): val is T & { [CLEANED]: SafeValue<T> } {
+  return CLEANED in val;
+}
+
+function isObject<T>(val: T): val is T & object {
+  return typeof val === 'object' && val != null;
+}
+
+function applyCleanVersion<T extends object>(val: T, cleaned: SafeValue<T>) {
+  (
+    val as {
+      [CLEANED]?: SafeValue<T> | undefined;
+    }
+  )[CLEANED] = cleaned;
+}
+
 export function safeValue<T>(
   val: T,
-  linkMap?: { [key: string]: Entry<any> | undefined },
+  process?: <U>(val: U) => SafeValue<U> | undefined,
 ): SafeValue<T> {
-  if (typeof val === 'object' && val != null) {
-    if (CLEANED in val) {
-      return (val as unknown as { [CLEANED]: SafeValue<T> })[CLEANED];
+  if (isObject(val)) {
+    if (isClean(val)) {
+      return val[CLEANED];
     }
-    if (Array.isArray(val)) {
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      const ret = cleanupArrayField(val, linkMap) as SafeValue<T>;
-      (val as { [CLEANED]?: SafeValue<T> })[CLEANED] = ret;
-      return ret;
+    const processed = process?.(val);
+    let ret: SafeValue<T & object>;
+    if (processed != null) {
+      ret = processed;
+    } else {
+      if (Array.isArray(val)) {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        ret = cleanupArrayField(val, process) as SafeValue<T & object>;
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        ret = cleanupObject(
+          val as Record<string, unknown>,
+          process,
+        ) as SafeValue<T & object>;
+      }
     }
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const ret = cleanupObject(
-      val as Record<string, unknown>,
-      linkMap,
-    ) as SafeValue<T>;
-    (val as { [CLEANED]?: SafeValue<T> })[CLEANED] = ret;
+    applyCleanVersion(val, ret);
     return ret;
   }
   return val as SafeValue<T>;
@@ -337,19 +358,18 @@ export function safeValue<T>(
 
 function cleanupArrayField<Arr extends unknown[]>(
   array: Arr,
-  linkMap: { [key: string]: Entry<any> | undefined } | undefined,
+  process: (<U>(val: U) => SafeValue<U> | undefined) | undefined,
 ): NonNullable<SafeValue<Arr[number]>>[] {
   return array
-    .map((val) => safeValue(val, linkMap))
+    .map((val) => safeValue(val, process))
     .filter(isNonNull) as NonNullable<SafeValue<Arr[number]>>[];
 }
 
 function cleanupObject<T extends Record<string, unknown>>(
   o: T,
-  linkMap: { [key: string]: Entry<any> | undefined } | undefined,
+  process: (<U>(val: U) => SafeValue<U> | undefined) | undefined,
 ): SafeValue<T> {
   const proto = Object.getPrototypeOf(o);
-  if (isLink(o)) return linkMap?.[o.sys.id] as SafeValue<T>;
   if (hasSys(o)) {
     if (isEntry(o)) {
       return {
@@ -364,7 +384,7 @@ function cleanupObject<T extends Record<string, unknown>>(
     return Object.fromEntries(
       Object.entries(o)
         .map(([key, value]) => {
-          return [key, safeValue(value)];
+          return [key, safeValue(value, process)];
         })
         .filter(([, value]) => typeof value !== 'undefined'),
     ) as SafeValue<T>;
