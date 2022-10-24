@@ -1,13 +1,34 @@
-import type { Entry, EntryFields } from 'contentful';
+import type { Entry } from 'contentful';
 import type { ContentTypeFieldsMap } from './contentTypes';
 export * from './contentfulTypes';
 export * as SafeEntryFields from './SafeEntryFields';
 
-export type GetBaseEntryParams = {
+export interface GetBaseEntryParams {
+  locale?: string;
+  preview?: boolean;
+}
+
+export interface GetMaybePaginatedParams extends GetBaseEntryParams {
+  count?: number;
+  skip?: number;
+}
+
+export interface GetPaginatedParams extends GetMaybePaginatedParams {
+  count: number;
+  skip: number;
+}
+
+export interface GetEntryByIdParams extends GetBaseEntryParams {
+  id: string;
+  locale?: string;
+  preview?: boolean;
+}
+
+export interface GetSlugEntryParams extends GetBaseEntryParams {
   slug: string;
   locale?: string;
   preview?: boolean;
-};
+}
 
 type ContentTypes = keyof ContentTypeFieldsMap;
 
@@ -19,22 +40,3 @@ export type ContentfulFields<Type extends ContentTypes> =
   ContentTypeFieldsMap[Type];
 
 export type { ContentTypes, ContentTypeFieldsMap };
-
-export interface ReviewSourceFields {
-  name: EntryFields.Symbol;
-  url: EntryFields.Symbol;
-  maxScore: EntryFields.Number;
-  averageScore: EntryFields.Number;
-}
-
-export type ReviewSource = Entry<ReviewSourceFields>;
-export interface UserReviewFields {
-  firstName: EntryFields.Symbol;
-  lastName: EntryFields.Symbol;
-  score: EntryFields.Number;
-  source: ReviewSource;
-  weight: EntryFields.Number;
-  review: EntryFields.RichText;
-}
-
-export type UserReview = Entry<UserReviewFields>;

@@ -1,11 +1,14 @@
 import * as Contentful from 'contentful';
 import type {
+  LayoutLinkProps,
   LayoutListEntryProps,
   LayoutProps,
 } from 'src/components/contentful/Layout';
 import { SafeAsset, SafeEntry } from './types';
-import { SafeValue, isNotLink, safeValue } from './helpers';
+import { SafeValue, isNotLink, safeValue, isLink } from './helpers';
 import { Entry } from 'contentful';
+import { components, isComponent } from 'src/components/contentful/Component';
+import { asyncMapMaxConcurrent } from '../asyncArray.mjs';
 
 type InternalLayoutFields<
   LayoutFieldId extends string,
@@ -13,21 +16,27 @@ type InternalLayoutFields<
   ReferenceListFieldId extends string,
 > = {
   [key in LayoutFieldId]:
-    | (Extract<key, LayoutFieldId> extends never ? never : LayoutProps[])
+    | (Extract<key, LayoutFieldId> extends never
+        ? never
+        : (LayoutProps | LayoutLinkProps)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
         : SafeEntry<unknown>[]);
 } & {
   [key in AssetListFieldId]:
-    | (Extract<key, LayoutFieldId> extends never ? never : LayoutProps[])
+    | (Extract<key, LayoutFieldId> extends never
+        ? never
+        : (LayoutProps | LayoutLinkProps)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
         : SafeEntry<unknown>[]);
 } & {
   [key in ReferenceListFieldId]:
-    | (Extract<key, LayoutFieldId> extends never ? never : LayoutProps[])
+    | (Extract<key, LayoutFieldId> extends never
+        ? never
+        : (LayoutProps | LayoutLinkProps)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -50,30 +59,34 @@ export type LayoutFields<
   >[key];
 };
 
-export default function parseLayout<
-  Props extends LayoutListEntryProps[] = LayoutListEntryProps[],
->(entry: Contentful.Entry<LayoutFields>): SafeValue<Props>;
-export default function parseLayout<
-  LayoutFieldId extends string,
-  Props extends LayoutListEntryProps[] = LayoutListEntryProps[],
->(
+export default async function parseLayout(
+  entry: Contentful.Entry<LayoutFields>,
+): Promise<{
+  layoutList: SafeValue<(LayoutProps | LayoutLinkProps)[]>;
+  collectedData: Record<string, unknown>;
+}>;
+export default async function parseLayout<LayoutFieldId extends string>(
   entry: Contentful.Entry<LayoutFields<LayoutFieldId>>,
   layoutFieldId: LayoutFieldId,
-): SafeValue<Props>;
-export default function parseLayout<
+): Promise<{
+  layoutList: LayoutListEntryProps[];
+  collectedData: Record<string, unknown>;
+}>;
+export default async function parseLayout<
   LayoutFieldId extends string,
   AssetListFieldId extends string,
-  Props extends LayoutListEntryProps[] = LayoutListEntryProps[],
 >(
   entry: Contentful.Entry<LayoutFields<LayoutFieldId, AssetListFieldId>>,
   layoutFieldId: LayoutFieldId,
   assetListFieldId: AssetListFieldId,
-): SafeValue<Props>;
-export default function parseLayout<
+): Promise<{
+  layoutList: LayoutListEntryProps[];
+  collectedData: Record<string, unknown>;
+}>;
+export default async function parseLayout<
   LayoutFieldId extends string,
   AssetListFieldId extends string,
   ReferenceListFieldId extends string,
-  Props extends LayoutListEntryProps[] = LayoutListEntryProps[],
 >(
   entry: Contentful.Entry<
     LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId>
@@ -81,17 +94,28 @@ export default function parseLayout<
   layoutFieldId: LayoutFieldId,
   assetListFieldId: AssetListFieldId,
   referenceListFieldId: ReferenceListFieldId,
-): SafeValue<Props>;
-export default function parseLayout(
+): Promise<{
+  layoutList: LayoutListEntryProps[];
+  collectedData: Record<string, unknown>;
+}>;
+export default async function parseLayout(
   entry: Contentful.Entry<LayoutFields<string, string, string>>,
   layoutFieldId = 'pageLayout',
   assetListFieldId = 'pageAssetReferences',
   referenceListFieldId = 'pageEntryReferences',
-): LayoutListEntryProps[] {
+): Promise<{
+  layoutList: LayoutListEntryProps[];
+  collectedData: Record<string, unknown>;
+}> {
   const layouts = entry.fields[layoutFieldId] as
     | LayoutListEntryProps[]
     | undefined;
-  if (layouts == null) return [];
+  if (layouts == null) {
+    return {
+      layoutList: [],
+      collectedData: {},
+    };
+  }
   const assetList = (
     (entry.fields[assetListFieldId] as Contentful.Asset[] | undefined) ?? []
   ).filter(isNotLink);
@@ -103,10 +127,49 @@ export default function parseLayout(
 
   const linkMap = Object.fromEntries([
     ...assetList.map(
-      (asset) => [asset.sys.id, asset as Entry<unknown>] as const,
+      (asset) => [asset.sys.id, asset as Entry<unknown> | undefined] as const,
     ),
-    ...referenceList.map((reference) => [reference.sys.id, reference] as const),
+    ...referenceList.map(
+      (reference) =>
+        [reference.sys.id, reference as Entry<unknown> | undefined] as const,
+    ),
   ]);
 
-  return safeValue(layouts, linkMap);
+  const dataCollectors: Record<
+    string,
+    { collect(): Promise<unknown> | unknown }
+  > = {};
+
+  const layoutList = safeValue(layouts, (o) => {
+    let ret = o as SafeValue<typeof o> | typeof o;
+    if (isLink(o)) {
+      const resolvedLink = linkMap[o.sys.id] as SafeValue<typeof o>;
+      if (resolvedLink != null) {
+        ret = resolvedLink;
+      }
+    }
+    if (isComponent(ret)) {
+      const componentRenderer = components[ret.type];
+      const dataCollector = componentRenderer?.registerDataCollector?.(
+        ret,
+        false,
+      );
+      if (dataCollector != null) {
+        dataCollectors[dataCollector.fetchKey] = dataCollector;
+      }
+    }
+    return ret !== o ? (ret as SafeValue<typeof o>) : undefined;
+  });
+
+  return {
+    layoutList,
+    collectedData: await asyncMapMaxConcurrent(
+      10,
+      Object.entries(dataCollectors),
+      ([key, dataCollector]) =>
+        Promise.resolve(dataCollector.collect()).then(
+          (data) => [key, data] as const,
+        ),
+    ).then((entries) => Object.fromEntries(entries)),
+  };
 }
