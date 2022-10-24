@@ -10,6 +10,7 @@ import { getUserReviews } from 'src/utils/contentful/userReview';
 import getFetchKey from 'src/utils/getFetchKey';
 import { useRouter } from 'next/router';
 import useCollectedData from 'src/hooks/useCollectedData';
+import UserReviewsSwiper from 'src/components/UserReviewsSwiper';
 
 type UserReviewsData = {
   initialCount?: SafeEntryFields.Integer;
@@ -95,14 +96,11 @@ function UserReviewsComponent(
   if (reviews.length === 0) return null;
   return (
     <div>
-      {reviews.map(({ id, ...review }) => (
-        <div key={id}>
-          RENDER REVIEW BY {review.firstName} {review.lastName} HERE{' '}
-        </div>
-      ))}
-      <button onClick={loadNextPage} disabled={isLoading || !hasMore}>
-        LOAD MORE
-      </button>
+      <UserReviewsSwiper
+        reviews={reviews}
+        isLoading={isLoading}
+        onEndReached={loadNextPage}
+      />
     </div>
   );
 }

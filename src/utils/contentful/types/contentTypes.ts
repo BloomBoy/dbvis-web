@@ -14,6 +14,7 @@ export type ContentTypeFieldsMap = {
   userReview: {
     firstName?: SafeEntryFields.Symbol;
     lastName?: SafeEntryFields.Symbol;
+    role?: SafeEntryFields.Symbol;
     score: SafeEntryFields.Number;
     review: SafeEntryFields.RichText;
     source: SafeEntryFields.SafeEntry<ContentTypeFieldsMap['reviewSource']>;
