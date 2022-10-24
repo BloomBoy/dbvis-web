@@ -42,21 +42,23 @@ const reviews = [
 export default function UserReviewsSwiper() {
   const swiperRef = React.useRef<SwiperType | null>(null);
   return (
-    <div>
-      <button
-        type="button"
-        className="ml-8 font-mono border border-spacing-5 p-3 bg-white rounded-md border-black hover:opacity-75"
-        onClick={() => swiperRef.current?.slidePrev()}
-      >
-        {'<-'}
-      </button>
-      <button
-        type="button"
-        className="font-mono text-white bg-black p-3 ml-2 rounded-md border hover:opacity-75"
-        onClick={() => swiperRef.current?.slideNext()}
-      >
-        {'->'}
-      </button>
+    <div className="w-full">
+      <div className="mx-auto px-8">
+        <button
+          type="button"
+          className="font-mono border border-spacing-5 p-3 bg-white rounded-md border-black hover:opacity-75"
+          onClick={() => swiperRef.current?.slidePrev()}
+        >
+          {'<-'}
+        </button>
+        <button
+          type="button"
+          className="font-mono text-white bg-black p-3 ml-2 rounded-md border hover:opacity-75"
+          onClick={() => swiperRef.current?.slideNext()}
+        >
+          {'->'}
+        </button>
+      </div>
       <Swiper
         onInit={(swiper) => {
           swiperRef.current = swiper;
