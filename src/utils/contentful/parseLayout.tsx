@@ -161,15 +161,16 @@ export default async function parseLayout(
     return ret !== o ? (ret as SafeValue<typeof o>) : undefined;
   });
 
+  const collectedData = await asyncMapMaxConcurrent(
+    10,
+    Object.entries(dataCollectors),
+    ([key, dataCollector]) =>
+      Promise.resolve(dataCollector.collect()).then(
+        (data) => [key, data] as const,
+      ),
+  ).then((entries) => Object.fromEntries(entries));
   return {
     layoutList,
-    collectedData: await asyncMapMaxConcurrent(
-      10,
-      Object.entries(dataCollectors),
-      ([key, dataCollector]) =>
-        Promise.resolve(dataCollector.collect()).then(
-          (data) => [key, data] as const,
-        ),
-    ).then((entries) => Object.fromEntries(entries)),
+    collectedData,
   };
 }

@@ -17,6 +17,7 @@ const getSingleUserReviewQuery = (params: GetEntryByIdParams) => ({
   include: 2,
   locale: params.locale,
   content_type: 'userReview',
+  order: 'fields.weight',
 });
 
 function parseUserReview(

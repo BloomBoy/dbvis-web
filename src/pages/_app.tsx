@@ -11,7 +11,7 @@ const {
 } = getConfig();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { collectedData } = pageProps;
+  const { collectedData } = pageProps as { collectedData?: unknown };
   return (
     <CollectedDataProvider data={collectedData}>
       <PageLayout>

@@ -15,8 +15,8 @@ export function CollectedDataProvider({
     <CollectedDataContext.Provider
       value={
         typeof data !== 'object' || data == null || Array.isArray(data)
-          ? (data as Record<string, unknown>)
-          : defaultData
+          ? defaultData
+          : (data as Record<string, unknown>)
       }
     >
       {children}
@@ -36,7 +36,7 @@ export default function useCollectedData<T>(
     return collectedData;
   }
   const ret = collectedData[key] as T | undefined;
-  if (typeof ret !== undefined) {
+  if (typeof ret === undefined) {
     return defaultValue;
   }
   return ret;
