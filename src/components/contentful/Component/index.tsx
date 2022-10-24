@@ -2,6 +2,7 @@ import React from 'react';
 import buttonComponent from './components/button';
 import imageComponent from './components/image';
 import textComponent from './components/text';
+import userReviewsComponent from './components/userReviews';
 
 export interface ComponentProps<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,6 +15,10 @@ export interface ComponentProps<
 
 interface ComponentRenderer<Props> extends React.FC<Props> {
   headerCount?: number | ((props: Props) => number);
+  registerDataCollector?: (props: Props) => {
+    id: string;
+    collect: () => unknown | Promise<unknown>;
+  };
 }
 
 const components: Record<
@@ -23,6 +28,7 @@ const components: Record<
   textComponent,
   buttonComponent,
   imageComponent,
+  userReviewsComponent,
 };
 
 function ComponentComp(props: ComponentProps): JSX.Element | null {
