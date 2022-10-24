@@ -1,27 +1,17 @@
-import Bars3Icon from './Bars3Icons';
-import HeaderLogo from './HeaderLogo';
-import MaybeLink from '../../contentful/MaybeLink';
-import NavLinks from './NavLinks';
-import SideBar from './SideBar';
-import XMarkIcon from './XMarkIcon';
-
 import React, { useEffect, useRef } from 'react';
 import { Popover } from '@headlessui/react';
-import getMenu from '../../../utils/menus';
+import type { PopoverProviderProps } from './Header';
 
-type PopoverRenderingProps = Parameters<
-  typeof Popover<'div'>
->[0]['children'] extends React.ReactNode | ((bag: infer props) => void)
-  ? props
-  : never;
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
+export interface Props extends PopoverProviderProps {
+  scrollbackMargin?: number;
+  stickyUntil?: number;
 }
 
-const navigation = getMenu('main-menu');
-
-const MARGIN = 50;
+type PopoverRenderingProps = PopoverProviderProps['children'] extends
+  | React.ReactNode
+  | ((bag: infer props) => void)
+  ? props
+  : never;
 
 function getScrollState(node: Element) {
   const isRootElement = node === document.firstElementChild;
@@ -45,40 +35,52 @@ function getScrollState(node: Element) {
   };
 }
 
-function HeaderContent({
-  wrapperRef,
-  open,
+function ScrollbackHeaderContainer({
+  popoverProps,
+  children,
+  wrapperEl,
+  scrollbackMargin = 20,
+  stickyUntil = 0,
 }: {
-  wrapperRef: HTMLElement | null;
-} & PopoverRenderingProps) {
+  wrapperEl: HTMLDivElement | null;
+  popoverProps: PopoverRenderingProps;
+} & Props) {
+  const { open } = popoverProps;
   const [topBarRef, setTopBarRef] = React.useState<HTMLDivElement | null>(null);
 
   const lastScrollRef = useRef(
     typeof window !== 'undefined' ? window.scrollY : 0,
   );
-  const lastHeightRef = useRef(0);
+  const lastHeightRef = useRef(stickyUntil);
+  const scrollbackMarginRef = useRef(scrollbackMargin);
+  scrollbackMarginRef.current = scrollbackMargin;
 
   useEffect(() => {
-    if (!wrapperRef || !topBarRef || open) return;
-    wrapperRef.style.setProperty('height', `${lastHeightRef.current}px`);
+    if (!wrapperEl || !topBarRef || open) return;
+    lastHeightRef.current = Math.max(stickyUntil, lastHeightRef.current);
+    wrapperEl.style.setProperty('height', `${lastHeightRef.current}px`);
     const scrollHandler = (ev: Event) => {
       if (ev.target != window.document) return;
       if (window.scrollY > lastScrollRef.current) {
         const newHeight = Math.max(
           lastHeightRef.current,
-          window.scrollY - topBarRef.clientHeight - MARGIN,
+          window.scrollY - topBarRef.clientHeight - scrollbackMarginRef.current,
+          stickyUntil,
         );
         if (newHeight !== lastHeightRef.current) {
-          wrapperRef.style.setProperty('height', `${newHeight}px`);
+          wrapperEl.style.setProperty('height', `${newHeight}px`);
           lastHeightRef.current = newHeight;
         }
       } else if (window.scrollY < lastScrollRef.current) {
-        const newHeight = Math.min(
-          lastHeightRef.current,
-          window.scrollY + topBarRef.clientHeight,
+        const newHeight = Math.max(
+          Math.min(
+            lastHeightRef.current,
+            window.scrollY + topBarRef.clientHeight,
+          ),
+          stickyUntil,
         );
         if (newHeight !== lastHeightRef.current) {
-          wrapperRef.style.setProperty('height', `${newHeight}px`);
+          wrapperEl.style.setProperty('height', `${newHeight}px`);
           lastHeightRef.current = newHeight;
         }
       }
@@ -87,9 +89,9 @@ function HeaderContent({
     window.addEventListener('scroll', scrollHandler, { passive: true });
     return () => {
       window.removeEventListener('scroll', scrollHandler);
-      wrapperRef.style.removeProperty('height');
+      wrapperEl.style.removeProperty('height');
     };
-  }, [wrapperRef, topBarRef, open]);
+  }, [wrapperEl, topBarRef, open, stickyUntil]);
   useEffect(() => {
     const element = document.firstElementChild;
     if (
@@ -173,66 +175,24 @@ function HeaderContent({
     };
   }, [open, topBarRef]);
   return (
-    <div className="bg-white top-0 sticky ui-open:static" ref={setTopBarRef}>
-      <div className="flex items-center justify-between px-4 h-20 sm:px-6 mx-auto max-w-[calc(1300px)] lg:justify-start md:space-x-10">
-        <div>
-          <MaybeLink href="/" aria-label="Home">
-            <HeaderLogo className="h-12 md:h-13 lg:h-20 w-auto" />
-          </MaybeLink>
-        </div>
-
-        <div
-          className={classNames(open ? 'hidden' : '', '-my-2 -mr-2 lg:hidden')}
-        >
-          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-black hover:text-gray-900">
-            <span className="sr-only">Open menu</span>
-            <Bars3Icon className="h-8 w-8" aria-hidden="true" />
-          </Popover.Button>
-        </div>
-        <div
-          className={classNames(open ? '' : 'hidden', '-my-2 -mr-2 lg:hidden')}
-        >
-          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-black hover:text-gray-900">
-            <span className="sr-only">Open menu</span>
-            <XMarkIcon className="h-8 w-8" aria-hidden="true" />
-          </Popover.Button>
-        </div>
-
-        <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
-          <Popover.Group as="nav" className="flex space-x-5">
-            <NavLinks navigation={navigation} />
-          </Popover.Group>
-          <div className="flex items-center lg:ml-12">
-            <MaybeLink
-              href="/download"
-              className="
-        hidden lg:block lg:px-4 xl:px-5 2xl:px-6 lg:py-1 xl:py-2 2xl:py-3 
-        border border-transparent text-xs xl:text-sm 2xl:text-base font-medium 
-        rounded-full text-white bg-black
-      "
-            >
-              DOWNLOAD FOR FREE
-            </MaybeLink>
-          </div>
-        </div>
-      </div>
-      <SideBar navigation={navigation} />
+    <div className="top-0 sticky ui-open:static" ref={setTopBarRef}>
+      {typeof children === 'function' ? children(popoverProps) : children}
     </div>
   );
 }
 
-export default function Header() {
-  const [wrapperRef, setWrapperRef] = React.useState<HTMLDivElement | null>(
-    null,
-  );
-
+export default function ScrollbackHeaderWrapper({ children, ...props }: Props) {
+  const [wrapperEl, setWrapperEl] = React.useState<HTMLDivElement | null>(null);
   return (
-    <Popover
-      ref={setWrapperRef}
-      className="absolute ui-open:fixed top-0 w-full"
-    >
-      {(childProps) => (
-        <HeaderContent {...childProps} wrapperRef={wrapperRef} />
+    <Popover ref={setWrapperEl} className="absolute ui-open:fixed top-0 w-full">
+      {(popoverProps) => (
+        <ScrollbackHeaderContainer
+          {...props}
+          wrapperEl={wrapperEl}
+          popoverProps={popoverProps}
+        >
+          {children}
+        </ScrollbackHeaderContainer>
       )}
     </Popover>
   );
