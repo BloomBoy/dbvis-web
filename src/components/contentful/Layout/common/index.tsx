@@ -1,6 +1,7 @@
 import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 import getTextAlignment from 'src/utils/getTextAlignment';
+
 export type HeaderData = {
   title?: SafeEntryFields.Symbol;
   subTitle?: SafeEntryFields.Symbol;
