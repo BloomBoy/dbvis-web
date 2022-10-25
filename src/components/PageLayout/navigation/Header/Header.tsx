@@ -78,11 +78,7 @@ function Content({ className }: Props) {
 }
 
 function StickyWrapper({ children }: PopoverProviderProps) {
-  return (
-    <Popover as="nav" className="fixed top-0 w-full">
-      {children}
-    </Popover>
-  );
+  return <Popover className="fixed top-0 w-full">{children}</Popover>;
 }
 function StaticWrapper({ children }: PopoverProviderProps) {
   return <Popover className="absolute w-full">{children}</Popover>;
