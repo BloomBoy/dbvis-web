@@ -58,6 +58,7 @@ module.exports = {
         primary: brandPrimaryColors,
         bodyBackground: colors.white,
         grey: brandGreyScale,
+        product: '#4BD068',
       },
       backgroundImage: {
         buttonBackground:
