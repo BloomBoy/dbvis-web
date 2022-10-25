@@ -1,5 +1,4 @@
 import { SafeEntryFields } from 'src/utils/contentful';
-import ShowDatabases from 'src/components/ShowDatabases';
 import classNames from 'classnames';
 import getTextAlignment from 'src/utils/getTextAlignment';
 
@@ -136,7 +135,6 @@ export function Container({
       style={style}
     >
       {children}
-      <ShowDatabases />
     </div>
   );
 }
