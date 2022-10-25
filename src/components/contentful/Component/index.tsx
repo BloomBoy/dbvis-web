@@ -2,6 +2,7 @@ import React from 'react';
 import buttonComponent from './components/button';
 import imageComponent from './components/image';
 import textComponent from './components/text';
+import userReviewsComponent from './components/userReviews';
 
 export interface ComponentProps<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,16 +15,37 @@ export interface ComponentProps<
 
 interface ComponentRenderer<Props> extends React.FC<Props> {
   headerCount?: number | ((props: Props) => number);
+  registerDataCollector?: (
+    props: Props,
+    preview: boolean,
+  ) => {
+    fetchKey: string;
+    collect: () => unknown | Promise<unknown>;
+  } | null;
 }
 
-const components: Record<
+export const components: Record<
   `${string}Component`,
   ComponentRenderer<ComponentProps> | undefined
 > = {
   textComponent,
   buttonComponent,
   imageComponent,
+  userReviewsComponent,
 };
+
+export function isComponent(obj: unknown): obj is ComponentProps {
+  if (typeof obj !== 'object' || obj == null) return false;
+  if (Array.isArray(obj)) return false;
+  if (!('type' in obj) || !('id' in obj) || !('data' in obj)) return false;
+  const { type, id, data } = obj as Record<string, unknown>;
+  if (typeof type !== 'string' || !type.endsWith('Component')) return false;
+  if (typeof id !== 'string') return false;
+  if (typeof data !== 'object' || data == null || Array.isArray(data)) {
+    return false;
+  }
+  return true;
+}
 
 function ComponentComp(props: ComponentProps): JSX.Element | null {
   const { type } = props;
