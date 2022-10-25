@@ -6,10 +6,11 @@ import {
   Wrapper,
   canRenderMainHeader,
 } from '../common';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Disclosure, Transition } from '@headlessui/react';
+import React, { useCallback, useState } from 'react';
 import Component from '../../Component';
 import { EntryFields } from 'contentful';
-import type { LayoutProps } from '..';
+import type { LayoutProps, SlotProps } from '..';
 import RichText from 'src/components/RichText';
 import classNames from 'classnames';
 
@@ -18,6 +19,20 @@ type Data = HeaderData & ThemeData;
 type SlotData = {
   button: EntryFields.RichText;
 };
+
+function SlotImage({ slot }: { slot: SlotProps<SlotData> }) {
+  return (
+    <div
+      className={classNames(
+        'absolute top-0 bottom-0 left-0 right-0 flex py-10 md:px-24 lg:px-36 items-center',
+      )}
+    >
+      {slot.components.map((componentProps) => (
+        <Component key={componentProps.id} {...componentProps} />
+      ))}
+    </div>
+  );
+}
 
 function SelectButtons({
   slots,
@@ -53,41 +68,59 @@ function SelectButtons({
     },
     [setSelectedIndex],
   );
-
-  return (
-    <div className="flex flex-wrap justify-center items-stretch -mx-3 -my-3">
+  return slots.length > 0 ? (
+    <div className="flex flex-wrap justify-center lg:grid lg:grid-cols-3 gap-6 mb-12">
       {slots.map((slot, index) => (
-        <button
-          key={slot.id}
-          className={classNames(
-            'px-14 py-9 rounded-2xl border border-neutral-200 text-left mx-3 my-3',
-            selectedIndex === index && 'bg-neutral-200 cursor-default',
-            selectedIndex !== index && 'hover:bg-neutral-100',
+        <Disclosure key={slot.id}>
+          {({ open }) => (
+            <>
+              <Disclosure.Button
+                className={classNames(
+                  'px-14 py-8 rounded-2xl border border-neutral-200 text-left self-center w-full md:w-96 lg:w-auto h-full',
+                  open && 'bg-neutral-200',
+                  selectedIndex === index &&
+                    'md:bg-neutral-200 md:cursor-default',
+                  selectedIndex !== index &&
+                    'md:bg-transparent hover:bg-neutral-100',
+                )}
+                onClick={(
+                  ev: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+                ) => onClick(ev, index)}
+              >
+                {slot.data.button && (
+                  <RichText className="text-base" content={slot.data.button} />
+                )}
+                <Transition
+                  show={open}
+                  enter="transition-all ease duration-500 transform"
+                  enterFrom="opacity-0 -translate-y-12 max-h-0"
+                  enterTo="opacity-100 translate-y-0 max-h-screen"
+                  leave="transition-all ease duration-300 transform"
+                  leaveFrom="opacity-100 translate-y-0 max-h-screen"
+                  leaveTo="opacity-0 -translate-y-12 max-h-0"
+                  className="w-full overflow-hidden md:hidden"
+                >
+                  <Disclosure.Panel
+                    className="relative my-3 w-full flex md:hidden flex-nowrap overflow-hidden h-[300px]"
+                    static
+                  >
+                    <SlotImage slot={slot} />
+                  </Disclosure.Panel>
+                </Transition>
+              </Disclosure.Button>
+            </>
           )}
-          onClick={(ev) => onClick(ev, index)}
-        >
-          {slot.data.button && (
-            <RichText className="w-72" content={slot.data.button} />
-          )}
-        </button>
+        </Disclosure>
       ))}
     </div>
-  );
+  ) : null;
 }
 
-function SlideViewLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
+function CrossFadeViewLayoutComp(
+  props: LayoutProps<Data, SlotData>,
+): JSX.Element {
   const { slots, data, mainHeaderIndex } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (containerRef == null) return;
-    containerRef.scrollTo({
-      top: 0,
-      left: containerRef.clientWidth * selectedIndex,
-      behavior: 'smooth',
-    });
-  }, [containerRef, selectedIndex]);
 
   return (
     <Wrapper data={data}>
@@ -100,19 +133,20 @@ function SlideViewLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
         />
-        <div
-          className="my-3 w-full flex flex-nowrap rounded-2xl bg-slate-500 overflow-hidden"
-          ref={setContainerRef}
-        >
-          {slots.map((slot) => (
-            <div
+        <div className="relative my-3 w-full hidden md:flex flex-nowrap rounded-2xl bg-gray-300 overflow-hidden h-[300px] md:h-[500px] lg:h-[725px]">
+          {slots.map((slot, index) => (
+            <Transition
               key={slot.id}
-              className="flex-grow flex-shrink-0 w-full flex flex-col items-center justify-center p-10"
+              show={selectedIndex === index}
+              enter="transition-opacity duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              {slot.components.map((componentProps) => (
-                <Component key={componentProps.id} {...componentProps} />
-              ))}
-            </div>
+              <SlotImage slot={slot} />
+            </Transition>
           ))}
         </div>
       </Container>
@@ -120,7 +154,7 @@ function SlideViewLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
   );
 }
 
-const SlideViewLayout = Object.assign(SlideViewLayoutComp, {
+const CrossFadeViewLayout = Object.assign(CrossFadeViewLayoutComp, {
   headerCount(props: LayoutProps<Data, SlotData>) {
     let count = 0;
     if (canRenderMainHeader(props.data)) count += 1;
@@ -133,4 +167,4 @@ const SlideViewLayout = Object.assign(SlideViewLayoutComp, {
   },
 });
 
-export default SlideViewLayout;
+export default CrossFadeViewLayout;
