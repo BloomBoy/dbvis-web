@@ -36,18 +36,17 @@ export default function ShowDatabases(): JSX.Element {
     <div className="flex flex-wrap">
       <div className="relative flex w-full items-center mb-10">
         <input
-          className="uppercase w-full py-3 pl-6 pr-28 sm:pr-60 border-zinc-300 border rounded-full font-mono"
+          className="uppercase w-full py-3 pl-6 pr-28 sm:pr-60 border-grey-300 border rounded-full font-mono outline-none placeholder:text-[#BFD6E2]"
           type="text"
           value={searchValue}
           onChange={({ target }) => setSearchValue(target.value)}
           placeholder="Enter database Name"
         />
         <button
-          className="absolute right-2 py-2 px-4 rounded-full text-white leading-none uppercase font-mono"
-          style={{ backgroundColor: '#3B3F42' }}
+          className="absolute right-2 py-2 px-4 rounded-full text-white leading-none uppercase font-mono bg-grey-600"
           onClick={filterData}
         >
-          <p className="hidden sm:block">Search for database</p>
+          <p className="hidden sm:block font-thin">Search for database</p>
           <p className="sm:hidden">Search</p>
         </button>
       </div>
