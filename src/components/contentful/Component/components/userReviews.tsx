@@ -95,13 +95,11 @@ function UserReviewsComponent(
   }, [hasMore, props.data.onlyTags]);
   if (reviews.length === 0) return null;
   return (
-    <div>
-      <UserReviewsSwiper
-        reviews={reviews}
-        isLoading={isLoading}
-        onEndReached={loadNextPage}
-      />
-    </div>
+    <UserReviewsSwiper
+      reviews={reviews}
+      isLoading={isLoading}
+      onEndReached={loadNextPage}
+    />
   );
 }
 

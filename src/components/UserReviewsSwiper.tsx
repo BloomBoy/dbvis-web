@@ -6,6 +6,20 @@ import { ContentfulFields, SafeValue } from 'src/utils/contentful';
 import RichText from './RichText';
 import 'swiper/css';
 
+const defaultSlidesPerViewViews = 1;
+
+const breakpoints = {
+  840: {
+    slidesPerView: 2,
+  },
+  1280: {
+    slidesPerView: 3,
+  },
+  1680: {
+    slidesPerView: 4,
+  },
+};
+
 export default function UserReviewsSwiper({
   reviews,
   isLoading,
@@ -18,7 +32,7 @@ export default function UserReviewsSwiper({
   const swiperRef = React.useRef<SwiperType | null>(null);
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-hidden">
       <div className="mx-auto px-8">
         <button
           type="button"
@@ -41,18 +55,8 @@ export default function UserReviewsSwiper({
         }}
         className="mt-8"
         spaceBetween={20}
-        slidesPerView={1}
-        breakpoints={{
-          840: {
-            slidesPerView: 2,
-          },
-          1280: {
-            slidesPerView: 3,
-          },
-          1680: {
-            slidesPerView: 4,
-          },
-        }}
+        slidesPerView={defaultSlidesPerViewViews}
+        breakpoints={breakpoints}
         modules={[Pagination]}
         pagination={{
           clickable: true,
