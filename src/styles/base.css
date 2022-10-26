@@ -19,7 +19,8 @@
   /* Fancy blur effect */
   #nprogress .peg {
     @apply block absolute right-0 h-full w-24 opacity-100;
-    box-shadow: 0 0 10px theme('colors.primary.DEFAULT'), 0 0 5px theme('colors.primary.DEFAULT');
+    box-shadow: 0 0 10px theme('colors.primary.DEFAULT'),
+      0 0 5px theme('colors.primary.DEFAULT');
     transform: rotate(3deg) translate(0px, -4px);
   }
 
@@ -54,4 +55,53 @@
       transform: rotate(360deg);
     }
   }
+}
+
+input[type='checkbox'] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  background-color: #fff;
+  /* Not removed via appearance */
+  margin: 0;
+
+  font: inherit;
+  color: #7b7b7b;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #7b7b7b;
+  border-radius: 4px;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+input[type='checkbox']::before {
+  content: '';
+  width: 0.65em;
+  height: 0.65em;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em theme('colors.primary.DEFAULT');
+  /* Windows High Contrast Mode */
+  background-color: CanvasText;
+}
+
+input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+input[type='checkbox']:focus {
+  outline: max(1px, 1px) solid currentColor;
+  outline-offset: max(1px, 1px);
+}
+
+input[type='checkbox']:disabled {
+  color: #7b7b7b;
+  cursor: not-allowed;
 }

@@ -6,6 +6,7 @@ import asHOC from 'src/utils/asHOC';
 import composeHOCs from 'src/utils/composeHOCs';
 import getConfig from 'next/config';
 import { CollectedDataProvider } from 'src/hooks/useCollectedData';
+import { InitialRenderProvider } from 'src/hooks/useIsInitialRender';
 const {
   publicRuntimeConfig: { contentfulAppParameters },
 } = getConfig();
@@ -22,6 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 const withProviders = composeHOCs(
+  asHOC(InitialRenderProvider, {}),
   asHOC(SEOProvider, {
     title: contentfulAppParameters.siteTagline,
     description: contentfulAppParameters.siteDescription,

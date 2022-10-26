@@ -1,15 +1,15 @@
 import React from 'react';
 import Windows from './icons/Windows';
-import Mac from './icons/Mac';
+import Mac from './icons/MacOS';
 import Linux from './icons/Linux';
+import { OsTypes } from 'react-device-detect';
 
 const OSComponent = {
-  Windows: Windows,
-  Mac: Mac,
-  Linux: Linux,
+  [OsTypes.Windows]: Windows,
+  [OsTypes.MAC_OS]: Mac,
+  Linux,
 };
 
-export const OSList = ['Windows', 'Mac', 'Linux'];
 export type OS = keyof typeof OSComponent;
 
 type GetBrowser = {

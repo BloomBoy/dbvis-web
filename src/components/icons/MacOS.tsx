@@ -1,7 +1,7 @@
 import React from 'react';
 import { SVGComponent } from '../../utils/types';
 
-const Mac = ({ ...props }: SVGComponent) => {
+const MacOS = ({ ...props }: SVGComponent) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -15,4 +15,4 @@ const Mac = ({ ...props }: SVGComponent) => {
   );
 };
 
-export default Mac;
+export default MacOS;

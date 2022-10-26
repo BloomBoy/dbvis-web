@@ -1,4 +1,6 @@
 import React from 'react';
+import { OsTypes } from 'react-device-detect';
+import useCurrentSystem from 'src/hooks/useCurrentBrowser';
 import MaybeLink from '../contentful/MaybeLink';
 import OSIcon from '../Icon';
 
@@ -14,7 +16,7 @@ const Installers = [
     id: 2,
     title: 'macOS Silicon',
     url: 'a link',
-    os: 'Mac',
+    os: OsTypes.MAC_OS,
     text: 'DMG with Java',
   },
   {
@@ -24,12 +26,13 @@ const Installers = [
     os: 'Linux',
     text: 'DMG with Java',
   },
-];
+] as const;
 
 export default function RecommendedInstallers(): JSX.Element {
-  const mobile = true;
-
-  if (mobile)
+  const { deviceType, os } = useCurrentSystem();
+  const recommendedInstallers = Installers.filter(Boolean);
+  console.log(os);
+  if (deviceType === 'mobile') {
     return (
       <div
         className="mx-auto p-8 rounded-3xl max-w-7xl"
@@ -40,7 +43,7 @@ export default function RecommendedInstallers(): JSX.Element {
         >
           Mobile Device Alert
         </h3>
-        <p className="mb-8">
+        <p className="mb-8 text-grey-900">
           DbVisualizer will not run on your mobile device. However, we’d be
           happy to send you an email with a direct link to a recommended
           installer for your computer.{' '}
@@ -50,10 +53,10 @@ export default function RecommendedInstallers(): JSX.Element {
             type="email"
             id="email"
             name="email"
-            className="px-8mb-4 rounded-3xl  p-3 px-8 font-mono font-light uppercase"
+            className="px-8 mb-4 rounded-3xl  p-3 px-8 font-mono font-light uppercase"
             placeholder="MAIL@MAIL.COM"
           />
-          <div className="mb-4">
+          <div className="mb-4 flex font-mono text-grey-600">
             <input
               type="checkbox"
               id="accept"
@@ -71,7 +74,7 @@ export default function RecommendedInstallers(): JSX.Element {
         </form>
       </div>
     );
-
+  }
   return (
     <>
       <h3
