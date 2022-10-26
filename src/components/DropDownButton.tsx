@@ -4,7 +4,7 @@ import MaybeLink from './contentful/MaybeLink';
 
 function DropDownButton() {
   let timeout = undefined as NodeJS.Timeout | undefined; // NodeJS.Timeout
-  const timeoutDuration = 400;
+  const timeoutDuration = 200;
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const closePopover = () => {
@@ -46,12 +46,12 @@ function DropDownButton() {
           </MaybeLink>
           <Transition
             as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
+            enter="transition ease-out duration-150"
+            enterFrom="transform opacity-0 translate-y-1"
+            enterTo="transform opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="transform opacity-100 translate-y-0"
+            leaveTo="transform opacity-0 translate-y-1"
           >
             <Popover.Panel
               className="absolute top-12 pt-2"
