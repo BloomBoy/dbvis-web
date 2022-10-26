@@ -17,12 +17,12 @@ const FooterNavLinks: React.FC<IFooterNavLinks> = ({ navigation }) => {
               <h3 className="text-base font-medium text-black">
                 {menuItem?.title}
               </h3>
-              <ul role="list" className="mt-6 space-y-4">
+              <ul role="list" className="mt-6 space-y-1">
                 {menuItem?.subItems?.map((subItem) => (
                   <li key={subItem?.id}>
                     <MaybeLink
                       href={subItem?.targetUrl}
-                      className="text-base text-gray-900 hover:text-black"
+                      className="text-base text-gray-900 hover:text-black hover:font-bold capitalize leading-0"
                     >
                       {subItem.title}
                     </MaybeLink>

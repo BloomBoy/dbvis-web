@@ -3,13 +3,27 @@
     font-family: "jetbrainsmono";
     src: url("/fonts/jetbrainsmono/JetBrainsMono-Thin.ttf") format("truetype"),
         url("/fonts/jetbrainsmono/JetBrainsMono-Thin.woff2") format("woff2");
-    font-weight: 200;
+    font-weight: 100;
     font-style: normal;
 }
 @font-face {
     font-family: "jetbrainsmono";
     src: url("/fonts/jetbrainsmono/JetBrainsMono-ThinItalic.ttf") format("truetype"),
         url("/fonts/jetbrainsmono/JetBrainsMono-ThinItalic.woff2") format("woff2");
+    font-weight: 100;
+    font-style: italic;
+}
+@font-face {
+    font-family: "jetbrainsmono";
+    src: url("/fonts/jetbrainsmono/JetBrainsMono-ExtraLight.ttf") format("truetype"),
+        url("/fonts/jetbrainsmono/JetBrainsMono-ExtraLight.woff2") format("woff2");
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: "jetbrainsmono";
+    src: url("/fonts/jetbrainsmono/JetBrainsMono-ExtraLightItalic.ttf") format("truetype"),
+        url("/fonts/jetbrainsmono/JetBrainsMono-ExtraLightItalic.woff2") format("woff2");
     font-weight: 200;
     font-style: italic;
 }

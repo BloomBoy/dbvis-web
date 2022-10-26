@@ -1,6 +1,6 @@
 @layer base {
   body {
-    @apply text-black;
+    @apply text-black antialiased;
   }
   body.dark {
     @apply bg-neutral-800 text-neutral-300;

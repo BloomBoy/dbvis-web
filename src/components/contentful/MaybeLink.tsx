@@ -1,27 +1,45 @@
 import React, { AnchorHTMLAttributes, DetailedHTMLProps } from 'react';
 import Link from 'next/link';
+import classNames from 'classnames';
 
 export default function MaybeLink({
   children,
   href,
+  className,
   ...props
 }: DetailedHTMLProps<
   AnchorHTMLAttributes<HTMLAnchorElement>,
   HTMLAnchorElement
 >) {
+  const fullClassNames = classNames(
+    'uppercase font-mono font-normal text-primary decoration-from-font underline-offset-4 hover:text-primary-200',
+    className,
+  );
   if (!href) {
-    return <span {...props}>{children}</span>;
+    return (
+      <span className={fullClassNames} {...props}>
+        {children}
+      </span>
+    );
   }
   if (href.startsWith('//') || /^[a-zA-Z_-]+:/.test(href)) {
     return (
-      <a href={href} {...props} target="_blank" rel="noopener noreferrer">
+      <a
+        className={fullClassNames}
+        href={href}
+        {...props}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {children}
       </a>
     );
   }
   return (
     <Link href={href}>
-      <a {...props}>{children}</a>
+      <a className={fullClassNames} {...props}>
+        {children}
+      </a>
     </Link>
   );
 }
