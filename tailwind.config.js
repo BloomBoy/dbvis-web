@@ -24,6 +24,7 @@ const brandGreyScale = {
 };
 
 brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
+brandGreyScale.DEFAULT = brandGreyScale[500];
 
 module.exports = {
   content: [
