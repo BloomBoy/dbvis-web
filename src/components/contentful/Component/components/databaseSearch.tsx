@@ -39,7 +39,10 @@ function DatabaseSearchComponent(
   const key = databaseFetchKey(props, isPreview);
   const [loadAll, setLoadAll] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const initialDatabases = useCollectedData<DatabaseListEntry[]>(key);
+  const { items: initialDatabases, fallback } = useCollectedData<CollectedData>(
+    key,
+    { items: [], fallback: null },
+  );
   const [allDatabases, setAllDatabases] = useState<DatabaseListEntry[]>();
   const router = useRouter();
   useEffect(() => {
@@ -91,6 +94,7 @@ function DatabaseSearchComponent(
       searchValue={searchValue}
       isLoading={isLoading}
       initialDatabases={initialDatabases}
+      fallback={fallback}
       allDatabases={allDatabases}
       loadAll={triggerLoadAll}
     />
@@ -116,6 +120,7 @@ const databaseSearch = Object.assign(DatabaseSearchComponent, {
           getDatabaseListEntries({
             count,
             skip: 0,
+            searchable: true,
             preview,
           }),
           getExtraDatabaseSearchResultEntries({

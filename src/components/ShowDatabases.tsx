@@ -56,6 +56,7 @@ export default function ShowDatabases({
   setSearchValue,
   allDatabases,
   initialDatabases,
+  fallback,
   loadAll,
   isLoading,
 }: {
@@ -64,6 +65,7 @@ export default function ShowDatabases({
   isLoading: boolean;
   initialDatabases: DatabaseListEntry[];
   allDatabases?: DatabaseListEntry[];
+  fallback: DatabaseListEntry | null;
   loadAll: () => void;
 }): JSX.Element {
   const [showAll, setShowAll] = useState(false);
@@ -74,7 +76,7 @@ export default function ShowDatabases({
   // Ensure the order of the initial databases stay the same
   // even when we load in the rest.
   const correctedDatabases = useMemo(() => {
-    if (!allDatabases) return allDatabases;
+    if (!allDatabases) return initialDatabases;
     const initialIds = initialDatabases.map(({ id }) => id);
     return [
       ...initialDatabases,
@@ -83,16 +85,20 @@ export default function ShowDatabases({
   }, [allDatabases, initialDatabases]);
 
   useEffect(() => {
-    if (allDatabases == null) return;
+    if (correctedDatabases == null) return;
     if (searchValue.length > 0) {
-      const f = allDatabases.filter((db) =>
-        db.title.toUpperCase().match(searchValue.toUpperCase()),
+      const f = correctedDatabases.filter((db) =>
+        db.title.toUpperCase().includes(searchValue.toUpperCase()),
       );
-      setFilteredDatabases(f);
+      if (f.length > 0) {
+        setFilteredDatabases(f);
+      } else if (fallback) {
+        setFilteredDatabases([fallback]);
+      }
     } else {
       setFilteredDatabases(null);
     }
-  }, [allDatabases, searchValue]);
+  }, [correctedDatabases, searchValue, fallback]);
 
   const renderList = showAll
     ? correctedDatabases ?? initialDatabases
