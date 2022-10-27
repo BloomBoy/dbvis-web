@@ -6,12 +6,14 @@ import renderRichText from 'src/utils/contentful/rich-text-renderer';
 export default function RichText({
   content,
   className,
+  style,
 }: {
   content: EntryFields.RichText;
   className?: string;
+  style?: React.CSSProperties;
 }): JSX.Element {
   return (
-    <div className={classNames('prose', className)}>
+    <div className={classNames('prose', className)} style={{ ...style }}>
       {renderRichText(content)}
     </div>
   );

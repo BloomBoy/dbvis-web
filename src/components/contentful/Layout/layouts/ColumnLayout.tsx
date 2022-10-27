@@ -15,6 +15,8 @@ type Data = HeaderData & ThemeData;
 type SlotData = {
   title?: SafeEntryFields.Symbol;
   subTitle?: SafeEntryFields.Symbol;
+  backgroundColor?: SafeEntryFields.Symbol;
+  textColor?: SafeEntryFields.Symbol;
 };
 
 function ColumnLayoutComp({
@@ -26,10 +28,19 @@ function ColumnLayoutComp({
   const columns =
     columnCount > 1 ? (
       <div
-        className={`flex flex-col md:grid grid-cols-${columnCount} gap-x-28`}
+        className={`flex flex-col md:grid gap-x-28`}
+        style={{
+          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+        }}
       >
         {slots.map((slot) => (
-          <div key={slot.id}>
+          <div
+            key={slot.id}
+            className="rounded-[30px]"
+            style={{
+              backgroundColor: slot.data.backgroundColor,
+            }}
+          >
             {slot.components.map((componentProps) => (
               <Component key={componentProps.id} {...componentProps} />
             ))}
