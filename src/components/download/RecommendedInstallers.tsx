@@ -4,12 +4,12 @@ import useCurrentSystem from 'src/hooks/useCurrentBrowser';
 import MaybeLink from '../contentful/MaybeLink';
 import OSIcon from '../Icon';
 
-const Installers = [
+const installers = [
   {
     id: 1,
     title: 'Windows',
     url: 'a link',
-    os: 'Windows',
+    os: OsTypes.Windows,
     text: 'DMG with Java',
   },
   {
@@ -26,12 +26,25 @@ const Installers = [
     os: 'Linux',
     text: 'DMG with Java',
   },
+  {
+    id: 4,
+    title: 'macOS Intel',
+    url: 'a link',
+    os: OsTypes.MAC_OS,
+    text: 'DMG with Java',
+  },
+  {
+    id: 5,
+    title: 'Windows Silicon',
+    url: 'a link',
+    os: OsTypes.Windows,
+    text: 'DMG with Java',
+  },
 ] as const;
 
 export default function RecommendedInstallers(): JSX.Element {
   const { deviceType, os } = useCurrentSystem();
-  const recommendedInstallers = Installers.filter(Boolean);
-  console.log(os);
+  const recommendedInstallers = installers.filter((i) => i.os === os);
   if (deviceType === 'mobile') {
     return (
       <div
@@ -53,7 +66,7 @@ export default function RecommendedInstallers(): JSX.Element {
             type="email"
             id="email"
             name="email"
-            className="px-8 mb-4 rounded-3xl  p-3 px-8 font-mono font-light uppercase"
+            className="mb-4 rounded-3xl py-3 px-8 font-mono font-light uppercase"
             placeholder="MAIL@MAIL.COM"
           />
           <div className="mb-4 flex font-mono text-grey-600">
@@ -62,7 +75,7 @@ export default function RecommendedInstallers(): JSX.Element {
               id="accept"
               name="accept"
               value="Accept"
-              className="mb-4"
+              className="mb-4 shrink-0 self-center"
             />
             <label htmlFor="accept" className="px-4">
               By submitting this form, I agree to the DbVis Privacy Policy.
@@ -83,7 +96,7 @@ export default function RecommendedInstallers(): JSX.Element {
         Recommended Installers
       </h3>
       <div className="flex flex-col w-full">
-        {Installers.map((installer) => (
+        {recommendedInstallers.map((installer) => (
           <div
             className="w-full flex flex-row gap-8 rounded-md mb-3 p-4"
             style={{
