@@ -38,10 +38,10 @@ module.exports = {
     'text-end',
     'text-center',
     {
-      pattern: /max-w-.+/,
+      pattern: /^max-w-.+/,
     },
     {
-      pattern: /-?(?:m|p)(?:x|y)-.+/,
+      pattern: /^-?(?:m|p)(?:x|y)-.+/,
     },
   ],
   theme: {
