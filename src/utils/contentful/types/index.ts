@@ -18,16 +18,16 @@ export interface GetPaginatedParams extends GetMaybePaginatedParams {
   skip: number;
 }
 
+export interface GetTaggedParams extends GetBaseEntryParams {
+  tags?: string[];
+}
+
 export interface GetEntryByIdParams extends GetBaseEntryParams {
   id: string;
-  locale?: string;
-  preview?: boolean;
 }
 
 export interface GetSlugEntryParams extends GetBaseEntryParams {
   slug: string;
-  locale?: string;
-  preview?: boolean;
 }
 
 type ContentTypes = keyof ContentTypeFieldsMap;

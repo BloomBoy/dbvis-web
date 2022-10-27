@@ -3,12 +3,14 @@ import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetEntryByIdParams,
+  GetTaggedParams,
 } from './types';
 import getClient from '../getContentfulClient.mjs';
 import { safeValue } from './helpers';
 
-export interface GetUserReviewsParams extends GetPaginatedParams {
-  tags?: string[];
+export interface GetUserReviewsParams
+  extends GetPaginatedParams,
+    GetTaggedParams {
   source?: string;
 }
 
@@ -62,7 +64,3 @@ export async function getUserReviews(params: GetUserReviewsParams) {
     total,
   };
 }
-
-export type StandardPageEntry = Contentful.Entry<
-  ContentTypeFieldsMap['standardPage']
->;

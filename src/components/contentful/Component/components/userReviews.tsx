@@ -4,7 +4,6 @@ import {
   ContentfulFields,
   SafeEntryFields,
   SafeValue,
-  safeValue,
 } from 'src/utils/contentful';
 import { getUserReviews } from 'src/utils/contentful/userReview';
 import getFetchKey from 'src/utils/getFetchKey';
@@ -19,7 +18,7 @@ type UserReviewsData = {
 };
 
 type CollectedData = {
-  userReviews: SafeValue<(ContentfulFields<'userReview'> & { id: string })[]>;
+  userReviews: (SafeValue<ContentfulFields<'userReview'>> & { id: string })[];
   hasMore: boolean;
 };
 
@@ -74,6 +73,7 @@ function UserReviewsComponent(
       skip: skipRef.current,
       count: PAGE_SIZE,
       tags: props.data.onlyTags,
+      preview: isPreview,
     })
       .then((result) => {
         skipRef.current += result.skip + result.userReviews.length;
@@ -92,7 +92,7 @@ function UserReviewsComponent(
         isLoadingRef.current = false;
         setIsLoading(false);
       });
-  }, [hasMore, props.data.onlyTags]);
+  }, [hasMore, isPreview, props.data.onlyTags]);
   if (reviews.length === 0) return null;
   return (
     <UserReviewsSwiper
@@ -127,9 +127,10 @@ const userReviews = Object.assign(UserReviewsComponent, {
         });
         const hasMore = total > skip + limit;
         return {
-          userReviews: safeValue(
-            items.map(({ sys: { id }, fields }) => ({ id, ...fields })),
-          ),
+          userReviews: items.map(({ sys: { id }, fields }) => ({
+            id,
+            ...fields,
+          })),
           hasMore,
         };
       },

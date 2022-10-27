@@ -3,13 +3,13 @@ import type {
   GetStaticPropsResult,
   NextPage,
 } from 'next';
-import { StandardPageEntry, getPage } from 'src/utils/contentful/standardPage';
 import { LayoutList } from 'src/components/contentful/Layout';
 import { WithCollectedData, WithGlobals } from 'src/utils/types';
 import { getGlobalData } from 'src/utils/getGlobalData';
+import { DatabasePageEntry, getDatabasePage } from 'src/utils/contentful/databasePage';
 
 type Props = {
-  page: StandardPageEntry;
+  page: DatabasePageEntry;
 };
 
 const Home: NextPage<Props> = (props) => {
@@ -21,17 +21,19 @@ export default Home;
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
 ): Promise<GetStaticPropsResult<WithGlobals<WithCollectedData<Props>>>> {
-  const path =
-    typeof ctx.params?.path === 'string' ? [ctx.params.path] : ctx.params?.path;
-  let slug: string;
-  if (path == null) {
-    slug = '/';
-  } else {
-    slug = `${path.join('/')}`;
+  const slug =
+    typeof ctx.params?.slug === 'object'
+      ? ctx.params.slug.join()
+      : ctx.params?.slug;
+  if (slug == null) {
+    return {
+      notFound: true,
+      revalidate: 12,
+    };
   }
   const preview = ctx.preview || false;
   try {
-    const { page, collectedData } = await getPage({
+    const { page, collectedData } = await getDatabasePage({
       slug,
       locale: ctx.locale,
       preview,

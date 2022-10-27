@@ -1,9 +1,12 @@
 import type { Menu, MenuItem } from '../../menus';
-import type { StandardPageFields } from '../standardPage';
+import type { WithLayoutFields } from '../parseLayout';
 import type * as SafeEntryFields from './SafeEntryFields';
 
 export type ContentTypeFieldsMap = {
-  standardPage: StandardPageFields;
+  standardPage: WithLayoutFields<{
+    title: SafeEntryFields.Symbol;
+    slug: SafeEntryFields.Symbol;
+  }>;
   menu: Omit<Menu, 'menuItems' | 'id'> & {
     menuId: SafeEntryFields.Symbol;
     menuItems: SafeEntryFields.SafeEntry<ContentTypeFieldsMap['menuItem']>[];
@@ -30,5 +33,23 @@ export type ContentTypeFieldsMap = {
   stringToken: {
     key: SafeEntryFields.Symbol;
     value: SafeEntryFields.Symbol;
+  };
+  databasePage: WithLayoutFields<{
+    title: SafeEntryFields.Symbol;
+    listTitle: SafeEntryFields.Symbol;
+    slug: SafeEntryFields.Symbol;
+    logo: SafeEntryFields.SafeAsset;
+    description: SafeEntryFields.RichText;
+    keywords: SafeEntryFields.Symbols;
+    searchable: SafeEntryFields.Boolean;
+    weight: SafeEntryFields.Number;
+  }>;
+  extraDatabaseSearchResult: {
+    title: SafeEntryFields.Symbol;
+    logo: SafeEntryFields.SafeAsset;
+    description: SafeEntryFields.RichText;
+    keywords: SafeEntryFields.Symbols;
+    targetUrl: SafeEntryFields.Symbol;
+    weight: SafeEntryFields.Number;
   };
 };
