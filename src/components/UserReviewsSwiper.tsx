@@ -5,6 +5,7 @@ import { ContentfulFields, SafeValue } from 'src/utils/contentful';
 
 import RichText from './RichText';
 import 'swiper/css';
+import StarScore from './StarScore';
 
 const defaultSlidesPerViewViews = 1;
 
@@ -95,23 +96,14 @@ export default function UserReviewsSwiper({
                   <span>{review.role}</span>
                 </div>
                 <div className="mt-6">
-                  <span className="text-[#AFAFAF] inline-block relative text-[24px] font-light">
-                    *****
-                    <div
-                      className="absolute top-0 left-0 bottom-0 text-[#FFD80C] text-[24px] font-light overflow-hidden"
-                      style={{
-                        width: `${
-                          (review.score /
-                            (review.source?.fields.reviewMaxScore ??
-                              review.score)) *
-                          100
-                        }%`,
-                      }}
-                    >
-                      *****
-                    </div>
-                  </span>
+                  <StarScore
+                    score={review.score}
+                    maxScore={
+                      review.source?.fields.reviewMaxScore ?? review.score
+                    }
+                  />
                 </div>
+
                 <div className="flex-1 mt-4 text-ellipsis overflow-y-auto">
                   <RichText
                     content={review.review}
