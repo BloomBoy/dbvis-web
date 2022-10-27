@@ -30,20 +30,24 @@ export default function UserReviewsSwiper({
   reviews: SafeValue<(ContentfulFields<'userReview'> & { id: string })[]>;
 }) {
   const swiperRef = React.useRef<SwiperType | null>(null);
+  const [isBeginning, setIsBeginning] = React.useState(true);
+  const [isEnd, setIsEnd] = React.useState(false);
 
   return (
     <div className="w-full overflow-hidden">
-      <div className="mx-auto px-8">
+      <div className="mx-auto">
         <button
           type="button"
-          className="font-mono border border-spacing-5 p-3 bg-white rounded-md border-black hover:opacity-75"
+          disabled={isBeginning}
+          className="font-mono text-white bg-black p-3 ml-2 rounded-md border hover:opacity-75 disabled:bg-white disabled:border-black disabled:text-black transition-colors"
           onClick={() => swiperRef.current?.slidePrev()}
         >
           {'<-'}
         </button>
         <button
           type="button"
-          className="font-mono text-white bg-black p-3 ml-2 rounded-md border hover:opacity-75"
+          disabled={isEnd}
+          className="font-mono text-white bg-black p-3 ml-2 rounded-md border hover:opacity-75 disabled:bg-white disabled:border-black disabled:text-black transition-colors"
           onClick={() => swiperRef.current?.slideNext()}
         >
           {'->'}
@@ -60,6 +64,14 @@ export default function UserReviewsSwiper({
         modules={[Pagination]}
         pagination={{
           clickable: true,
+        }}
+        onPaginationUpdate={(swiper) => {
+          setIsBeginning(swiper.isBeginning);
+          setIsEnd(swiper.isEnd);
+        }}
+        onResize={(swiper) => {
+          setIsBeginning(swiper.isBeginning);
+          setIsEnd(swiper.isEnd);
         }}
         onReachEnd={() => {
           if (!isLoading) {
@@ -107,10 +119,12 @@ export default function UserReviewsSwiper({
                   />
                 </div>
                 <div className="mt-8 flex flex-row">
-                  <img
-                    src={review.source?.fields.logo.fields.file.url}
-                    alt={review.source?.fields.logo.fields.title}
-                  />
+                  <div className="w-10 h-10 flex items-center">
+                    <img
+                      src={review.source?.fields.logo.fields.file.url}
+                      alt={review.source?.fields.logo.fields.title}
+                    />
+                  </div>
                   <div className="ml-4 flex flex-col text-gray-500">
                     <span>Verified user</span>
                     <span>Review from {review.source?.fields.name}</span>
