@@ -1,6 +1,6 @@
 import useIsInitialRender from './useIsInitialRender';
 import { useDeviceData } from 'react-device-detect';
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 const defaultSystem = {
   browser: null as string | null,
@@ -19,34 +19,30 @@ export function UserAgentProvider({
   children: React.ReactNode;
   userAgent?: string;
 }) {
-  return (
-    <context.Provider
-      value={typeof window !== 'undefined' ? userAgent ?? '' : 'Next.JS/SSR'}
-    >
-      {children}
-    </context.Provider>
+  const [resolvedUa, setResolvedUa] = useState(
+    typeof window !== 'undefined' ? userAgent ?? '' : 'Next.JS/SSR',
   );
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setResolvedUa((old) => (userAgent ?? window.navigator.userAgent) || old);
+    }
+  }, [userAgent]);
+  return <context.Provider value={resolvedUa}>{children}</context.Provider>;
 }
 
 export default function useCurrentSystem(): typeof defaultSystem {
   const isInitial = useIsInitialRender();
-  const { isMobile, isDesktop, browserName, osName } = useDeviceData(
-    useContext(context),
-  );
+  const ua = useContext(context);
+  const data = useDeviceData(ua);
+  const { UA: UAParser } = data;
   return useMemo(() => {
     if (isInitial) {
       return defaultSystem;
     }
-    let deviceType: 'mobile' | 'desktop' | null = null;
-    if (isMobile) {
-      deviceType = 'mobile';
-    } else if (isDesktop) {
-      deviceType = 'desktop';
-    }
     return {
-      browser: browserName,
-      os: osName,
-      deviceType,
+      browser: UAParser.getBrowser(),
+      os: UAParser.getOS().name,
+      deviceType: UAParser.getDevice().type ?? null,
     };
-  }, [browserName, isDesktop, isInitial, isMobile, osName]);
+  }, [isInitial, UAParser]);
 }
