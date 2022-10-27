@@ -1,50 +1,23 @@
 import React from 'react';
-import { OsTypes } from 'react-device-detect';
 import useCurrentSystem from 'src/hooks/useCurrentBrowser';
 import MaybeLink from '../contentful/MaybeLink';
 import OSIcon from '../Icon';
 
-const installers = [
-  {
-    id: 1,
-    title: 'Windows',
-    url: 'a link',
-    os: OsTypes.Windows,
-    text: 'DMG with Java',
-  },
-  {
-    id: 2,
-    title: 'macOS Silicon',
-    url: 'a link',
-    os: OsTypes.MAC_OS,
-    text: 'DMG with Java',
-  },
-  {
-    id: 3,
-    title: 'Linux Silicon',
-    url: 'a link',
-    os: 'Linux',
-    text: 'DMG with Java',
-  },
-  {
-    id: 4,
-    title: 'macOS Intel',
-    url: 'a link',
-    os: OsTypes.MAC_OS,
-    text: 'DMG with Java',
-  },
-  {
-    id: 5,
-    title: 'Windows Silicon',
-    url: 'a link',
-    os: OsTypes.Windows,
-    text: 'DMG with Java',
-  },
-] as const;
+type InstallerTypeProp = {
+  id: string | number;
+  title: string;
+  url: string;
+  os: string;
+  text: string;
+};
 
-export default function RecommendedInstallers(): JSX.Element {
+export default function RecommendedInstallers({
+  data,
+}: {
+  data: InstallerTypeProp[];
+}): JSX.Element {
   const { deviceType, os } = useCurrentSystem();
-  const recommendedInstallers = installers.filter((i) => i.os === os);
+  const recommendedInstallers = data.filter((i) => i.os === os);
   if (deviceType === 'mobile') {
     return (
       <div

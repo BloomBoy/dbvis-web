@@ -33,8 +33,7 @@ export function UserAgentProvider({
 export default function useCurrentSystem(): typeof defaultSystem {
   const isInitial = useIsInitialRender();
   const ua = useContext(context);
-  const data = useDeviceData(ua);
-  const { UA: UAParser } = data;
+  const { UA: UAParser } = useDeviceData(ua);
   return useMemo(() => {
     if (isInitial) {
       return defaultSystem;

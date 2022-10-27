@@ -18,6 +18,7 @@ const brandPrimaryColors = {
 
 const brandGreyScale = {
   300: '#F3F3F3',
+  400: '#BFD6E2',
   500: '#7B7B7B',
   600: '#3B3F42',
   900: '#2B2B2B',
