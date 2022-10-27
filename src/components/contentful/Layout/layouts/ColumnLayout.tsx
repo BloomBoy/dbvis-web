@@ -39,6 +39,7 @@ function ColumnLayoutComp({
             className="rounded-[30px]"
             style={{
               backgroundColor: slot.data.backgroundColor,
+              color: slot.data.textColor,
             }}
           >
             {slot.components.map((componentProps) => (
@@ -49,7 +50,13 @@ function ColumnLayoutComp({
       </div>
     ) : (
       columnCount === 1 && (
-        <div className="flex flex-col">
+        <div
+          className="flex flex-col"
+          style={{
+            backgroundColor: slots[0].data.backgroundColor,
+            color: slots[0].data.textColor,
+          }}
+        >
           {slots[0].components.map((componentProps) => (
             <Component key={componentProps.id} {...componentProps} />
           ))}

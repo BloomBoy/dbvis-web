@@ -44,7 +44,7 @@ export default function Text(
     <RichText
       content={text}
       className={classNames(
-        `${textAlign} self-center mb-12 max-w-[612px]`,
+        `${textAlign} self-center mb-12 max-w-[612px] text-inherit`,
         paddingX,
         paddingY,
         marginX,
