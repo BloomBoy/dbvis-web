@@ -134,7 +134,7 @@
     font-family: "AUTHENTIC Sans";
     src: url("/fonts/authentic_sans/woff/AUTHENTICSans-130.woff") format("woff"),
         url("/fonts/authentic_sans/woff/AUTHENTICSans-130.woff2") format("woff2");
-    font-weight: 500;
+    font-weight: 700;
     font-style: normal;
 }
 
@@ -142,6 +142,6 @@
     font-family: "AUTHENTIC Sans";
     src: url("/fonts/authentic_sans/woff/AUTHENTICSans-150.woff") format("woff"),
         url("/fonts/authentic_sans/woff/AUTHENTICSans-150.woff2") format("woff2");
-    font-weight: 600;
+    font-weight: 800;
     font-style: normal;
 }
