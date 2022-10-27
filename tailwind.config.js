@@ -83,6 +83,11 @@ module.exports = {
               lineHeight: '78px',
               letterSpacing: '-0.03em',
             },
+            h3: {
+              fontWeight: 700,
+              fontSize: '20px',
+              lineHeight: '28px',
+            },
           },
         },
       },
