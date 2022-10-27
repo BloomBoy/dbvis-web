@@ -77,6 +77,12 @@ module.exports = {
             h1: {
               fontWeight: 400,
             },
+            h2: {
+              fontWeight: 400,
+              fontSize: '72px',
+              lineHeight: '78px',
+              letterSpacing: '-0.03em',
+            },
           },
         },
       },
