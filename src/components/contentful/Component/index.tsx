@@ -23,12 +23,18 @@ export interface ComponentProps<
   layout: LayoutProps;
 }
 
-interface ComponentRenderer<Props> extends React.FC<Props> {
+interface ComponentRenderer<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Data extends Record<string, unknown> = Record<string, any>,
+> extends React.FC<ComponentProps<Data>> {
   headerCount?:
     | number
-    | ((props: Props, collectedData: Record<string, unknown>) => number);
+    | ((
+        props: ComponentProps<Data>,
+        collectedData: Record<string, unknown>,
+      ) => number);
   registerDataCollector?: (
-    props: Props,
+    props: SavedComponentProps<Data>,
     preview: boolean,
   ) => {
     fetchKey: string;
@@ -38,7 +44,7 @@ interface ComponentRenderer<Props> extends React.FC<Props> {
 
 export const components: Record<
   `${string}Component`,
-  ComponentRenderer<ComponentProps> | undefined
+  ComponentRenderer | undefined
 > = {
   textComponent,
   buttonComponent,

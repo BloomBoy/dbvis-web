@@ -4,7 +4,9 @@ import { SafeValue } from 'src/utils/contentful';
 import layoutBlockLink from './links/layoutBlockLink';
 
 interface LinkComponent<Props> extends React.FC<Props> {
-  headerCount?: number | ((props: Props) => number);
+  headerCount?:
+    | number
+    | ((props: Props, collectedData: Record<string, unknown>) => number);
 }
 
 export const links: Record<
@@ -24,14 +26,17 @@ function LayoutLinkComp(props: SafeValue<LayoutLinkProps>): JSX.Element | null {
 }
 
 const LayoutLink = Object.assign(LayoutLinkComp, {
-  headerCount(props: SafeValue<LayoutLinkProps>) {
+  headerCount(
+    props: SafeValue<LayoutLinkProps>,
+    collectedData: Record<string, unknown>,
+  ) {
     const { type } = props;
     const LayoutComponent = links[type];
     if (LayoutComponent == null) {
       return 0;
     }
     if (typeof LayoutComponent.headerCount === 'function') {
-      return LayoutComponent.headerCount(props);
+      return LayoutComponent.headerCount(props, collectedData);
     }
     return LayoutComponent.headerCount ?? 0;
   },

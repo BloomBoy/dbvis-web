@@ -1,4 +1,4 @@
-import type { ComponentProps } from '..';
+import type { ComponentProps, SavedComponentProps } from '..';
 import React, { useCallback, useEffect } from 'react';
 import {
   ContentfulFields,
@@ -30,7 +30,7 @@ function reviewFetchKey(
   {
     data: { initialCount = DEFAULT_INITIAL_COUNT, onlyTags },
     type,
-  }: ComponentProps<UserReviewsData>,
+  }: SavedComponentProps<UserReviewsData>,
   preview: boolean,
 ) {
   return getFetchKey(type, { preview }, initialCount, onlyTags);
@@ -105,7 +105,7 @@ function UserReviewsComponent(
 
 const userReviews = Object.assign(UserReviewsComponent, {
   registerDataCollector(
-    props: ComponentProps<UserReviewsData>,
+    props: SavedComponentProps<UserReviewsData>,
     preview: boolean,
   ) {
     const {

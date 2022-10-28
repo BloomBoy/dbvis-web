@@ -15,7 +15,7 @@ function getHeaderCount(
   collectedData: Record<string, unknown>,
 ): number {
   if (isLinkProps(layout)) {
-    return LayoutLink.headerCount(layout);
+    return LayoutLink.headerCount(layout, collectedData);
   }
   return layoutHeaderCount(layout, collectedData);
 }
