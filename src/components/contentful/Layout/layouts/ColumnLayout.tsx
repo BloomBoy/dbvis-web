@@ -9,12 +9,20 @@ import {
 import Component from '../../Component';
 import type { LayoutProps } from '..';
 import { SafeEntryFields } from 'src/utils/contentful';
+import classNames from 'classnames';
+import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
 
-type Data = HeaderData & ThemeData;
+type Data = HeaderData &
+  ThemeData & {
+    hGapSize?: Size;
+    vGapSize?: Size;
+  };
 
 type SlotData = {
   title?: SafeEntryFields.Symbol;
   subTitle?: SafeEntryFields.Symbol;
+  backgroundColor?: SafeEntryFields.Symbol;
+  textColor?: SafeEntryFields.Symbol;
 };
 
 function ColumnLayoutComp({
@@ -22,14 +30,39 @@ function ColumnLayoutComp({
   data,
   mainHeaderIndex,
 }: LayoutProps<Data, SlotData>): JSX.Element {
+  const gapX = getMarginPadding({
+    size: data.hGapSize,
+    type: 'gap',
+    direction: 'horizontal',
+  });
+  const gapY = getMarginPadding({
+    size: data.vGapSize,
+    type: 'gap',
+    direction: 'vertical',
+  });
+
   const columnCount = slots.length;
   const columns =
     columnCount > 1 ? (
       <div
-        className={`flex flex-col md:grid grid-cols-${columnCount} gap-x-28`}
+        className={classNames(
+          'flex flex-col md:grid',
+          gapX ? gapX : 'gap-x-28',
+          gapY ? gapY : '',
+        )}
+        style={{
+          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+        }}
       >
         {slots.map((slot) => (
-          <div key={slot.id}>
+          <div
+            key={slot.id}
+            className="rounded-[30px]"
+            style={{
+              backgroundColor: slot.data.backgroundColor,
+              color: slot.data.textColor,
+            }}
+          >
             {slot.components.map((componentProps) => (
               <Component key={componentProps.id} {...componentProps} />
             ))}
@@ -38,7 +71,13 @@ function ColumnLayoutComp({
       </div>
     ) : (
       columnCount === 1 && (
-        <div className="flex flex-col">
+        <div
+          className="flex flex-col"
+          style={{
+            backgroundColor: slots[0].data.backgroundColor,
+            color: slots[0].data.textColor,
+          }}
+        >
           {slots[0].components.map((componentProps) => (
             <Component key={componentProps.id} {...componentProps} />
           ))}
