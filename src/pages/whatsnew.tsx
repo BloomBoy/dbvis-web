@@ -120,10 +120,10 @@ export default function WhatsNewPage({ release }: WhatsNewPageProps) {
       <div id="link_Welcome" className="flex flex-col flex-1 py-20">
         {/* Header */}
         <div className="w-full px-10">
-          <span>
+          <span className="text-grey">
             {release.name} released on {release.releaseDate}
           </span>
-          <h1 className="text-xxl">{`What's new in ${release.name}`}</h1>
+          <h1 className="text-6xl font-extrabold">{`What's new in ${release.name}`}</h1>
         </div>
 
         {/* Content */}
