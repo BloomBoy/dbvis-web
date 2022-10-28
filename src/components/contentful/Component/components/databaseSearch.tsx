@@ -52,7 +52,7 @@ function DatabaseSearchComponent(
     getAllDatabaseListEntries({
       locale: router.locale,
       preview: router.isPreview,
-      searchable: false,
+      searchable: true,
     })
       .then((databases) => {
         if (!mounted) return;
