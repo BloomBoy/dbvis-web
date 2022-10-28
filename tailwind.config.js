@@ -67,8 +67,12 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
+            '--tw-prose-body': 'currentColor',
+            '--tw-prose-bold': 'currentColor',
+            '--tw-prose-links': brandPrimaryColors.DEFAULT,
+            '--tw-prose-links-hover': brandPrimaryColors[700],
+            '--tw-prose-headings': 'currentColor',
             lineHeight: 1.2,
-            color: colors.black,
             fontSize: '20px',
             lineHeight: '28px',
             fontWeight: 300,
@@ -85,6 +89,9 @@ module.exports = {
               fontWeight: 700,
               fontSize: '20px',
               lineHeight: '28px',
+            },
+            'a:hover': {
+              color: 'var(--tw-prose-links-hover)',
             },
           },
         },

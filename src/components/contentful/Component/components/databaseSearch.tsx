@@ -1,5 +1,5 @@
 import type { ComponentProps } from '..';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { SafeEntryFields } from 'src/utils/contentful';
 import getFetchKey from 'src/utils/getFetchKey';
 import { useRouter } from 'next/router';
@@ -52,10 +52,11 @@ function DatabaseSearchComponent(
     getAllDatabaseListEntries({
       locale: router.locale,
       preview: router.isPreview,
+      searchable: false,
     })
-      .then(() => {
+      .then((databases) => {
         if (!mounted) return;
-        setAllDatabases(allDatabases);
+        setAllDatabases(databases);
       })
       .catch(console.error)
       .finally(() => {
@@ -86,7 +87,10 @@ function DatabaseSearchComponent(
     }
     return rawSetSearchValue;
   }, [loadAll]);
-  const triggerLoadAll = useCallback(() => setLoadAll(true), []);
+  const triggerLoadAll = useMemo(
+    () => (!loadAll ? () => setLoadAll(true) : undefined),
+    [loadAll],
+  );
   if (initialDatabases == null) return null;
   return (
     <ShowDatabases

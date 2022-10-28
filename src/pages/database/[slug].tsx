@@ -6,7 +6,10 @@ import type {
 import { LayoutList } from 'src/components/contentful/Layout';
 import { WithCollectedData, WithGlobals } from 'src/utils/types';
 import { getGlobalData } from 'src/utils/getGlobalData';
-import { DatabasePageEntry, getDatabasePage } from 'src/utils/contentful/databasePage';
+import {
+  DatabasePageEntry,
+  getDatabasePage,
+} from 'src/utils/contentful/databasePage';
 
 type Props = {
   page: DatabasePageEntry;

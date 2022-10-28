@@ -19,6 +19,7 @@ const getSingleDatabasePageQuery = (
   limit: 1,
   include: 2,
   locale: params.locale,
+  'fields.slug': params.slug,
   content_type: 'databasePage',
   ...(pickFields != null
     ? {
@@ -180,7 +181,7 @@ export function parseListItem({
       alt: listTitle,
     },
     searchable: searchable ?? false,
-    url: `/databases/${encodeURIComponent(slug)}`,
+    url: `/database/${encodeURIComponent(slug)}`,
     weight: weight ?? 0,
   };
 }
@@ -201,7 +202,9 @@ export async function getDatabaseListEntries(
   };
 }
 
-export async function getAllDatabaseListEntries(params: GetTaggedParams) {
+export async function getAllDatabaseListEntries(
+  params: GetDatabasePagesParams,
+) {
   const query = {
     ...getDatabasePagesQuery(params, listFields),
     limit: 100,

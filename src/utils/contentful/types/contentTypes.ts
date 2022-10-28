@@ -40,7 +40,7 @@ export type ContentTypeFieldsMap = {
     slug: SafeEntryFields.Symbol;
     logo: SafeEntryFields.SafeAsset;
     description: SafeEntryFields.RichText;
-    keywords: SafeEntryFields.Symbols;
+    keywords?: SafeEntryFields.Symbols;
     searchable: SafeEntryFields.Boolean;
     weight: SafeEntryFields.Number;
   }>;
@@ -48,7 +48,7 @@ export type ContentTypeFieldsMap = {
     title: SafeEntryFields.Symbol;
     logo: SafeEntryFields.SafeAsset;
     description: SafeEntryFields.RichText;
-    keywords: SafeEntryFields.Symbols;
+    keywords?: SafeEntryFields.Symbols;
     targetUrl: SafeEntryFields.Symbol;
     weight: SafeEntryFields.Number;
   };
