@@ -2,7 +2,7 @@ import * as Contentful from 'contentful';
 import type { ComponentProps } from '..';
 import RichText from 'src/components/RichText';
 import getTextAlignment from 'src/utils/getTextAlignment';
-import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
+import getMarginPadding, { Size, Margin } from 'src/utils/getGetMarginPadding';
 import classNames from 'classnames';
 
 type TextData = {
@@ -10,8 +10,8 @@ type TextData = {
   alignment?: Contentful.EntryFields.Symbol;
   hPadding?: Size;
   vPadding?: Size;
-  hMargin?: Size;
-  vMargin?: Size;
+  hMargin?: Margin;
+  vMargin?: Margin;
 };
 
 export default function Text(
@@ -44,7 +44,7 @@ export default function Text(
     <RichText
       content={text}
       className={classNames(
-        `${textAlign} self-center mb-12 max-w-[612px] text-inherit`,
+        `${textAlign} self-center mb-12 max-w-[612px]`,
         paddingX,
         paddingY,
         marginX,

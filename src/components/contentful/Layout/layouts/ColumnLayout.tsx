@@ -9,8 +9,14 @@ import {
 import Component from '../../Component';
 import type { LayoutProps } from '..';
 import { SafeEntryFields } from 'src/utils/contentful';
+import classNames from 'classnames';
+import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
 
-type Data = HeaderData & ThemeData;
+type Data = HeaderData &
+  ThemeData & {
+    hGapSize?: Size;
+    vGapSize?: Size;
+  };
 
 type SlotData = {
   title?: SafeEntryFields.Symbol;
@@ -24,11 +30,26 @@ function ColumnLayoutComp({
   data,
   mainHeaderIndex,
 }: LayoutProps<Data, SlotData>): JSX.Element {
+  const gapX = getMarginPadding({
+    size: data.hGapSize,
+    type: 'gap',
+    direction: 'horizontal',
+  });
+  const gapY = getMarginPadding({
+    size: data.vGapSize,
+    type: 'gap',
+    direction: 'vertical',
+  });
+
   const columnCount = slots.length;
   const columns =
     columnCount > 1 ? (
       <div
-        className={`flex flex-col md:grid gap-x-28`}
+        className={classNames(
+          'flex flex-col md:grid',
+          gapX ? gapX : 'gap-x-28',
+          gapY ? gapY : '',
+        )}
         style={{
           gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
         }}

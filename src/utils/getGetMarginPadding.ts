@@ -35,25 +35,56 @@ export type Size =
   | '80'
   | '96';
 
+export type Margin = Size | `-${Size}` | 'auto';
+
+export default function getMarginPadding(options: {
+  size?: Size;
+  type: 'gap';
+  direction?: 'horizontal' | 'vertical';
+}): string | null;
+export default function getMarginPadding(options: {
+  size?: Size;
+  type: 'padding';
+  direction?: 'horizontal' | 'vertical';
+}): string | null;
+export default function getMarginPadding(options: {
+  size?: Margin;
+  type: 'margin';
+  direction?: 'horizontal' | 'vertical';
+}): string | null;
 export default function getMarginPadding({
-  size = '0' as Size,
-  type = 'padding' as 'padding' | 'margin',
-  direction = 'horizontal' as 'horizontal' | 'vertical',
+  size,
+  type,
+  direction,
+}: {
+  size?: Margin | Size;
+  type: 'padding' | 'margin' | 'gap';
+  direction?: 'horizontal' | 'vertical';
 }) {
-  if (type == 'padding') {
-    if (direction === 'horizontal') {
-      return `px-${size}`;
+  if (size) {
+    if (type == 'padding') {
+      if (direction === 'horizontal') {
+        return `px-${size}`;
+      }
+      if (direction === 'vertical') {
+        return `py-${size}`;
+      }
     }
-    if (direction === 'vertical') {
-      return `py-${size}`;
+    if (type == 'margin') {
+      if (direction === 'horizontal') {
+        return `mx-${size}`;
+      }
+      if (direction === 'vertical') {
+        return `my-${size}`;
+      }
     }
-  }
-  if (type == 'margin') {
-    if (direction === 'horizontal') {
-      return `mx-${size}`;
-    }
-    if (direction === 'vertical') {
-      return `my-${size}`;
+    if (type == 'gap') {
+      if (direction === 'horizontal') {
+        return `gap-x-${size}`;
+      }
+      if (direction === 'vertical') {
+        return `gap-y-${size}`;
+      }
     }
   }
 
