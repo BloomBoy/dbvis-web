@@ -1,7 +1,7 @@
-import { ContentTypeFieldsMap, GetBaseEntryParams } from './types';
+import { ContentTypeFieldsMap, GetTaggedParams } from './types';
 import getClient from '../getContentfulClient.mjs';
 
-const getStringTokensQuery = (params: GetBaseEntryParams) => ({
+const getStringTokensQuery = (params: GetTaggedParams) => ({
   limit: 100,
   locale: params.locale,
   content_type: 'userReview',
@@ -30,7 +30,7 @@ async function getStringTokenPage(
   };
 }
 
-export async function getAllStringTokens(params: GetBaseEntryParams) {
+export async function getAllStringTokens(params: GetTaggedParams) {
   const query = getStringTokensQuery(params);
   let last: {
     skip: number;

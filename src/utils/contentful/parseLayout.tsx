@@ -48,7 +48,7 @@ export type LayoutFields<
   AssetListFieldId extends string = 'pageAssetReferences',
   ReferenceListFieldId extends string = 'pageEntryReferences',
 > = {
-  [key in keyof InternalLayoutFields<
+  readonly [key in keyof InternalLayoutFields<
     LayoutFieldId,
     AssetListFieldId,
     ReferenceListFieldId
@@ -59,15 +59,31 @@ export type LayoutFields<
   >[key];
 };
 
+export type WithLayoutFields<Fields> = {
+  [key in keyof LayoutFields | keyof Fields]: (LayoutFields & Fields)[key];
+};
+
+export interface ParsingContext {
+  collectedData: {
+    [k: string]: unknown;
+  };
+}
+
 export default async function parseLayout(
-  entry: Contentful.Entry<LayoutFields>,
+  entry: {
+    readonly fields: LayoutFields;
+  },
+  context?: ParsingContext,
 ): Promise<{
-  layoutList: SafeValue<(LayoutProps | LayoutLinkProps)[]>;
+  layoutList: LayoutListEntryProps[];
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout<LayoutFieldId extends string>(
-  entry: Contentful.Entry<LayoutFields<LayoutFieldId>>,
+  entry: {
+    readonly fields: LayoutFields<LayoutFieldId>;
+  },
   layoutFieldId: LayoutFieldId,
+  context?: ParsingContext,
 ): Promise<{
   layoutList: LayoutListEntryProps[];
   collectedData: Record<string, unknown>;
@@ -76,9 +92,12 @@ export default async function parseLayout<
   LayoutFieldId extends string,
   AssetListFieldId extends string,
 >(
-  entry: Contentful.Entry<LayoutFields<LayoutFieldId, AssetListFieldId>>,
+  entry: {
+    readonly fields: LayoutFields<LayoutFieldId, AssetListFieldId>;
+  },
   layoutFieldId: LayoutFieldId,
   assetListFieldId: AssetListFieldId,
+  context?: ParsingContext,
 ): Promise<{
   layoutList: LayoutListEntryProps[];
   collectedData: Record<string, unknown>;
@@ -88,25 +107,56 @@ export default async function parseLayout<
   AssetListFieldId extends string,
   ReferenceListFieldId extends string,
 >(
-  entry: Contentful.Entry<
-    LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId>
-  >,
+  entry: {
+    readonly fields: LayoutFields<
+      LayoutFieldId,
+      AssetListFieldId,
+      ReferenceListFieldId
+    >;
+  },
   layoutFieldId: LayoutFieldId,
   assetListFieldId: AssetListFieldId,
   referenceListFieldId: ReferenceListFieldId,
+  context?: ParsingContext,
 ): Promise<{
   layoutList: LayoutListEntryProps[];
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout(
-  entry: Contentful.Entry<LayoutFields<string, string, string>>,
-  layoutFieldId = 'pageLayout',
-  assetListFieldId = 'pageAssetReferences',
-  referenceListFieldId = 'pageEntryReferences',
+  entry: {
+    readonly fields: LayoutFields<string, string, string>;
+  },
+  layoutFieldId?: ParsingContext | string,
+  assetListFieldId?: ParsingContext | string,
+  referenceListFieldId?: ParsingContext | string,
+  context?: ParsingContext,
 ): Promise<{
   layoutList: LayoutListEntryProps[];
   collectedData: Record<string, unknown>;
 }> {
+  context = (() => {
+    if (typeof layoutFieldId === 'object') {
+      return layoutFieldId;
+    }
+    if (typeof assetListFieldId === 'object') {
+      return assetListFieldId;
+    }
+    if (typeof referenceListFieldId === 'object') {
+      return referenceListFieldId;
+    }
+    return context;
+  })();
+  layoutFieldId =
+    typeof layoutFieldId === 'string' ? layoutFieldId : 'pageLayout';
+  assetListFieldId =
+    typeof assetListFieldId === 'string'
+      ? assetListFieldId
+      : 'pageAssetReferences';
+  referenceListFieldId =
+    typeof referenceListFieldId === 'string'
+      ? referenceListFieldId
+      : 'pageEntryReferences';
+
   const layouts = entry.fields[layoutFieldId] as
     | LayoutListEntryProps[]
     | undefined;
@@ -140,6 +190,8 @@ export default async function parseLayout(
     { collect(): Promise<unknown> | unknown }
   > = {};
 
+  const preCollectedData = context?.collectedData ?? {};
+
   const layoutList = safeValue(layouts, (o) => {
     let ret = o as SafeValue<typeof o> | typeof o;
     if (isLink(o)) {
@@ -164,10 +216,14 @@ export default async function parseLayout(
   const collectedData = await asyncMapMaxConcurrent(
     10,
     Object.entries(dataCollectors),
-    ([key, dataCollector]) =>
-      Promise.resolve(dataCollector.collect()).then(
+    ([key, dataCollector]) => {
+      if (key in preCollectedData) {
+        return [key, preCollectedData[key]] as const;
+      }
+      return Promise.resolve(dataCollector.collect()).then(
         (data) => [key, data] as const,
-      ),
+      );
+    },
   ).then((entries) => Object.fromEntries(entries));
   return {
     layoutList,
