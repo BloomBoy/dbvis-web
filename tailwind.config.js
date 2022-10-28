@@ -43,7 +43,7 @@ module.exports = {
       pattern: /^max-w-.+/,
     },
     {
-      pattern: /^-?(?:m|p)(?:x|y)-.+/,
+      pattern: /^-?(?:m|p|gap)(?:x|y)-.+/,
     },
   ],
   theme: {
