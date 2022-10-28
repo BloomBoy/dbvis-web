@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SafeEntryFields, SafeValue } from 'src/utils/contentful';
-import { ComponentProps } from '../Component';
+import { SavedComponentProps } from '../Component';
 
 export type SlotProps<
   Data extends Record<string, unknown> = Record<string, any>,
 > = {
-  components: ComponentProps[];
+  components: SavedComponentProps[];
   id: string;
   data: Partial<Data>;
 };
@@ -23,7 +23,7 @@ export interface LayoutProps<
   type: `${string}Layout`;
   slots: SlotProps<SlotData>[];
   id: string;
-  mainHeaderIndex?: number;
+  mainHeaderIndex: number;
 }
 
 export interface LayoutLinkProps {

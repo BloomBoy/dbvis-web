@@ -1,7 +1,6 @@
 import {
   Container,
   HeaderData,
-  LayoutHeader,
   ThemeData,
   Wrapper,
   canRenderMainHeader,
@@ -13,6 +12,7 @@ import { EntryFields } from 'contentful';
 import type { LayoutProps, SlotProps } from '..';
 import RichText from 'src/components/RichText';
 import classNames from 'classnames';
+import LayoutTitle from '../../Component/components/layoutTitle';
 
 type Data = HeaderData & ThemeData;
 
@@ -20,7 +20,13 @@ type SlotData = {
   button: EntryFields.RichText;
 };
 
-function SlotImage({ slot }: { slot: SlotProps<SlotData> }) {
+function SlotImage({
+  slot,
+  layout,
+}: {
+  slot: SlotProps<SlotData>;
+  layout: LayoutProps<Data, SlotData>;
+}) {
   return (
     <div
       className={classNames(
@@ -28,20 +34,23 @@ function SlotImage({ slot }: { slot: SlotProps<SlotData> }) {
       )}
     >
       {slot.components.map((componentProps) => (
-        <Component key={componentProps.id} {...componentProps} />
+        <Component
+          {...componentProps}
+          key={componentProps.id}
+          layout={layout}
+        />
       ))}
     </div>
   );
 }
 
-function SelectButtons({
-  slots,
-  selectedIndex,
-  setSelectedIndex,
-}: LayoutProps<Data, SlotData> & {
-  selectedIndex: number;
-  setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
-}) {
+function SelectButtons(
+  props: LayoutProps<Data, SlotData> & {
+    selectedIndex: number;
+    setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
+  },
+) {
+  const { slots, selectedIndex, setSelectedIndex } = props;
   const onClick = useCallback(
     (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
       if (ev.defaultPrevented) return;
@@ -104,7 +113,7 @@ function SelectButtons({
                     className="relative my-3 w-full flex md:hidden flex-nowrap overflow-hidden h-[300px]"
                     static
                   >
-                    <SlotImage slot={slot} />
+                    <SlotImage slot={slot} layout={props} />
                   </Disclosure.Panel>
                 </Transition>
               </Disclosure.Button>
@@ -119,14 +128,19 @@ function SelectButtons({
 function CrossFadeViewLayoutComp(
   props: LayoutProps<Data, SlotData>,
 ): JSX.Element {
-  const { slots, data, mainHeaderIndex } = props;
+  const { slots, data, id } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   return (
     <Wrapper data={data}>
       <Container data={data}>
         {data.renderHeader && (
-          <LayoutHeader {...data} mainHeaderIndex={mainHeaderIndex} />
+          <LayoutTitle
+            data={{ alignment: data.alignment }}
+            id={`${id}-header`}
+            layout={props}
+            type="layoutTitleComponent"
+          />
         )}
         <SelectButtons
           {...props}
@@ -145,7 +159,7 @@ function CrossFadeViewLayoutComp(
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <SlotImage slot={slot} />
+              <SlotImage slot={slot} layout={props} />
             </Transition>
           ))}
         </div>
@@ -155,12 +169,21 @@ function CrossFadeViewLayoutComp(
 }
 
 const CrossFadeViewLayout = Object.assign(CrossFadeViewLayoutComp, {
-  headerCount(props: LayoutProps<Data, SlotData>) {
+  headerCount(
+    props: LayoutProps<Data, SlotData>,
+    collectedData: Record<string, unknown>,
+  ) {
     let count = 0;
     if (canRenderMainHeader(props.data)) count += 1;
     props.slots.forEach((slot) => {
       slot.components.forEach((component) => {
-        count += Component.headerCount(component);
+        count += Component.headerCount(
+          {
+            ...component,
+            layout: props,
+          },
+          collectedData,
+        );
       });
     });
     return count;

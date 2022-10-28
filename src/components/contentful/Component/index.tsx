@@ -4,8 +4,10 @@ import imageComponent from './components/image';
 import textComponent from './components/text';
 import userReviewsComponent from './components/userReviews';
 import databaseSearchComponent from './components/databaseSearch';
+import layoutTitleComponent from './components/layoutTitle';
+import type { LayoutProps } from '../Layout';
 
-export interface ComponentProps<
+export interface SavedComponentProps<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Data extends Record<string, unknown> = Record<string, any>,
 > {
@@ -14,8 +16,17 @@ export interface ComponentProps<
   data: Partial<Data>;
 }
 
+export interface ComponentProps<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Data extends Record<string, unknown> = Record<string, any>,
+> extends SavedComponentProps<Data> {
+  layout: LayoutProps;
+}
+
 interface ComponentRenderer<Props> extends React.FC<Props> {
-  headerCount?: number | ((props: Props) => number);
+  headerCount?:
+    | number
+    | ((props: Props, collectedData: Record<string, unknown>) => number);
   registerDataCollector?: (
     props: Props,
     preview: boolean,
@@ -34,9 +45,10 @@ export const components: Record<
   imageComponent,
   userReviewsComponent,
   databaseSearchComponent,
+  layoutTitleComponent,
 };
 
-export function isComponent(obj: unknown): obj is ComponentProps {
+export function isComponent(obj: unknown): obj is SavedComponentProps {
   if (typeof obj !== 'object' || obj == null) return false;
   if (Array.isArray(obj)) return false;
   if (!('type' in obj) || !('id' in obj) || !('data' in obj)) return false;
@@ -59,14 +71,14 @@ function ComponentComp(props: ComponentProps): JSX.Element | null {
 }
 
 const Component = Object.assign(ComponentComp, {
-  headerCount(props: ComponentProps) {
+  headerCount(props: ComponentProps, collectedData: Record<string, unknown>) {
     const { type } = props;
     const Comp = components[type];
     if (Comp == null) {
       return 0;
     }
     if (typeof Comp.headerCount === 'function') {
-      return Comp.headerCount(props);
+      return Comp.headerCount(props, collectedData);
     }
     return Comp.headerCount ?? 0;
   },

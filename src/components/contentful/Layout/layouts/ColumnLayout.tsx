@@ -1,7 +1,6 @@
 import {
   Container,
   HeaderData,
-  LayoutHeader,
   ThemeData,
   Wrapper,
   canRenderMainHeader,
@@ -11,6 +10,7 @@ import type { LayoutProps } from '..';
 import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
+import LayoutTitle from '../../Component/components/layoutTitle';
 
 type Data = HeaderData &
   ThemeData & {
@@ -25,11 +25,8 @@ type SlotData = {
   textColor?: SafeEntryFields.Symbol;
 };
 
-function ColumnLayoutComp({
-  slots,
-  data,
-  mainHeaderIndex,
-}: LayoutProps<Data, SlotData>): JSX.Element {
+function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
+  const { id, slots, data } = props;
   const gapX = getMarginPadding({
     size: data.hGapSize,
     type: 'gap',
@@ -64,7 +61,11 @@ function ColumnLayoutComp({
             }}
           >
             {slot.components.map((componentProps) => (
-              <Component key={componentProps.id} {...componentProps} />
+              <Component
+                {...componentProps}
+                key={componentProps.id}
+                layout={props}
+              />
             ))}
           </div>
         ))}
@@ -79,7 +80,11 @@ function ColumnLayoutComp({
           }}
         >
           {slots[0].components.map((componentProps) => (
-            <Component key={componentProps.id} {...componentProps} />
+            <Component
+              key={componentProps.id}
+              {...componentProps}
+              layout={props}
+            />
           ))}
         </div>
       )
@@ -89,7 +94,12 @@ function ColumnLayoutComp({
     <Wrapper data={data}>
       <Container data={data}>
         {data.renderHeader && (
-          <LayoutHeader {...data} mainHeaderIndex={mainHeaderIndex} />
+          <LayoutTitle
+            data={{ alignment: data.alignment }}
+            id={`${id}-header`}
+            layout={props}
+            type="layoutTitleComponent"
+          />
         )}
         {columns}
       </Container>
@@ -98,13 +108,22 @@ function ColumnLayoutComp({
 }
 
 const ColumnLayout = Object.assign(ColumnLayoutComp, {
-  headerCount(props: LayoutProps<Data, SlotData>) {
+  headerCount(
+    props: LayoutProps<Data, SlotData>,
+    collectedData: Record<string, unknown>,
+  ) {
     let count = 0;
     if (canRenderMainHeader(props.data)) count += 1;
     props.slots.forEach((slot) => {
       if (slot.data.title) count += 1;
       slot.components.forEach((component) => {
-        count += Component.headerCount(component);
+        count += Component.headerCount(
+          {
+            ...component,
+            layout: props,
+          },
+          collectedData,
+        );
       });
     });
     return count;
