@@ -1,6 +1,8 @@
 import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 import getTextAlignment from 'src/utils/getTextAlignment';
+import { CSSProperties } from 'react';
+import { getTextColorStyle } from 'src/utils/getTextColorStyle';
 
 export type HeaderData = {
   title?: SafeEntryFields.Symbol;
@@ -53,22 +55,13 @@ export function LayoutHeader({
 }
 
 export type ThemeData = {
+  classes?: SafeEntryFields.Symbol;
   backgroundColor?: SafeEntryFields.Symbol;
-  containerBgColor?: SafeEntryFields.Symbol;
+  backgroundImage?: SafeEntryFields.Asset;
   textColor?: SafeEntryFields.Symbol;
-  sizing?:
-    | 'xs'
-    | 'sm'
-    | 'md'
-    | 'lg'
-    | 'xl'
-    | '2xl'
-    | '3xl'
-    | '4xl'
-    | '5xl'
-    | '6xl'
-    | '7xl'
-    | 'full';
+  contentClasses?: SafeEntryFields.Symbol;
+  contentBackgroundColor?: SafeEntryFields.Symbol;
+  contentBackgroundImage?: SafeEntryFields.Asset;
 };
 
 export function Wrapper({
@@ -78,21 +71,20 @@ export function Wrapper({
   const backgroundColor = data.backgroundColor?.startsWith('#')
     ? data.backgroundColor
     : undefined;
-  const backgroundClass =
-    data.backgroundColor && !data.backgroundColor.startsWith('#')
-      ? `bg-${data.backgroundColor}`
-      : undefined;
+  const backgroundURL = data.backgroundImage?.fields.file.url;
 
-  const style = backgroundColor
-    ? {
-        backgroundColor,
-      }
-    : undefined;
-  if (style == null && backgroundClass == null) {
+  const style: CSSProperties | undefined =
+    backgroundColor || backgroundURL != null
+      ? {
+          backgroundColor,
+          backgroundImage: backgroundURL ? `url(${backgroundURL})` : undefined,
+        }
+      : undefined;
+  if (style == null && !data.classes) {
     return <>{children}</>;
   }
   return (
-    <div className={classNames('w-full', backgroundClass)} style={style}>
+    <div className={data.classes} style={style}>
       {children}
     </div>
   );
@@ -102,42 +94,31 @@ export function Container({
   data,
   children,
 }: React.PropsWithChildren<{ data: Partial<ThemeData> }>): JSX.Element {
-  const color = data.textColor?.startsWith('#') ? data.textColor : undefined;
-  const textClass =
-    data.textColor && !data.textColor.startsWith('#')
-      ? `text-${data.textColor}`
-      : undefined;
-  const backgroundColor = data.containerBgColor?.startsWith('#')
-    ? data.containerBgColor
+  const textColor = data.textColor?.startsWith('#')
+    ? data.textColor
     : undefined;
-  const backgroundClass =
-    data.containerBgColor && !data.containerBgColor.startsWith('#')
-      ? `bg-${data.containerBgColor}`
-      : undefined;
-  const style =
-    backgroundColor || color
+  const backgroundColor = data.contentBackgroundColor?.startsWith('#')
+    ? data.contentBackgroundColor
+    : undefined;
+  const backgroundURL = data.contentBackgroundImage?.fields.file.url;
+
+  const style: CSSProperties | undefined =
+    backgroundColor || textColor || backgroundURL != null
       ? {
           backgroundColor,
-          color,
+          backgroundImage: backgroundURL ? `url(${backgroundURL})` : undefined,
+          ...getTextColorStyle(textColor),
         }
       : undefined;
-  const sizingClass = data.sizing
-    ? (`max-w-${data.sizing}` as const)
-    : 'max-w-7xl';
 
-  return (
-    <div className="p-8 lg:px-24">
-      <div
-        className={classNames(
-          'mx-auto rounded-3xl',
-          sizingClass,
-          textClass,
-          backgroundClass,
-        )}
-        style={style}
-      >
+  let el = children;
+  if (style != null || data.contentClasses) {
+    el = (
+      <div className={classNames(data.contentClasses)} style={style}>
         {children}
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <div className="p-8 lg:px-24 mx-auto">{el}</div>;
 }

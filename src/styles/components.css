@@ -1,0 +1,7 @@
+.rounded-box {
+  @apply p-11 rounded-3xl bg-[#FFFFCC] dark:bg-[#2B2B2B];
+}
+
+.no-box-padding {
+  @apply -m-11;
+}
