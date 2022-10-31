@@ -39,6 +39,8 @@ module.exports = {
     'text-start',
     'text-end',
     'text-center',
+    'rounded-box',
+    'no-box-padding',
     {
       pattern: /^max-w-.+/,
     },
@@ -46,6 +48,7 @@ module.exports = {
       pattern: /^-?(?:m|p|gap-)(?:x|y)-.+/,
     },
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       container: {
@@ -67,11 +70,8 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
-            '--tw-prose-body': 'currentColor',
-            '--tw-prose-bold': 'currentColor',
             '--tw-prose-links': brandPrimaryColors.DEFAULT,
             '--tw-prose-links-hover': brandPrimaryColors[700],
-            '--tw-prose-headings': 'currentColor',
             lineHeight: 1.2,
             fontSize: '20px',
             lineHeight: '28px',
