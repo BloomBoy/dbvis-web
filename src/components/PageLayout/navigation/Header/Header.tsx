@@ -33,11 +33,16 @@ const navigation = getMenu('main-menu');
 
 function Content({ className }: Props) {
   return (
-    <div className={classNames(className, 'bg-white')}>
-      <div className="flex items-center justify-between px-4 h-full sm:px-6 mx-auto max-w-[calc(1300px)] lg:justify-start md:space-x-10">
-        <div>
+    <div
+      className={classNames(
+        className,
+        'bg-white px-4 sm:px-6 lg:px-14 mx-auto',
+      )}
+    >
+      <div className="h-full flex items-center justify-between max-w-7xl md:space-x-10">
+        <div className="">
           <MaybeLink href="/" aria-label="Home">
-            <HeaderLogo className="h-12 md:h-13 lg:h-20 w-auto" />
+            <HeaderLogo className="h-12 md:h-13 lg:h-[72px]" />
           </MaybeLink>
         </div>
 
@@ -61,11 +66,11 @@ function Content({ className }: Props) {
           <div className="flex items-center lg:ml-12">
             <MaybeLink
               href="/download"
-              className="
-  hidden lg:block lg:px-4 xl:px-5 2xl:px-6 lg:py-1 xl:py-2 2xl:py-3 
-  border border-transparent text-xs xl:text-sm 2xl:text-base font-medium 
-  rounded-full text-white bg-black
-"
+              className={classNames(
+                'hidden lg:block border border-transparent rounded-full',
+                'lg:px-6 xl:px-8 lg:py-2',
+                'text-xs lg:text-sm xl:text-base text-white bg-black',
+              )}
             >
               DOWNLOAD FOR FREE
             </MaybeLink>

@@ -9,7 +9,7 @@ export default function PageLayout({
 }): JSX.Element {
   return (
     <>
-      <Header behavior="sticky" className="relative z-10 h-20" />
+      <Header behavior="sticky" className="relative z-10 h-20 lg:h-32" />
       <div className="min-h-screen flex flex-col items-stretch">
         <main className="flex-grow flex-shrink-0">{children}</main>
         <Footer className="flex-grow-0 flex-shrink-0" />
