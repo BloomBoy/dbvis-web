@@ -1,4 +1,4 @@
-import type { ComponentProps } from '..';
+import type { ComponentProps, SavedComponentProps } from '..';
 import React, { useEffect, useMemo, useState } from 'react';
 import { SafeEntryFields } from 'src/utils/contentful';
 import getFetchKey from 'src/utils/getFetchKey';
@@ -26,7 +26,10 @@ interface CollectedData {
 }
 
 function databaseFetchKey(
-  { data: { count = DEFAULT_COUNT }, type }: ComponentProps<DatabaseSearchData>,
+  {
+    data: { count = DEFAULT_COUNT },
+    type,
+  }: SavedComponentProps<DatabaseSearchData>,
   preview: boolean,
 ) {
   return getFetchKey(type, { preview }, count);
@@ -107,7 +110,7 @@ function DatabaseSearchComponent(
 
 const databaseSearch = Object.assign(DatabaseSearchComponent, {
   registerDataCollector(
-    props: ComponentProps<DatabaseSearchData>,
+    props: SavedComponentProps<DatabaseSearchData>,
     preview: boolean,
   ) {
     const {

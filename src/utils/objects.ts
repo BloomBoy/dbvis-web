@@ -43,3 +43,24 @@ export function objectKeys<
 >(input: In): readonly Keys<In>[] {
   return Object.keys(input) as Keys<In>[];
 }
+
+type MappedTuple<
+  T extends readonly unknown[],
+  Fns extends { [key in keyof T]: (value: T[key]) => unknown },
+> = {
+  [key in keyof T]: ReturnType<Fns[key]>;
+};
+
+export function tupleMap<
+  T extends readonly unknown[],
+  Fn extends (value: T[number]) => unknown,
+>(input: T, fn: Fn) {
+  return input.map(fn) as MappedTuple<
+    T,
+    {
+      [key in keyof T]: Fn extends (value: T[key]) => infer Q
+        ? (value: T[key]) => Q
+        : Fn;
+    }
+  >;
+}
