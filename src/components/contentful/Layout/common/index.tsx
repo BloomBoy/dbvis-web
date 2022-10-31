@@ -124,17 +124,20 @@ export function Container({
   const sizingClass = data.sizing
     ? (`max-w-${data.sizing}` as const)
     : 'max-w-7xl';
+
   return (
-    <div
-      className={classNames(
-        'mx-auto p-8 rounded-3xl',
-        sizingClass,
-        textClass,
-        backgroundClass,
-      )}
-      style={style}
-    >
-      {children}
+    <div className="p-8 lg:px-24">
+      <div
+        className={classNames(
+          'mx-auto rounded-3xl',
+          sizingClass,
+          textClass,
+          backgroundClass,
+        )}
+        style={style}
+      >
+        {children}
+      </div>
     </div>
   );
 }

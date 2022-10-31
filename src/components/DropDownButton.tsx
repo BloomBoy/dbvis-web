@@ -37,7 +37,7 @@ function DropDownButton() {
         >
           <Popover.Button ref={buttonRef} className="absolute outline-none" />
           <MaybeLink
-            className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono font-light uppercase outline-none"
+            className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono uppercase outline-none"
             onMouseEnter={onMouseEnter.bind(null, open)}
             onMouseLeave={onMouseLeave.bind(null, open)}
             href="/downloads"
