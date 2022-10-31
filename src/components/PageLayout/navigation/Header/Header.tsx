@@ -33,51 +33,48 @@ const navigation = getMenu('main-menu');
 
 function Content({ className }: Props) {
   return (
-    <div
-      className={classNames(
-        className,
-        'bg-white px-4 sm:px-6 lg:px-14 mx-auto',
-      )}
-    >
-      <div className="h-full flex items-center justify-between max-w-7xl md:space-x-10">
-        <div className="">
-          <MaybeLink href="/" aria-label="Home">
-            <HeaderLogo className="h-12 md:h-13 lg:h-[72px]" />
-          </MaybeLink>
-        </div>
-
-        <div className="ui-open:hidden -my-2 -mr-2 lg:hidden">
-          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-black hover:text-gray-900">
-            <span className="sr-only">Open menu</span>
-            <Bars3Icon className="h-8 w-8" aria-hidden="true" />
-          </Popover.Button>
-        </div>
-        <div className="-my-2 -mr-2 lg:hidden ui-not-open:hidden">
-          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-black hover:text-gray-900">
-            <span className="sr-only">Open menu</span>
-            <XMarkIcon className="h-8 w-8" aria-hidden="true" />
-          </Popover.Button>
-        </div>
-
-        <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
-          <Popover.Group as="nav" className="flex space-x-5">
-            <NavLinks navigation={navigation} />
-          </Popover.Group>
-          <div className="flex items-center lg:ml-12">
-            <MaybeLink
-              href="/download"
-              className={classNames(
-                'hidden lg:block border border-transparent rounded-full',
-                'lg:px-6 xl:px-8 lg:py-2',
-                'text-xs lg:text-sm xl:text-base text-white bg-black',
-              )}
-            >
-              DOWNLOAD FOR FREE
+    <div className={classNames(className, 'px-4 sm:px-6 lg:px-14 bg-white')}>
+      <div className="max-w-7xl h-full mx-auto">
+        <div className="h-full flex items-center justify-between md:space-x-10">
+          <div className="">
+            <MaybeLink href="/" aria-label="Home">
+              <HeaderLogo className="h-12 md:h-13 lg:h-[72px]" />
             </MaybeLink>
           </div>
+
+          <div className="ui-open:hidden -my-2 -mr-2 lg:hidden">
+            <Popover.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-black hover:text-gray-900">
+              <span className="sr-only">Open menu</span>
+              <Bars3Icon className="h-8 w-8" aria-hidden="true" />
+            </Popover.Button>
+          </div>
+          <div className="-my-2 -mr-2 lg:hidden ui-not-open:hidden">
+            <Popover.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-black hover:text-gray-900">
+              <span className="sr-only">Open menu</span>
+              <XMarkIcon className="h-8 w-8" aria-hidden="true" />
+            </Popover.Button>
+          </div>
+
+          <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
+            <Popover.Group as="nav" className="flex space-x-5">
+              <NavLinks navigation={navigation} />
+            </Popover.Group>
+            <div className="flex items-center lg:ml-12">
+              <MaybeLink
+                href="/download"
+                className={classNames(
+                  'hidden lg:block border border-transparent rounded-full',
+                  'lg:px-6 xl:px-8 lg:py-2',
+                  'text-xs lg:text-sm xl:text-base text-white bg-black',
+                )}
+              >
+                DOWNLOAD FOR FREE
+              </MaybeLink>
+            </div>
+          </div>
         </div>
+        <SideBar navigation={navigation} />
       </div>
-      <SideBar navigation={navigation} />
     </div>
   );
 }
