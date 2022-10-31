@@ -45,7 +45,10 @@ module.exports = {
       pattern: /^max-w-.+/,
     },
     {
-      pattern: /^-?(?:m|p|gap-)(?:x|y)-.+/,
+      pattern: /^gap-(?:x|y)-.+/,
+    },
+    {
+      pattern: /^-?(?:m|p)(?:x|y|t|l|b|r)?-.+/,
     },
   ],
   darkMode: 'class',
