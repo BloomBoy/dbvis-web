@@ -4,6 +4,8 @@ import imageComponent from './components/image';
 import textComponent from './components/text';
 import userReviewsComponent from './components/userReviews';
 import databaseSearchComponent from './components/databaseSearch';
+import emailSignupFormComponent from './components/emailSignupForm';
+import imageButtonComponent from './components/imageButton';
 
 export interface ComponentProps<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,6 +36,8 @@ export const components: Record<
   imageComponent,
   userReviewsComponent,
   databaseSearchComponent,
+  emailSignupFormComponent,
+  imageButtonComponent,
 };
 
 export function isComponent(obj: unknown): obj is ComponentProps {
