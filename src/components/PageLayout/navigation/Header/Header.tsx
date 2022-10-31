@@ -33,7 +33,7 @@ const navigation = getMenu('main-menu');
 
 function Content({ className }: Props) {
   return (
-    <div className={classNames(className, 'px-4 sm:px-6 lg:px-14 bg-white')}>
+    <div className={classNames(className, 'px-4 sm:px-6 lg:px-16 bg-white')}>
       <div className="max-w-7xl h-full mx-auto">
         <div className="h-full flex items-center justify-between md:space-x-10">
           <div className="">
