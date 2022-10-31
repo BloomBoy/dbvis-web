@@ -4,6 +4,8 @@ import imageComponent from './components/image';
 import textComponent from './components/text';
 import userReviewsComponent from './components/userReviews';
 import databaseSearchComponent from './components/databaseSearch';
+import emailSignupFormComponent from './components/emailSignupForm';
+import imageButtonComponent from './components/imageButton';
 import layoutTitleComponent from './components/layoutTitle';
 import type { LayoutProps } from '../Layout';
 
@@ -51,6 +53,8 @@ export const components: Record<
   imageComponent,
   userReviewsComponent,
   databaseSearchComponent,
+  emailSignupFormComponent,
+  imageButtonComponent,
   layoutTitleComponent,
 };
 
