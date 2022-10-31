@@ -18,9 +18,11 @@ export default function Image(
     return (
       <MaybeLink
         href={props.data.target}
-        className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono font-light uppercase"
+        className="bg-grey-300 self-center text-white rounded-3xl p-8"
       >
-        <img src={assetUrl} alt={asset.fields.title} />
+        <div className="w-[82px] aspect-square">
+          <img src={assetUrl} alt={asset.fields.title} />
+        </div>
       </MaybeLink>
     );
   }
