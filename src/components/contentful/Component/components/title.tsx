@@ -49,22 +49,19 @@ function TitleComponent({
   return (
     <div className="flex flex-col">
       {hasSubTitle && (
-        <h3
+        <span
           className={classNames(
-            'font-mono font-light quote-decoration uppercase text-grey-500 mb-6',
+            'font-mono block font-light quote-decoration uppercase title-sub mb-6',
             textAlign,
           )}
         >
           {subTitle}
-        </h3>
+        </span>
       )}
       {hasTitle && (
         <HeaderComp
           className={classNames(
-            HeaderComp === 'h1'
-              ? 'text-5xl md:text-8xl'
-              : 'text-5xl md:text-7xl',
-            'font-normal text-gray-900',
+            'text-5xl md:text-7xl font-normal title-main',
             textAlign,
           )}
         >
