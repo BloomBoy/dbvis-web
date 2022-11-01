@@ -88,7 +88,7 @@ function ThrobbingButton({
   if (isLoading) return null;
   return (
     <button
-      className="text-[#BFD6E2] font-mono mt-5 p-5 self-center"
+      className="text-[#BFD6E2] font-mono mt-10 h-12 border border-grey-300 rounded-lg"
       onClick={clickHandler}
       {...props}
     >
