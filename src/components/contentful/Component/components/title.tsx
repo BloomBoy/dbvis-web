@@ -10,10 +10,11 @@ export type TitleData = {
   title: Contentful.EntryFields.Symbol;
   subTitle: Contentful.EntryFields.Symbol;
   alignment?: Contentful.EntryFields.Symbol;
+  classes?: Contentful.EntryFields.Symbol[];
 };
 
 function TitleComponent({
-  data: { alignment, title, subTitle },
+  data: { alignment, title, subTitle, classes },
   id,
   layout,
 }: ComponentProps<TitleData>): JSX.Element | null {
@@ -47,7 +48,7 @@ function TitleComponent({
   const hasSubTitle = subTitle != null && subTitle !== '';
   if (!hasTitle && !hasSubTitle) return null;
   return (
-    <div className="flex flex-col">
+    <div className={classNames('flex flex-col', ...(classes || []))}>
       {hasSubTitle && (
         <span
           className={classNames(
