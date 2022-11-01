@@ -1,6 +1,5 @@
 import * as Contentful from 'contentful';
 import type { ComponentProps } from '..';
-import getTextAlignment from 'src/utils/getTextAlignment';
 import classNames from 'classnames';
 import { layoutHeaderCount } from '../../Layout/LayoutRenderers';
 import { useMemo } from 'react';
@@ -14,7 +13,7 @@ export type TitleData = {
 };
 
 function TitleComponent({
-  data: { alignment, title, subTitle, classes },
+  data: { title, subTitle, classes },
   id,
   layout,
 }: ComponentProps<TitleData>): JSX.Element | null {
@@ -43,32 +42,33 @@ function TitleComponent({
     return layout.mainHeaderIndex + layoutHeaders;
   }, [collectedData, id, layout]);
   const HeaderComp = mainHeaderIndex === 0 ? 'h1' : 'h2';
-  const textAlign = getTextAlignment(alignment);
   const hasTitle = title != null && title !== '';
   const hasSubTitle = subTitle != null && subTitle !== '';
   if (!hasTitle && !hasSubTitle) return null;
+
   return (
-    <div className={classNames('flex flex-col', ...(classes || []))}>
-      {hasSubTitle && (
-        <span
-          className={classNames(
-            'font-mono block font-light quote-decoration uppercase title-sub mb-6',
-            textAlign,
-          )}
-        >
-          {subTitle}
-        </span>
-      )}
-      {hasTitle && (
-        <HeaderComp
-          className={classNames(
-            'text-5xl md:text-7xl font-normal title-main',
-            textAlign,
-          )}
-        >
-          {title}
-        </HeaderComp>
-      )}
+    <div className="flex flex-col text-center">
+      <div className={classNames(...(classes || []))}>
+        {hasSubTitle && (
+          <span
+            className={classNames(
+              '!text-base',
+              'font-mono block font-light quote-decoration uppercase title-sub mb-6',
+            )}
+          >
+            {subTitle}
+          </span>
+        )}
+        {hasTitle && (
+          <HeaderComp
+            className={classNames(
+              'text-5xl md:text-7xl font-normal title-main',
+            )}
+          >
+            {title}
+          </HeaderComp>
+        )}
+      </div>
     </div>
   );
 }
