@@ -88,7 +88,7 @@
     src: url("/fonts/jetbrainsmono/JetBrainsMono-Bold.ttf") format("truetype"),
         url("/fonts/jetbrainsmono/JetBrainsMono-Bold.woff2") format("woff2");
     font-weight: 700;
-    font-style: oblique     44turn;
+    font-style: normal;
 }
 @font-face {
     font-family: "jetbrainsmono";
