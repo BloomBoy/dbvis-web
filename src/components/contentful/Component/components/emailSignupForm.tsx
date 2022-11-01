@@ -5,21 +5,21 @@ import classNames from 'classnames';
 import RichText from 'src/components/RichText';
 
 type NewsletterSignupProps = {
-  buttonText: SafeEntryFields.Symbol;
-  alignment: string;
-  termsText: SafeEntryFields.RichText;
+  buttonText?: SafeEntryFields.Symbol;
+  alignment?: string;
+  termsText?: SafeEntryFields.RichText;
 };
 function SubmitButton({
   isLoading,
   className,
-  title,
+  title = 'Submit',
   onClick,
   disabled = false,
 }: {
   disabled?: boolean;
   isLoading: boolean;
   className: string;
-  title: string;
+  title?: string;
   onClick: (event: SyntheticEvent) => void;
 }) {
   const [throbberVisible, setThrobberVisible] = useState(isLoading);
@@ -88,7 +88,7 @@ export default function NewsletterSignup(
 ): JSX.Element | null {
   const [isLoading, setIsLoading] = useState(false);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-  const { buttonText, termsText } = props.data;
+  const { buttonText = 'SUBSCRIBE ->', termsText = '' } = props.data ?? {};
   return (
     <>
       <div>
@@ -102,7 +102,7 @@ export default function NewsletterSignup(
               />
               <SubmitButton
                 isLoading={isLoading}
-                title={buttonText ?? 'Submit'}
+                title={buttonText}
                 onClick={(e) => {
                   e.preventDefault();
                   setIsLoading(!isLoading);
@@ -127,7 +127,7 @@ export default function NewsletterSignup(
             <div className="inline">
               <SubmitButton
                 isLoading={isLoading}
-                title={buttonText ?? 'Submit'}
+                title={buttonText}
                 onClick={(e) => {
                   e.preventDefault();
                   setIsLoading(!isLoading);
