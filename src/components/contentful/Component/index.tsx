@@ -7,6 +7,7 @@ import databaseSearchComponent from './components/databaseSearch';
 import emailSignupFormComponent from './components/emailSignupForm';
 import imageButtonComponent from './components/imageButton';
 import layoutTitleComponent from './components/layoutTitle';
+import titleComponent from './components/title';
 import type { LayoutProps } from '../Layout';
 
 export interface SavedComponentProps<
@@ -56,6 +57,7 @@ export const components: Record<
   emailSignupFormComponent,
   imageButtonComponent,
   layoutTitleComponent,
+  titleComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {

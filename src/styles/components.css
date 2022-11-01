@@ -6,4 +6,33 @@
 
 .no-box-padding {
   @apply -m-11;
+/*
+#===================================#
+| Contentful Helper Classes         |
+#===================================#
+*/
+@layer components {
+  .rounded-box {
+    @apply p-11 rounded-3xl bg-[#FFFFCC] dark:bg-[#2B2B2B];
+  }
+
+  .no-box-padding {
+    @apply -m-11;
+  }
+}
+
+/*
+#===================================#
+| Internal Classes                  |
+#===================================#
+*/
+
+@layer components {
+  .title-main {
+    color: var(--title-main-color);
+  }
+
+  .title-sub {
+    color: var(--title-sub-color);
+  }
 }

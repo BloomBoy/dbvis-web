@@ -8,6 +8,8 @@ import getConfig from 'next/config';
 import { CollectedDataProvider } from 'src/hooks/useCollectedData';
 import { InitialRenderProvider } from 'src/hooks/useIsInitialRender';
 import { UserAgentProvider } from 'src/hooks/useCurrentBrowser';
+import PreloadFonts from 'src/utils/preloadFont';
+
 const {
   publicRuntimeConfig: { contentfulAppParameters },
 } = getConfig();
@@ -27,6 +29,20 @@ function MyApp({ Component, pageProps, ua }: AppProps & { ua?: string }) {
 
 const withProviders = composeHOCs(
   asHOC(InitialRenderProvider, {}),
+  asHOC(PreloadFonts, {
+    fonts: [
+      {
+        family: 'jetbrainsmono',
+        weight: ['400', '700'],
+        style: 'normal',
+      },
+      {
+        family: 'AUTHENTIC Sans',
+        weight: ['400', '700'],
+        style: 'normal',
+      },
+    ],
+  }),
   asHOC(SEOProvider, {
     title: contentfulAppParameters.siteTagline,
     description: contentfulAppParameters.siteDescription,

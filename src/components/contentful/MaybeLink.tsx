@@ -12,7 +12,7 @@ export default function MaybeLink({
   HTMLAnchorElement
 >) {
   const fullClassNames = classNames(
-    'uppercase font-mono font-normal text-primary decoration-from-font underline-offset-4 hover:text-primary-200',
+    'uppercase font-mono font-normal decoration-from-font underline-offset-4',
     className,
   );
   if (!href) {

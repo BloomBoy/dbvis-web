@@ -83,8 +83,9 @@ export function Wrapper({
   if (style == null && !data.classes) {
     return <>{children}</>;
   }
+
   return (
-    <div className={data.classes} style={style}>
+    <div className={classNames(data.classes)} style={style}>
       {children}
     </div>
   );
