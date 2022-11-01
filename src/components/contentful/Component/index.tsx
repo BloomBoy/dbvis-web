@@ -8,6 +8,8 @@ import emailSignupFormComponent from './components/emailSignupForm';
 import imageButtonComponent from './components/imageButton';
 import layoutTitleComponent from './components/layoutTitle';
 import titleComponent from './components/title';
+import downloadButtonComponent from './components/downloadButton';
+import reviewSourcesComponent from './components/reviewSources';
 import type { LayoutProps } from '../Layout';
 
 export interface SavedComponentProps<
@@ -58,6 +60,8 @@ export const components: Record<
   imageButtonComponent,
   layoutTitleComponent,
   titleComponent,
+  downloadButtonComponent,
+  reviewSourcesComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {
