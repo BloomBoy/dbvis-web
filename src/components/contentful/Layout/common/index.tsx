@@ -121,5 +121,5 @@ export function Container({
     );
   }
 
-  return <div className="p-8 lg:px-24 mx-auto">{el}</div>;
+  return <div className="p-8 lg:px-24 mx-auto max-w-7xl">{el}</div>;
 }
