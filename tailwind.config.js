@@ -70,9 +70,9 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
-            '--tw-prose-body': `var(--contentful-text-color, ${brandPrimaryColors.DEFAULT})`,
-            '--tw-prose-bold': `var(--contentful-text-color, ${brandPrimaryColors.DEFAULT})`,
-            '--tw-prose-headings': `var(--contentful-text-color, ${brandPrimaryColors.DEFAULT})`,
+            '--tw-prose-body': `var(--contentful-text-color, ${colors.gray[700]})`,
+            '--tw-prose-bold': `var(--contentful-text-color, ${colors.gray[900]})`,
+            '--tw-prose-headings': `var(--contentful-text-color, ${colors.gray[900]})`,
             '--tw-prose-links': brandPrimaryColors.DEFAULT,
             '--tw-prose-links-hover': brandPrimaryColors[700],
             lineHeight: 1.2,
