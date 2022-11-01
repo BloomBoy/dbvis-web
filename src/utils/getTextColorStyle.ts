@@ -6,9 +6,8 @@ export function getTextColorStyle(
   return color
     ? ({
         color,
-        '--tw-prose-body': 'currentColor',
-        '--tw-prose-bold': 'currentColor',
-        '--tw-prose-headings': 'currentColor',
+        '--contentful-text-color': 'currentColor',
+        '--title-main-color': 'currentColor',
       } as CSSProperties)
     : null;
 }
