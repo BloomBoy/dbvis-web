@@ -1,6 +1,6 @@
 import React from 'react';
 import MaybeLink from 'src/components/contentful/MaybeLink';
-import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
+// import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
 
 type ReleaseNotesPageProps = {
   id: string;
