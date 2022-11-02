@@ -59,53 +59,69 @@
       transform: rotate(360deg);
     }
   }
-}
+  input[type='checkbox'] {
+    /* Add if not using autoprefixer */
+    -webkit-appearance: none;
+    /* Remove most all native input styles */
+    appearance: none;
+    /* For iOS < 15 */
+    background-color: #fff;
+    /* Not removed via appearance */
+    margin: 0;
 
-input[type='checkbox'] {
-  /* Add if not using autoprefixer */
-  -webkit-appearance: none;
-  /* Remove most all native input styles */
-  appearance: none;
-  /* For iOS < 15 */
-  background-color: #fff;
-  /* Not removed via appearance */
-  margin: 0;
+    font: inherit;
+    color: #7b7b7b;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #7b7b7b;
+    border-radius: 4px;
+    transform: translateY(-0.075em);
 
-  font: inherit;
-  color: #7b7b7b;
-  width: 24px;
-  height: 24px;
-  border: 1px solid #7b7b7b;
-  border-radius: 4px;
-  transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+  }
 
-  display: grid;
-  place-content: center;
-}
+  input[type='checkbox']::before {
+    content: '';
+    width: 0.65em;
+    height: 0.65em;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    transform: scale(0);
+    transform-origin: bottom left;
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em theme('colors.primary.DEFAULT');
+    /* Windows High Contrast Mode */
+    background-color: CanvasText;
+  }
 
-input[type='checkbox']::before {
-  content: '';
-  width: 0.65em;
-  height: 0.65em;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-  transform: scale(0);
-  transform-origin: bottom left;
-  transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em theme('colors.primary.DEFAULT');
-  /* Windows High Contrast Mode */
-  background-color: CanvasText;
-}
+  input[type='checkbox']:checked::before {
+    transform: scale(1);
+  }
 
-input[type='checkbox']:checked::before {
-  transform: scale(1);
-}
+  input[type='checkbox']:focus {
+    outline: max(1px, 1px) solid currentColor;
+    outline-offset: max(1px, 1px);
+  }
 
-input[type='checkbox']:focus {
-  outline: max(1px, 1px) solid currentColor;
-  outline-offset: max(1px, 1px);
-}
-
-input[type='checkbox']:disabled {
-  color: #7b7b7b;
-  cursor: not-allowed;
+  input[type='checkbox']:disabled {
+    color: #7b7b7b;
+    cursor: not-allowed;
+  }
+  table {
+    @apply w-full table-auto border-collapse mb-8 text-white font-mono;
+  }
+  thead {
+    @apply border-dashed border-[#7B7B7B40] border-y uppercase text-xs font-bold;
+  }
+  tbody {
+  }
+  tr {
+    @apply border-dashed border-[#7B7B7B40] border-b;
+  }
+  th {
+    @apply text-left py-4 pl-4;
+  }
+  td {
+    @apply text-left py-4 pl-4;
+  }
 }
