@@ -27,4 +27,31 @@
   .title-sub {
     color: var(--title-sub-color);
   }
+
+  .hover-trigger-base {
+    --hover-trigger-panel-opacity: var(--hover-trigger-panel-inactive-opacity, 0);
+    --hover-trigger-panel-display: var(--hover-trigger-panel-inactive-display, hidden);
+    &:hover, &:focus, &:focus-within {
+      --hover-trigger-panel-opacity: var(--hover-trigger-panel-active-opacity, 1);
+      --hover-trigger-panel-display: var(--hover-trigger-panel-active-display, visible);
+      .hover-trigger-panel-wrapper {
+        @apply -top-3 -left-3 -right-3;
+      }
+      .hover-trigger-panel {
+        @apply p-3;
+        pointer-events: auto;
+      }
+    }
+    position: relative;
+  }
+  .hover-trigger-panel {
+    @apply absolute top-0 p-0 left-1/2 -translate-x-1/2 min-w-full;
+    opacity: var(--hover-trigger-panel-opacity, var(--hover-trigger-panel-inactive-opacity, 0));
+    visibility: var(--hover-trigger-panel-display, var(--hover-trigger-panel-inactive-display, hidden));
+    transition: opacity 0.2s ease-in-out, pointer-events 0.2s 0.2s;
+    pointer-events: none;
+  }
+  .hover-trigger-panel-wrapper {
+    @apply absolute top-0 left-0 right-0 z-10;
+  }
 }
