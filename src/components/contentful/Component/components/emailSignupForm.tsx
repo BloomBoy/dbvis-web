@@ -55,7 +55,7 @@ function SubmitButton({
     <button
       onClick={onClick}
       className={classNames(
-        'right-2 items-stretch place-content-stretch text-white flex disabled:opacity-50 transition-opacity',
+        'right-4 t-4 items-stretch place-content-stretch text-white flex disabled:opacity-60 transition-opacity bg-grey-900 rounded-full py-2 md:py-4 px-12 h-[55%]',
         className,
       )}
       disabled={disabled}
@@ -63,23 +63,20 @@ function SubmitButton({
       {throbberVisible && (
         <div
           className={classNames(
-            'absolute z-10 animate-spin rounded-full top-2 left-2 h-4 w-4 border-b-2 border-current mr-2',
+            'absolute z-10 animate-spin rounded-full top-[33%] left-5 h-4 w-4 border-b-2 border-current mr-2',
           )}
         />
       )}
       <div
         className={classNames(
-          'relative pl-4 py-2 rounded-l-full leading-none uppercase font-mono bg-grey-600 transition-transform duration-150 translate-x-full',
+          'relative pl-4 py-2 rounded-l-full leading-none uppercase font-mono bg-grey-900 transition-transform duration-150 translate-x-full',
           isLoading ? 'translate-x-0' : 'translate-x-4',
         )}
         ref={setAnimationEl}
-      >
-        <div className="h-4 w-4"></div>
+      ></div>
+      <div className="relative py-2 leading-none uppercase font-mono bg-grey-900 font-semibold self-center">
+        {title}
       </div>
-      <div className="relative py-2 leading-none uppercase font-mono bg-grey-600">
-        <p className="font-thin">{title}</p>
-      </div>
-      <div className="w-4 bg-grey-600 rounded-r-full" />
     </button>
   );
 }
@@ -96,7 +93,7 @@ export default function NewsletterSignup(
           <div className="mb-4 flex flex-col font-mono text-grey-600">
             <div className="relative flex w-full items-center mb-10">
               <input
-                className="uppercase w-full py-3 pl-6 pr-28 sm:pr-60 border-grey-300 border rounded-full font-mono outline-none placeholder:text-[#BFD6E2]"
+                className="uppercase w-full font-extralight text-xl md:text-5xl py-3 md:py-4 pl-6 md:pl-12 pr-28 sm:pr-60 border-grey-300 border rounded-full font-mono outline-none placeholder:text-grey-500"
                 type="email"
                 placeholder="MAIL@MAIL.COM"
               />
@@ -108,7 +105,7 @@ export default function NewsletterSignup(
                   setIsLoading(!isLoading);
                 }}
                 disabled={!isTermsAccepted}
-                className="absolute invisible md:visible"
+                className="absolute invisible md:visible h-full m-4"
               />
             </div>
             <div className="mb-4 flex font-mono text-grey-600">
