@@ -65,7 +65,7 @@ function Content({ className }: Props) {
                 className={classNames(
                   'hidden lg:block border border-transparent rounded-full',
                   'lg:px-6 xl:px-8 lg:py-2',
-                  'text-xs lg:text-sm xl:text-base text-white bg-black',
+                  'text-xs lg:text-sm xl:text-base text-white hover:text-primary bg-black',
                 )}
               >
                 DOWNLOAD FOR FREE
