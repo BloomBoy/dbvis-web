@@ -166,7 +166,7 @@ module.exports = plugin(
           font: Object.fromEntries(
             [
               ...Object.entries(theme('fontSize')),
-              ['DEFAULT', theme('fontSize')['5xl']],
+              ['DEFAULT', theme('fontSize')['7xl']],
             ].map(
               /**
                * @param {[string, FontSize | undefined]} entry
