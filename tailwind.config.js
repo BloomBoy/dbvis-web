@@ -57,6 +57,7 @@ module.exports = {
     },
     {
       pattern: /^title-.+/,
+      variants: ['sm', 'md', 'lg'],
     },
   ],
   darkMode: 'class',
