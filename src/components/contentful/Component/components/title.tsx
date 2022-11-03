@@ -50,24 +50,11 @@ function TitleComponent({
     <div className="flex flex-col text-center">
       <div className={classNames(...(classes || []))}>
         {hasSubTitle && (
-          <span
-            className={classNames(
-              '!text-base',
-              'font-mono block font-light quote-decoration uppercase title-sub mb-6',
-            )}
-          >
+          <span className="block quote-decoration uppercase title-sub mb-6">
             {subTitle}
           </span>
         )}
-        {hasTitle && (
-          <HeaderComp
-            className={classNames(
-              'text-5xl md:text-7xl font-normal title-main',
-            )}
-          >
-            {title}
-          </HeaderComp>
-        )}
+        {hasTitle && <HeaderComp className="title-main">{title}</HeaderComp>}
       </div>
     </div>
   );

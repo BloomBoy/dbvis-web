@@ -27,6 +27,11 @@ const brandGreyScale = {
 brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
 brandGreyScale.DEFAULT = brandGreyScale[500];
 
+/**
+ * @typedef {import('tailwindcss').Config} TailwindConfig
+ */
+
+/** @type {TailwindConfig} */
 module.exports = {
   content: [
     path.join(__dirname, 'src', 'components', '**', '*.{js,ts,jsx,tsx}'),
@@ -50,6 +55,9 @@ module.exports = {
     {
       pattern: /^-?(?:m|p)(?:x|y|t|l|b|r)?-.+/,
     },
+    {
+      pattern: /^title-.+/,
+    },
   ],
   darkMode: 'class',
   theme: {
@@ -69,6 +77,9 @@ module.exports = {
       },
       boxShadow: {
         imageShadow: '0px 0px 6px rgba(0, 0, 0, 0.05)',
+      },
+      borderRadius: {
+        card: '24px',
       },
       typography: {
         DEFAULT: {
@@ -114,5 +125,6 @@ module.exports = {
   plugins: [
     require('@tailwindcss/typography'),
     require('@headlessui/tailwindcss'),
+    require('./tailwindPlugins/titleComponent'),
   ],
 };
