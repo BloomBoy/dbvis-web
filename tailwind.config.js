@@ -29,7 +29,6 @@ brandGreyScale.DEFAULT = brandGreyScale[500];
 
 /**
  * @typedef {import('tailwindcss').Config} TailwindConfig
- * @typedef {NonNullable<TailwindConfig['theme']>['fontSize'] extends import('tailwindcss/types/config').ResolvableTo<infer T> ? NonNullable<T>[string] : never} FontSize
  */
 
 /** @type {TailwindConfig} */
