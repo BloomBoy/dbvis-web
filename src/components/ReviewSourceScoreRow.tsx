@@ -14,6 +14,7 @@ export default function ReviewSourceScoreRow({
         <img
           src={reviewSource?.logo.fields.file.url}
           alt={reviewSource?.logo.fields.title}
+          className="w-8 h-8"
         />
         <span className="uppercase my-auto">{reviewSource?.name}</span>
       </div>
