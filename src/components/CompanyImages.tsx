@@ -19,7 +19,7 @@ export default function CompanyImages(): JSX.Element {
       {databases.map(({ alt, imageUrl }) => (
         <button
           key={alt}
-          className="flex justify-center items-center h-20 w-20 rounded-2xl shadow-imageShadow border border-grey-300 bg-buttonBackground cursor-pointer py-5"
+          className="flex justify-center items-center h-20 w-20 rounded-2xl shadow-imageShadow border border-grey-300 bg-badgeBackgground cursor-pointer py-5"
           onClick={() => {
             console.log('click item');
           }}

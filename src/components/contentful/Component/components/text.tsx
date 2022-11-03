@@ -18,7 +18,7 @@ export default function Text(
   const textAlign = getTextAlignment(props.data.alignment);
 
   return (
-    <div className={classNames(textAlign, 'self-center max-w-[612px] pb-12')}>
+    <div className={classNames(textAlign, 'pb-12')}>
       <RichText
         content={text}
         className={classNames(...(props.data?.classes || []))}

@@ -8,6 +8,7 @@ import getClient from '../getContentfulClient.mjs';
 import { isLink } from './helpers';
 import { DatabaseListEntry } from 'src/components/ShowDatabases';
 import { isNonNull } from '../filters';
+import contentTypeSchemas from './schemas';
 
 export interface GetExtraDatabaseSearchResultsParams
   extends GetPaginatedParams,
@@ -33,13 +34,22 @@ const getPagedExtraDatabaseSearchResultsQuery = (
 
 function parseListItem({
   sys: { id },
-  fields: { keywords, title, targetUrl, logo, weight },
+  fields,
 }: Contentful.Entry<
   Partial<ContentTypeFieldsMap['extraDatabaseSearchResult']>
 >): DatabaseListEntry | null {
-  if (title == null) return null;
-  if (targetUrl == null) return null;
-  if (isLink(logo) || logo == null) return null;
+  const { keywords, title, targetUrl, logo, weight } = fields;
+  const verified =
+    contentTypeSchemas.extraDatabaseSearchResult.safeParse(fields).success;
+  if (
+    title == null ||
+    targetUrl == null ||
+    isLink(logo) ||
+    logo == null ||
+    !verified
+  )
+    return null;
+
   return {
     id,
     title: title,

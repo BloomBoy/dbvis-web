@@ -16,8 +16,8 @@ export default function ReviewSourceScoreRow({
       <div className="flex flex-row gap-8 no-grow no-shrink w-[40%]">
         <span className="bg-[#FAFAFA] p-2 rounded-md">
           <img
-            src={reviewSource?.logo.fields.file.url}
-            alt={reviewSource?.logo.fields.title}
+            src={reviewSource?.logo?.fields.file.url}
+            alt={reviewSource?.logo?.fields.title}
             className="w-8 h-8"
           />
         </span>

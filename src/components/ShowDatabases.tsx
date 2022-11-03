@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { SafeEntryFields } from 'src/utils/contentful';
-import MaybeLink from './contentful/MaybeLink';
+import Badge from './Badge';
 
 export interface DatabaseListEntry {
   id: SafeEntryFields.Symbol;
@@ -37,21 +37,13 @@ function DatabaseList({
       )}
     >
       {databases.map(({ logo, title, url, id }) => (
-        <MaybeLink
+        <Badge
           key={id}
-          className="w-full flex justify-between items-center px-4 py-5 rounded-lg shadow-imageShadow border border-grey-300 bg-buttonBackground font-mono uppercase cursor-pointer"
           href={url}
-        >
-          <div className="flex items-center">
-            <div className="h-6 w-6 rounded-[5px] bg-buttonBackground border px-1 flex items-center">
-              <img src={logo.src} alt={logo.alt || title} />
-            </div>
-            <span className="ml-2">{title}</span>
-          </div>
-          <span className="text-primary-500 flex-shrink-0 whitespace-nowrap">
-            -&gt;
-          </span>
-        </MaybeLink>
+          icon={{ url: logo.src, alt: logo.alt || title }}
+          className="px-4 py-5"
+          text={title}
+        />
       ))}
     </div>
   );

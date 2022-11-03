@@ -78,7 +78,7 @@ function DropDownButton({
           >
             <Popover.Button ref={buttonRef} className="absolute outline-none" />
             <MaybeLink
-              className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono uppercase outline-none justify"
+              className="bg-black self-center text-white rounded-full p-3 px-8 font-mono uppercase outline-none justify"
               href="/download"
             >
               Download for free ↓
@@ -94,10 +94,10 @@ function DropDownButton({
             >
               <Popover.Panel className="absolute top-12 pt-2">
                 <div className="rounded-xl overflow-hidden shadow-imageShadow">
-                  <div className="font-mono font-light quote-decoration uppercase text-grey-500 text-start pb-3 pt-4 bg-buttonBackground px-6 text-xs">
+                  <div className="font-mono font-light quote-decoration uppercase text-grey-500 text-start pb-3 pt-4 bg-badgeBackground px-6 text-xs">
                     Recommended installer
                   </div>
-                  <div className="px-6 bg-buttonBackground">
+                  <div className="px-6 bg-badgeBackground">
                     <div className="flex py-5">
                       <div className="flex mr-28">
                         <img

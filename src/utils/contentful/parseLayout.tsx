@@ -70,6 +70,7 @@ export interface ParsingContext {
 }
 
 export default async function parseLayout(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields;
   },
@@ -79,6 +80,7 @@ export default async function parseLayout(
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout<LayoutFieldId extends string>(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<LayoutFieldId>;
   },
@@ -92,6 +94,7 @@ export default async function parseLayout<
   LayoutFieldId extends string,
   AssetListFieldId extends string,
 >(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<LayoutFieldId, AssetListFieldId>;
   },
@@ -107,6 +110,7 @@ export default async function parseLayout<
   AssetListFieldId extends string,
   ReferenceListFieldId extends string,
 >(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<
       LayoutFieldId,
@@ -123,6 +127,7 @@ export default async function parseLayout<
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<string, string, string>;
   },
@@ -204,7 +209,7 @@ export default async function parseLayout(
       const componentRenderer = components[ret.type];
       const dataCollector = componentRenderer?.registerDataCollector?.(
         ret,
-        false,
+        preview,
       );
       if (dataCollector != null) {
         dataCollectors[dataCollector.fetchKey] = dataCollector;

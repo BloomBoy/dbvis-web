@@ -7,6 +7,7 @@ import parseLayout from './parseLayout';
 import getClient from '../getContentfulClient.mjs';
 import { SafeValue, safeValue } from './helpers';
 import { Entry } from 'contentful';
+import contentTypeSchemas from './schemas';
 
 const getStandardPageQuery = (params: GetSlugEntryParams) => ({
   limit: 1,
@@ -17,12 +18,13 @@ const getStandardPageQuery = (params: GetSlugEntryParams) => ({
 });
 
 async function parseStandardPage(
+  preview: boolean,
   rawPage: Entry<ContentTypeFieldsMap['standardPage']>,
 ) {
   const {
     fields: { pageLayout, ...fields },
   } = rawPage;
-  const { collectedData, layoutList } = await parseLayout(rawPage);
+  const { collectedData, layoutList } = await parseLayout(preview, rawPage);
   const safeFields = safeValue<typeof fields>(fields);
   return {
     page: {
@@ -45,13 +47,16 @@ export async function getPage(params: GetSlugEntryParams): Promise<{
     ContentTypeFieldsMap['standardPage']
   >(query);
   const rawPage = items.at(0);
-  if (!rawPage) {
+  const verified = contentTypeSchemas.standardPage.safeParse(
+    rawPage?.fields,
+  ).success;
+  if (!rawPage || !verified) {
     return {
       page: null,
       collectedData: {},
     };
   }
-  return parseStandardPage(rawPage);
+  return parseStandardPage(params.preview ?? false, rawPage);
 }
 
 export type StandardPageEntry = SafeEntryFields.Entry<

@@ -6,11 +6,12 @@ import {
   canRenderMainHeader,
 } from '../common';
 import Component from '../../Component';
-import type { LayoutProps } from '..';
+import type { LayoutProps, SlotProps } from '..';
 import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
 import LayoutTitle from '../../Component/components/layoutTitle';
+import React from 'react';
 
 type Data = HeaderData &
   ThemeData & {
@@ -23,7 +24,39 @@ type SlotData = {
   subTitle?: SafeEntryFields.Symbol;
   backgroundColor?: SafeEntryFields.Symbol;
   textColor?: SafeEntryFields.Symbol;
+  inlineComponents?: SafeEntryFields.Boolean;
+  classes?: SafeEntryFields.Symbol[];
 };
+
+function renderSlot({
+  id,
+  components,
+  data,
+  layout,
+}: SlotProps<SlotData> & { layout: LayoutProps<Data, SlotData> }) {
+  const style =
+    data.backgroundColor || data.textColor || data.inlineComponents
+      ? {
+          backgroundColor: data.backgroundColor,
+          color: data.textColor,
+          display: data.inlineComponents ? 'flex' : undefined,
+        }
+      : undefined;
+  const className =
+    data.classes != null && data.classes.length > 0 ? data.classes : undefined;
+
+  return (
+    <div key={id} className={classNames(className) || undefined} style={style}>
+      {components.map((componentProps) => (
+        <Component
+          {...componentProps}
+          key={componentProps.id}
+          layout={layout}
+        />
+      ))}
+    </div>
+  );
+}
 
 function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
   const { id, slots, data } = props;
@@ -39,56 +72,20 @@ function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
   });
 
   const columnCount = slots.length;
-  const columns =
-    columnCount > 1 ? (
-      <div
-        className={classNames(
-          'flex flex-col md:grid',
-          gapX ? gapX : 'gap-x-28',
-          gapY ? gapY : '',
-        )}
-        style={{
-          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
-        }}
-      >
-        {slots.map((slot) => (
-          <div
-            key={slot.id}
-            className="rounded-[30px]"
-            style={{
-              backgroundColor: slot.data.backgroundColor,
-              color: slot.data.textColor,
-            }}
-          >
-            {slot.components.map((componentProps) => (
-              <Component
-                {...componentProps}
-                key={componentProps.id}
-                layout={props}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    ) : (
-      columnCount === 1 && (
-        <div
-          className="flex flex-col"
-          style={{
-            backgroundColor: slots[0].data.backgroundColor,
-            color: slots[0].data.textColor,
-          }}
-        >
-          {slots[0].components.map((componentProps) => (
-            <Component
-              key={componentProps.id}
-              {...componentProps}
-              layout={props}
-            />
-          ))}
-        </div>
-      )
-    );
+  const columns = (
+    <div
+      className={classNames(
+        'md:grid',
+        gapX ? gapX : 'gap-x-28',
+        gapY ? gapY : '',
+      )}
+      style={{
+        gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+      }}
+    >
+      {slots.map((slot) => renderSlot({ ...slot, layout: props }))}
+    </div>
+  );
 
   return (
     <Wrapper data={data}>
