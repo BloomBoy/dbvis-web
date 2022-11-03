@@ -154,7 +154,7 @@ export default function ReleaseNotesPage({}: ReleaseNotesPageProps): JSX.Element
           </table>
         </div>
       </div>
-      <div className="p-8 lg:px-24 mx-auto">
+      <div className="p-8 mx-auto">
         <div
           className="rounded-3xl py-20 px-11"
           style={{ backgroundColor: '#FFFFCC' }}
