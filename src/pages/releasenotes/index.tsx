@@ -3,6 +3,10 @@ import MaybeLink from 'src/components/contentful/MaybeLink';
 // import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
 
 type ReleaseNotesPageProps = {
+  releaseNotes: ReleaseNoteType[];
+};
+
+type ReleaseNoteType = {
   id: string;
   title: string;
   releaseDate: string;
@@ -14,55 +18,55 @@ const XMLData = [
     id: 'a-string-1',
     title: 'DbVisualizer  14.0 - 14.0.1',
     releaseDate: '2022-10-14',
-    slug: '/',
-  },
-  {
-    id: 'a-string-1',
-    title: 'DbVisualizer  13.0 - 13.0.6',
-    releaseDate: '2022-10-14',
-    slug: '/',
-  },
-  {
-    id: 'a-string-1',
-    title: 'DbVisualizer  12.1 - 12.1.9',
-    releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
   {
     id: 'a-string-2',
-    title: 'DbVisualizer  12.0 - 12.0.9',
+    title: 'DbVisualizer  13.0 - 13.0.6',
     releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
   {
     id: 'a-string-3',
-    title: 'DbVisualizer  11.0 - 11.0.7',
+    title: 'DbVisualizer  12.1 - 12.1.9',
     releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
   {
     id: 'a-string-4',
-    title: 'DbVisualizer  10.0 - 10.0.27',
+    title: 'DbVisualizer  12.0 - 12.0.9',
     releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
   {
     id: 'a-string-5',
-    title: 'DbVisualizer  9.5 - 9.5.8',
+    title: 'DbVisualizer  11.0 - 11.0.7',
     releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
   {
     id: 'a-string-6',
-    title: 'DbVisualizer  9.2 - 9.2.17',
+    title: 'DbVisualizer  10.0 - 10.0.27',
     releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
   {
     id: 'a-string-7',
+    title: 'DbVisualizer  9.5 - 9.5.8',
+    releaseDate: '2022-10-14',
+    slug: '/a-string-1',
+  },
+  {
+    id: 'a-string-8',
+    title: 'DbVisualizer  9.2 - 9.2.17',
+    releaseDate: '2022-10-14',
+    slug: '/a-string-1',
+  },
+  {
+    id: 'a-string-9',
     title: 'DbVisualizer  9.1 - 9.1.13',
     releaseDate: '2022-10-14',
-    slug: '/',
+    slug: '/a-string-1',
   },
 ];
 const latestVersion = XMLData.shift();
@@ -85,13 +89,19 @@ export default function ReleaseNotesPage({}: ReleaseNotesPageProps): JSX.Element
         </h3>
         <ul className="flex felx-row gap-6">
           <li>
-            <MaybeLink href="a-link">WHAT&apos;S NEW -&gt;</MaybeLink>
+            <MaybeLink href="a-link" className="text-primary">
+              WHAT&apos;S NEW -&gt;
+            </MaybeLink>
           </li>
           <li>
-            <MaybeLink href="a-link">RELEASE NOTES -&gt;</MaybeLink>
+            <MaybeLink href="a-link" className="text-primary">
+              RELEASE NOTES -&gt;
+            </MaybeLink>
           </li>
           <li>
-            <MaybeLink href="a-link">DOWNLOADS -&gt;</MaybeLink>
+            <MaybeLink href="a-link" className="text-primary">
+              DOWNLOADS -&gt;
+            </MaybeLink>
           </li>
         </ul>
       </div>
@@ -118,7 +128,10 @@ export default function ReleaseNotesPage({}: ReleaseNotesPageProps): JSX.Element
                 <td>{latestVersion?.title}</td>
                 <td className="text-grey-400">{latestVersion?.releaseDate}</td>
                 <td>
-                  <MaybeLink href={latestVersion?.slug} className="underline">
+                  <MaybeLink
+                    href={`/releasenotes/${latestVersion?.slug}`}
+                    className="underline text-primary"
+                  >
                     Release Notese -&gt;
                   </MaybeLink>
                 </td>
@@ -144,7 +157,10 @@ export default function ReleaseNotesPage({}: ReleaseNotesPageProps): JSX.Element
                   <td>{item?.title}</td>
                   <td className="text-grey-400">{item?.releaseDate}</td>
                   <td>
-                    <MaybeLink href={item?.slug} className="underline">
+                    <MaybeLink
+                      href={`/releasenotes/${item?.slug}`}
+                      className="underline text-primary"
+                    >
                       Release Notese -&gt;
                     </MaybeLink>
                   </td>
