@@ -1,9 +1,17 @@
+import * as Contentful from 'contentful';
 import React, { Fragment, useCallback, useRef } from 'react';
 import { Popover, Transition } from '@headlessui/react';
 import MaybeLink from './contentful/MaybeLink';
+import classNames from 'classnames';
 
 const TIMEOUT_DURATION = 500;
-function DropDownButton({ children }: { children?: React.ReactNode }) {
+function DropDownButton({
+  children,
+  classes,
+}: {
+  children?: React.ReactNode;
+  classes?: Contentful.EntryFields.Symbol[];
+}) {
   const timeoutRef = useRef<NodeJS.Timeout | number>(); // NodeJS.Timeout
   const buttonRef = useRef<HTMLButtonElement>(null);
   const openRef = useRef(false);
@@ -43,19 +51,34 @@ function DropDownButton({ children }: { children?: React.ReactNode }) {
     timeoutRef.current = setTimeout(() => closePopover(), TIMEOUT_DURATION);
   }, []);
 
+  // check if the classes contains any of the justify
+  // classes so we can overwrte the positioning
+  const containsPositioning = classes?.some((r) => /^justify-.+/.test(r));
+
   return (
-    <Popover as="div" className="relative hidden md:flex justify-center">
+    <Popover
+      as="div"
+      className={classNames(
+        'relative hidden md:flex',
+        !containsPositioning && 'justify-center',
+        ...(classes || []),
+      )}
+    >
       {({ open }) => {
         openRef.current = open;
         return (
           <div
-            className="flex justify-center"
+            className={classNames(
+              'flex',
+              !containsPositioning && 'justify-center',
+              classes?.find((c) => /^justify-.+/.test(c)),
+            )}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
           >
             <Popover.Button ref={buttonRef} className="absolute outline-none" />
             <MaybeLink
-              className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono uppercase outline-none"
+              className="bg-black self-center text-white rounded-3xl p-3 px-8 font-mono uppercase outline-none justify"
               href="/download"
             >
               Download for free ↓

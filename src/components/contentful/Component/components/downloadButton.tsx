@@ -1,3 +1,4 @@
+import * as Contentful from 'contentful';
 import type { ComponentProps } from '..';
 import { SafeEntryFields } from 'src/utils/contentful';
 import Button, { ButtonData } from './button';
@@ -6,6 +7,7 @@ import DropDownButton from 'src/components/DropDownButton';
 
 type DownloadButtonData = Omit<ButtonData, 'target'> & {
   hoverWidget: SafeEntryFields.Boolean;
+  classes?: Contentful.EntryFields.Symbol[];
 };
 
 export default function DownloadButton(
@@ -24,7 +26,7 @@ export default function DownloadButton(
   }
 
   return (
-    <DropDownButton>
+    <DropDownButton classes={props.data.classes}>
       {props.data.buttonText || 'Download for free'}
     </DropDownButton>
   );
