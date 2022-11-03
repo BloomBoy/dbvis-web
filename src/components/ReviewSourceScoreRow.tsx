@@ -9,13 +9,18 @@ export default function ReviewSourceScoreRow({
   reviewSource: SafeValue<ContentfulFields<'reviewSource'>>;
 }) {
   return (
-    <div className="font-mono bg-grey-300 rounded-lg mt-8 py-4 flex flex-row justify-between items-center text-black px-6 md:px-10">
-      <div className="flex flex-row gap-8">
-        <img
-          src={reviewSource?.logo.fields.file.url}
-          alt={reviewSource?.logo.fields.title}
-          className="w-8 h-8"
-        />
+    <div
+      className="font-mono bg-grey-300 rounded-lg py-4 mb-4 flex flex-row justify-between items-center text-black px-6 md:px-6"
+      style={{ boxShadow: ' 0px 0px 12px rgba(0, 0, 0, 0.03)' }}
+    >
+      <div className="flex flex-row gap-8 no-grow no-shrink w-[40%]">
+        <span className="bg-[#FAFAFA] p-2 rounded-md">
+          <img
+            src={reviewSource?.logo.fields.file.url}
+            alt={reviewSource?.logo.fields.title}
+            className="w-8 h-8"
+          />
+        </span>
         <span className="uppercase my-auto">{reviewSource?.name}</span>
       </div>
       <div>
