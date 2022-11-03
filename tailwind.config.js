@@ -27,6 +27,12 @@ const brandGreyScale = {
 brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
 brandGreyScale.DEFAULT = brandGreyScale[500];
 
+/**
+ * @typedef {import('tailwindcss').Config} TailwindConfig
+ * @typedef {NonNullable<TailwindConfig['theme']>['fontSize'] extends import('tailwindcss/types/config').ResolvableTo<infer T> ? NonNullable<T>[string] : never} FontSize
+ */
+
+/** @type {TailwindConfig} */
 module.exports = {
   content: [
     path.join(__dirname, 'src', 'components', '**', '*.{js,ts,jsx,tsx}'),
@@ -49,6 +55,9 @@ module.exports = {
     },
     {
       pattern: /^-?(?:m|p)(?:x|y|t|l|b|r)?-.+/,
+    },
+    {
+      pattern: /^title-.+/,
     },
   ],
   darkMode: 'class',
@@ -114,5 +123,6 @@ module.exports = {
   plugins: [
     require('@tailwindcss/typography'),
     require('@headlessui/tailwindcss'),
+    require('./tailwindPlugins/titleComponent'),
   ],
 };

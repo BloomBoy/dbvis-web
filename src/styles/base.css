@@ -1,8 +1,4 @@
 @layer base {
-  :root {
-    --title-main-color: theme("colors.gray.900");
-    --title-sub-color: theme("colors.gray.500");
-  }
   body {
     @apply text-black antialiased;
   }

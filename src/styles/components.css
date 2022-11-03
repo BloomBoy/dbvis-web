@@ -3,9 +3,9 @@
 | Contentful Helper Classes         |
 #===================================#
 */
-@layer components {
-  .rounded-box {
-    @apply p-11 rounded-3xl bg-[#FFFFCC] dark:bg-[#2B2B2B];
+@layer utilities {
+  .round-container, .rounded-box /* deprecated */ {
+    @apply p-11 rounded-card bg-[#FFFFCC] dark:bg-[#2B2B2B];
   }
 
   .no-box-padding {
@@ -19,15 +19,7 @@
 #===================================#
 */
 
-@layer components {
-  .title-main {
-    color: var(--title-main-color);
-  }
-
-  .title-sub {
-    color: var(--title-sub-color);
-  }
-
+@layer utilities {
   .hover-trigger-base {
     --hover-trigger-panel-opacity: var(--hover-trigger-panel-inactive-opacity, 0);
     --hover-trigger-panel-display: var(--hover-trigger-panel-inactive-display, hidden);
