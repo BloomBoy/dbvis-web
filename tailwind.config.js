@@ -79,6 +79,9 @@ module.exports = {
       boxShadow: {
         imageShadow: '0px 0px 6px rgba(0, 0, 0, 0.05)',
       },
+      borderRadius: {
+        card: '24px',
+      },
       typography: {
         DEFAULT: {
           css: {
