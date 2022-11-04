@@ -1,13 +1,12 @@
-import * as Contentful from 'contentful';
+import { SafeEntryFields } from 'src/utils/contentful';
 import type { ComponentProps } from '..';
 import MaybeLink from 'src/components/contentful/MaybeLink';
-import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
 
 export type ButtonData = {
   buttonText: SafeEntryFields.Symbol;
   target: SafeEntryFields.Symbol;
-  classes: Contentful.EntryFields.Symbol[];
+  classes: SafeEntryFields.Symbol[];
 };
 
 export default function Button(

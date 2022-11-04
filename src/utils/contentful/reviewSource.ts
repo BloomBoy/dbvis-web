@@ -1,9 +1,9 @@
-import * as Contentful from 'contentful';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetEntryByIdParams,
   GetTaggedParams,
+  SafeEntryFields,
 } from './types';
 import getClient from '../getContentfulClient.mjs';
 import { safeValue } from './helpers';
@@ -22,7 +22,7 @@ const getSingleReviewSourceQuery = (params: GetEntryByIdParams) => ({
 });
 
 function parseReviewSource(
-  rawSource: Contentful.Entry<ContentTypeFieldsMap['reviewSource']>,
+  rawSource: SafeEntryFields.Entry<ContentTypeFieldsMap['reviewSource']>,
 ) {
   return {
     ...rawSource,

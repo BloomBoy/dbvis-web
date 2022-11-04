@@ -1,4 +1,4 @@
-import { EntryFields } from 'contentful';
+import { SafeEntryFields } from 'src/utils/contentful';
 import React from 'react';
 import classNames from 'classnames';
 import renderRichText from 'src/utils/contentful/rich-text-renderer';
@@ -8,7 +8,7 @@ export default function RichText({
   className,
   style,
 }: {
-  content: EntryFields.RichText;
+  content: SafeEntryFields.RichText;
   className?: string;
   style?: React.CSSProperties;
 }): JSX.Element {

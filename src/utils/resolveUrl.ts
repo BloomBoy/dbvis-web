@@ -1,5 +1,4 @@
 import { isAsset, isLink, SafeEntryFields } from './contentful';
-import * as Contentful from 'contentful';
 import { ContentTypeFieldsMap } from 'src/utils/contentful';
 import { objectEntries, fromEntries } from 'src/utils/objects';
 
@@ -11,14 +10,14 @@ const simpleUrlPrefix = {
 function makeUrlMap<
   T extends {
     [key in Exclude<keyof ContentTypeFieldsMap, keyof typeof simpleUrlPrefix>]:
-      | ((entry: Contentful.Entry<ContentTypeFieldsMap[key]>) => string)
+      | ((entry: SafeEntryFields.Entry<ContentTypeFieldsMap[key]>) => string)
       | null;
   },
 >(o: T) {
   return o as {
     [key in keyof T & keyof ContentTypeFieldsMap]: T[key] extends null
       ? null
-      : (entry: Contentful.Entry<ContentTypeFieldsMap[key]>) => string;
+      : (entry: SafeEntryFields.Entry<ContentTypeFieldsMap[key]>) => string;
   };
 }
 
@@ -77,7 +76,7 @@ export function getEntryUrl<T extends ValidEntry>(entry: T): string | null {
 }
 
 type ValidEntry = {
-  [key in keyof typeof contentTypeUrlMap]: Contentful.Entry<
+  [key in keyof typeof contentTypeUrlMap]: SafeEntryFields.Entry<
     ContentTypeFieldsMap[key]
   > & {
     sys: {

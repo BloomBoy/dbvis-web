@@ -1,13 +1,13 @@
-import * as Contentful from 'contentful';
+import { SafeEntryFields } from 'src/utils/contentful';
 import type { ComponentProps } from '..';
 import RichText from 'src/components/RichText';
 import getTextAlignment from 'src/utils/getTextAlignment';
 import classNames from 'classnames';
 
 type TextData = {
-  text: Contentful.EntryFields.RichText;
-  alignment?: Contentful.EntryFields.Symbol;
-  classes: Contentful.EntryFields.Symbol[];
+  text: SafeEntryFields.RichText;
+  alignment?: SafeEntryFields.Symbol;
+  classes: SafeEntryFields.Symbol[];
 };
 
 export default function Text(

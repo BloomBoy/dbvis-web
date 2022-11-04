@@ -1,4 +1,3 @@
-import * as Contentful from 'contentful';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
@@ -36,7 +35,7 @@ async function parseFullDatabasePage<
   T extends Partial<ContentTypeFieldsMap['databasePage']>,
 >(
   preview: boolean,
-  rawPage: Contentful.Entry<T>,
+  rawPage: SafeEntryFields.Entry<T>,
 ): Promise<{
   page: SafeEntryFields.Entry<SafeValue<T>>;
   collectedData: Record<string, unknown>;
@@ -231,7 +230,7 @@ export async function getAllDatabaseListEntries(
     limit: 100,
     skip: 0,
   };
-  const items: Contentful.Entry<ListEntryFields>[] = [];
+  const items: SafeEntryFields.Entry<ListEntryFields>[] = [];
   let total = Infinity;
   do {
     let newItems;

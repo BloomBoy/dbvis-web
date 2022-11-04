@@ -95,60 +95,76 @@ const safeEntry = <T>() =>
 const safeAsset = () =>
   z.record(z.unknown()) as unknown as z.ZodType<SafeEntryFields.SafeAsset>;
 
+const standardPage = withLayoutFields({
+  title: z.string(),
+  slug: z.string(),
+});
+
+const menuItem = z.object({
+  id: z.string(),
+  title: z.string(),
+  targetUrl: z.string().optional(),
+  styles: z.array(z.string()),
+  subItems: z.array(safeEntry()).optional(),
+});
+
+const menu = z.object({
+  menuId: z.string(),
+  menuItems: z.array(safeEntry<z.infer<typeof menuItem>>()),
+});
+
+const reviewSource = z.object({
+  name: z.string(),
+  logo: safeAsset(),
+  url: z.string().optional(),
+  reviewMaxScore: z.number(),
+  averageScore: z.number().optional(),
+});
+
+const userReview = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  role: z.string().optional(),
+  score: z.number(),
+  review: richText(),
+  source: safeEntry<z.infer<typeof reviewSource>>(),
+  weight: z.number(),
+});
+
+const stringToken = z.object({
+  key: z.string(),
+  value: z.string(),
+});
+
+const databasePage = withLayoutFields({
+  title: z.string(),
+  listTitle: z.string(),
+  slug: z.string(),
+  logo: safeAsset(),
+  description: z.string(),
+  keywords: z.array(z.string()).optional(),
+  searchable: z.boolean(),
+  weight: z.number(),
+});
+
+const extraDatabaseSearchResult = z.object({
+  title: z.string(),
+  logo: safeAsset(),
+  description: string(),
+  keywords: z.array(z.string()).optional(),
+  targetUrl: z.string(),
+  weight: z.number(),
+});
+
 const contentTypeSchemas = {
-  standardPage: withLayoutFields({
-    title: z.string(),
-    slug: z.string(),
-  }),
-  menu: z.object({
-    menuId: z.string(),
-    menuItems: z.array(safeEntry()),
-  }),
-  menuItem: z.object({
-    id: z.string(),
-    title: z.string(),
-    targetUrl: z.string().optional(),
-    styles: z.array(z.string()),
-    subItems: z.array(safeEntry()).optional(),
-  }),
-  userReview: z.object({
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
-    role: z.string().optional(),
-    score: z.number(),
-    review: richText(),
-    source: safeEntry(),
-    weight: z.number(),
-  }),
-  reviewSource: z.object({
-    name: z.string(),
-    logo: safeAsset(),
-    url: z.string().optional(),
-    reviewMaxScore: z.number(),
-    averageScore: z.number().optional(),
-  }),
-  stringToken: z.object({
-    key: z.string(),
-    value: z.string(),
-  }),
-  databasePage: withLayoutFields({
-    title: z.string(),
-    listTitle: z.string(),
-    slug: z.string(),
-    logo: safeAsset(),
-    description: z.string(),
-    keywords: z.array(z.string()).optional(),
-    searchable: z.boolean(),
-    weight: z.number(),
-  }),
-  extraDatabaseSearchResult: z.object({
-    title: z.string(),
-    logo: safeAsset(),
-    description: string(),
-    keywords: z.array(z.string()).optional(),
-    targetUrl: z.string(),
-    weight: z.number(),
-  }),
+  standardPage,
+  menuItem,
+  menu,
+  reviewSource,
+  userReview,
+  stringToken,
+  databasePage,
+  extraDatabaseSearchResult,
 };
 
 export default contentTypeSchemas;

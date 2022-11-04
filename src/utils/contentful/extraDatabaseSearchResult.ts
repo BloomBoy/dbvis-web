@@ -1,8 +1,8 @@
-import * as Contentful from 'contentful';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetTaggedParams,
+  SafeEntryFields,
 } from './types';
 import getClient from '../getContentfulClient.mjs';
 import { isLink } from './helpers';
@@ -35,7 +35,7 @@ const getPagedExtraDatabaseSearchResultsQuery = (
 function parseListItem({
   sys: { id },
   fields,
-}: Contentful.Entry<
+}: SafeEntryFields.Entry<
   Partial<ContentTypeFieldsMap['extraDatabaseSearchResult']>
 >): DatabaseListEntry | null {
   const { keywords, title, targetUrl, logo, weight } = fields;
@@ -90,7 +90,7 @@ export async function getAllExtraDatabaseSearchResultListEntries(
     limit: 100,
     skip: 0,
   };
-  const items: Contentful.Entry<
+  const items: SafeEntryFields.Entry<
     ContentTypeFieldsMap['extraDatabaseSearchResult']
   >[] = [];
   let total = Infinity;

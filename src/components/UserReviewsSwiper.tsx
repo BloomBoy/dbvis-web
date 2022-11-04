@@ -106,8 +106,8 @@ export default function UserReviewsSwiper({
               <div className="mt-8 flex flex-row">
                 <div className="w-10 h-10 flex items-center">
                   <img
-                    src={review.source?.fields.logo.fields.file.url}
-                    alt={review.source?.fields.logo.fields.title}
+                    src={review.source?.fields.logo?.fields?.file?.url}
+                    alt={review.source?.fields.logo?.fields?.title}
                   />
                 </div>
                 <div className="ml-4 flex flex-col text-gray-500">
