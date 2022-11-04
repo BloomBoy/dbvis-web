@@ -31,15 +31,27 @@ let previewClient =
  */
 const getContentfulClient = (preview) => {
   if (!preview) return baseClient;
-  if (typeof previewClient == null && typeof preview === 'object') {
-    contentful.createClient({
-      space: CF_SPACE_ID,
-      accessToken: preview.CF_PREVIEW_ACCESS_TOKEN,
-      host: 'preview.contentful.com',
-    });
+  if (previewClient == null) {
+    if (typeof window !== 'undefined') {
+      const previewCookie = document.cookie
+        .split(';')
+        .map((v) => v.split('='))
+        .find(([key]) => {
+          return key.trim() === 'previewToken';
+        })?.[1]
+        ?.trim();
+      if (previewCookie) {
+        previewClient = contentful.createClient({
+          space: CF_SPACE_ID,
+          accessToken: decodeURIComponent(previewCookie),
+          host: 'preview.contentful.com',
+        });
+      }
+    }
   }
   if (previewClient == null) {
-    throw new Error('Missing Contentful preview token');
+    console.error('Missing Contentful preview token');
+    return baseClient;
   }
   return previewClient;
 };
