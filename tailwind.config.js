@@ -54,6 +54,9 @@ module.exports = {
       pattern: /^gap-(?:x|y)-.+/,
     },
     {
+      pattern: /^justify-.+/,
+    },
+    {
       pattern: /^-?(?:m|p)(?:x|y|t|l|b|r)?-.+/,
     },
     {
