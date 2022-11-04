@@ -1,16 +1,16 @@
-import { EntryFields } from 'contentful';
+import { SafeEntryFields } from './contentful';
 import getConfig from 'next/config';
 
 export type MenuItem = {
-  id: EntryFields.Symbol;
-  title: EntryFields.Symbol;
-  targetUrl?: EntryFields.Symbol;
-  styles: EntryFields.Symbol[];
+  id: SafeEntryFields.Symbol;
+  title: SafeEntryFields.Symbol;
+  targetUrl?: SafeEntryFields.Symbol;
+  styles: SafeEntryFields.Symbol[];
   subItems?: MenuItem[];
 };
 
 export type Menu = {
-  id: EntryFields.Symbol;
+  id: SafeEntryFields.Symbol;
   menuItems: MenuItem[];
 };
 

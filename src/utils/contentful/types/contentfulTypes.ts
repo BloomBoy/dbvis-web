@@ -1,4 +1,11 @@
-import { Asset, Entry, LinkType, Locale, Sys, Tag } from 'contentful';
+import { Asset, LinkType, Locale, Metadata, Sys, Tag } from 'contentful';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Entry<T = any> {
+  sys: Sys;
+  fields: T;
+  metadata: Metadata;
+}
 
 export const VALID_LINK_TYPES = [
   'Entry',

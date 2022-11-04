@@ -1,6 +1,6 @@
-import { EntryFields } from 'contentful';
 import MaybeLink from 'src/components/contentful/MaybeLink';
 import RichText from 'src/components/RichText';
+import { SafeEntryFields } from 'src/utils/contentful';
 
 type WhatsNewPageProps = {
   release: {
@@ -136,7 +136,9 @@ export default function WhatsNewPage({ release }: WhatsNewPageProps) {
             <hr className="border-dotted border-grey-500 my-16 opacity-20" />
             <div className="p-10">
               {/*  */}
-              <RichText content={c.richText as any as EntryFields.RichText} />
+              <RichText
+                content={c.richText as unknown as SafeEntryFields.RichText}
+              />
             </div>
           </div>
         ))}

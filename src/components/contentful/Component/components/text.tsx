@@ -1,13 +1,13 @@
-import * as Contentful from 'contentful';
+import { SafeEntryFields } from 'src/utils/contentful';
 import type { ComponentProps } from '..';
 import RichText from 'src/components/RichText';
 import getTextAlignment from 'src/utils/getTextAlignment';
 import classNames from 'classnames';
 
 type TextData = {
-  text: Contentful.EntryFields.RichText;
-  alignment?: Contentful.EntryFields.Symbol;
-  classes: Contentful.EntryFields.Symbol[];
+  text: SafeEntryFields.RichText;
+  alignment?: SafeEntryFields.Symbol;
+  classes: SafeEntryFields.Symbol[];
 };
 
 export default function Text(
@@ -18,7 +18,7 @@ export default function Text(
   const textAlign = getTextAlignment(props.data.alignment);
 
   return (
-    <div className={classNames(textAlign, 'self-center max-w-[612px] pb-12')}>
+    <div className={classNames(textAlign, 'pb-12')}>
       <RichText
         content={text}
         className={classNames(...(props.data?.classes || []))}

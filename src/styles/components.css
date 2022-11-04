@@ -46,4 +46,16 @@
   .hover-trigger-panel-wrapper {
     @apply absolute top-0 left-0 right-0 z-10;
   }
+
+  .center {
+    @apply self-center justify-self-center mx-auto text-center;
+  }
+
+  .right {
+    @apply self-end justify-self-end ml-auto text-right;
+  }
+
+  .left {
+    @apply self-start justify-self-start mr-auto text-left;
+  }
 }

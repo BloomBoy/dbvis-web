@@ -1,4 +1,4 @@
-import * as Contentful from 'contentful';
+import { SafeEntryFields } from 'src/utils/contentful';
 import type { ComponentProps } from '..';
 import classNames from 'classnames';
 import { layoutHeaderCount } from '../../Layout/LayoutRenderers';
@@ -6,10 +6,10 @@ import { useMemo } from 'react';
 import useCollectedData from 'src/hooks/useCollectedData';
 
 export type TitleData = {
-  title: Contentful.EntryFields.Symbol;
-  subTitle: Contentful.EntryFields.Symbol;
-  alignment?: Contentful.EntryFields.Symbol;
-  classes?: Contentful.EntryFields.Symbol[];
+  title: SafeEntryFields.Symbol;
+  subTitle: SafeEntryFields.Symbol;
+  alignment?: SafeEntryFields.Symbol;
+  classes?: SafeEntryFields.Symbol[];
 };
 
 function TitleComponent({

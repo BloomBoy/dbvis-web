@@ -75,9 +75,12 @@ module.exports = {
         bodyBackground: colors.white,
         grey: brandGreyScale,
         product: '#4BD068',
+        'tab-active-color': `var(--tab-active-color, ${colors.neutral[200]})`,
+        'tab-hover-color': `var(--tab-hover-color, ${colors.neutral[100]})`,
+        'tab-border-color': `var(--tab-hover-color, ${colors.neutral[200]})`,
       },
       backgroundImage: {
-        buttonBackground:
+        badgeBackground:
           'linear-gradient(360deg, #FCFCFC -48.75%, #F3F3F3 100%)',
       },
       boxShadow: {
@@ -94,6 +97,7 @@ module.exports = {
             '--tw-prose-headings': `var(--contentful-text-color, ${colors.gray[900]})`,
             '--tw-prose-links': brandPrimaryColors.DEFAULT,
             '--tw-prose-links-hover': brandPrimaryColors[700],
+            maxWidth: null,
             lineHeight: 1.2,
             fontSize: '20px',
             lineHeight: '28px',

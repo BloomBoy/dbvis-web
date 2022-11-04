@@ -36,7 +36,7 @@ export default function useCollectedData<T>(
     return collectedData;
   }
   const ret = collectedData[key] as T | undefined;
-  if (typeof ret === undefined) {
+  if (typeof ret === 'undefined') {
     return defaultValue;
   }
   return ret;

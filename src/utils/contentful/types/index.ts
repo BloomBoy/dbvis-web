@@ -1,5 +1,5 @@
-import type { Entry } from 'contentful';
 import type { ContentTypeFieldsMap } from './contentTypes';
+import { Entry } from './SafeEntryFields';
 export * from './contentfulTypes';
 export * as SafeEntryFields from './SafeEntryFields';
 

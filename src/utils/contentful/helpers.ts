@@ -5,7 +5,7 @@ import {
   SafeEntryFields,
   VALID_LINK_TYPES,
 } from './types';
-import { Entry, Locale, Metadata, Sys } from 'contentful';
+import { Locale } from 'contentful';
 import { isNonNull } from '../filters';
 
 export function isLink<T extends typeof VALID_LINK_TYPES[number]>(
@@ -248,7 +248,9 @@ export function isTag(obj: {
   return true;
 }
 
-export function isEntryOrAsset(obj: unknown): obj is Entry<unknown> {
+export function isEntryOrAsset(
+  obj: unknown,
+): obj is SafeEntryFields.Entry<unknown> {
   if (!hasSys(obj)) return false;
   return isEntry(obj) || isAsset(obj);
 }
@@ -281,21 +283,14 @@ export function linkToUndefined<
 
 const CLEANED = Symbol('Cleaned');
 
-type SafeMap<T extends object> = T extends Entry<infer Q>
-  ? {
-      sys: Sys;
-      fields: SafeValue<Q>;
-      metadata: Metadata;
-    }
-  : T extends {
-      sys: {
-        type: string;
-        id: string;
-      };
-    }
+type SafeMap<T extends object> = T extends {
+  readonly sys: object;
+}
   ? T extends ContentfulFieldLink
     ? undefined
-    : T
+    : {
+        [key in keyof T]: key extends 'fields' ? SafeValue<T[key]> : T[key];
+      }
   : {
       [key in keyof T]: SafeValue<T[key]>;
     };
@@ -372,11 +367,12 @@ function cleanupObject<T extends Record<string, unknown>>(
   const proto = Object.getPrototypeOf(o);
   if (hasSys(o)) {
     if (isEntry(o)) {
-      return {
+      const a = {
         sys: o.sys,
         fields: safeValue(o.fields),
         metadata: o.metadata,
-      } as SafeValue<T>;
+      } as any;
+      return a;
     }
     return o as SafeValue<T>;
   }

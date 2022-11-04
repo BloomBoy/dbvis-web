@@ -1,12 +1,10 @@
-import * as Contentful from 'contentful';
 import type {
   LayoutLinkProps,
   LayoutListEntryProps,
   LayoutProps,
 } from 'src/components/contentful/Layout';
-import { SafeAsset, SafeEntry } from './types';
+import { SafeAsset, SafeEntry, SafeEntryFields } from './types';
 import { SafeValue, isNotLink, safeValue, isLink } from './helpers';
-import { Entry } from 'contentful';
 import { components, isComponent } from 'src/components/contentful/Component';
 import { asyncMapMaxConcurrent } from '../asyncArray.mjs';
 
@@ -70,6 +68,7 @@ export interface ParsingContext {
 }
 
 export default async function parseLayout(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields;
   },
@@ -79,6 +78,7 @@ export default async function parseLayout(
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout<LayoutFieldId extends string>(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<LayoutFieldId>;
   },
@@ -92,6 +92,7 @@ export default async function parseLayout<
   LayoutFieldId extends string,
   AssetListFieldId extends string,
 >(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<LayoutFieldId, AssetListFieldId>;
   },
@@ -107,6 +108,7 @@ export default async function parseLayout<
   AssetListFieldId extends string,
   ReferenceListFieldId extends string,
 >(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<
       LayoutFieldId,
@@ -123,6 +125,7 @@ export default async function parseLayout<
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout(
+  preview: boolean,
   entry: {
     readonly fields: LayoutFields<string, string, string>;
   },
@@ -167,21 +170,29 @@ export default async function parseLayout(
     };
   }
   const assetList = (
-    (entry.fields[assetListFieldId] as Contentful.Asset[] | undefined) ?? []
+    (entry.fields[assetListFieldId] as SafeEntryFields.Asset[] | undefined) ??
+    []
   ).filter(isNotLink);
   const referenceList = (
     (entry.fields[referenceListFieldId] as
-      | Contentful.Entry<unknown>[]
+      | SafeEntryFields.Entry<unknown>[]
       | undefined) ?? []
   ).filter(isNotLink);
 
   const linkMap = Object.fromEntries([
     ...assetList.map(
-      (asset) => [asset.sys.id, asset as Entry<unknown> | undefined] as const,
+      (asset) =>
+        [
+          asset.sys.id,
+          asset as SafeEntryFields.Entry<unknown> | undefined,
+        ] as const,
     ),
     ...referenceList.map(
       (reference) =>
-        [reference.sys.id, reference as Entry<unknown> | undefined] as const,
+        [
+          reference.sys.id,
+          reference as SafeEntryFields.Entry<unknown> | undefined,
+        ] as const,
     ),
   ]);
 
@@ -204,7 +215,7 @@ export default async function parseLayout(
       const componentRenderer = components[ret.type];
       const dataCollector = componentRenderer?.registerDataCollector?.(
         ret,
-        false,
+        preview,
       );
       if (dataCollector != null) {
         dataCollectors[dataCollector.fetchKey] = dataCollector;

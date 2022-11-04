@@ -6,32 +6,52 @@ import {
   canRenderMainHeader,
 } from '../common';
 import { Disclosure, Transition } from '@headlessui/react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import Component from '../../Component';
-import { EntryFields } from 'contentful';
 import type { LayoutProps, SlotProps } from '..';
 import RichText from 'src/components/RichText';
 import classNames from 'classnames';
 import LayoutTitle from '../../Component/components/layoutTitle';
+import { SafeEntryFields } from 'src/utils/contentful';
 
-type Data = HeaderData & ThemeData;
+type Data = HeaderData &
+  ThemeData & {
+    buttonActiveBackgroundColor: SafeEntryFields.Symbol;
+    buttonHoverBackgroundColor: SafeEntryFields.Symbol;
+    buttonBorderColor: SafeEntryFields.Symbol;
+  };
 
 type SlotData = {
-  button: EntryFields.RichText;
+  button: SafeEntryFields.RichText;
+  buttonActiveBackgroundColor: SafeEntryFields.Symbol;
+  buttonHoverBackgroundColor: SafeEntryFields.Symbol;
+  buttonBorderColor: SafeEntryFields.Symbol;
+  buttonTextColor: SafeEntryFields.Symbol;
+  buttonClases: SafeEntryFields.Symbol[];
+  classes: SafeEntryFields.Symbol[];
+  backgroundColor: SafeEntryFields.Symbol;
+  backgroundImage: SafeEntryFields.Asset;
+  textColor: string;
 };
 
 function SlotImage({
   slot,
   layout,
+  zIndex,
 }: {
   slot: SlotProps<SlotData>;
   layout: LayoutProps<Data, SlotData>;
+  zIndex?: number;
 }) {
   return (
     <div
       className={classNames(
         'absolute top-0 bottom-0 left-0 right-0 flex py-10 md:px-24 lg:px-36 items-center',
       )}
+      style={{
+        backgroundColor: slot.data.backgroundColor,
+        zIndex,
+      }}
     >
       {slot.components.map((componentProps) => (
         <Component
@@ -44,13 +64,50 @@ function SlotImage({
   );
 }
 
+function SlotButton({
+  as: Comp,
+  className,
+  slot,
+  style,
+  ...props
+}: Omit<React.ComponentPropsWithoutRef<'button'>, 'children' | 'slot'> & {
+  as: 'button' | typeof Disclosure.Button;
+  slot: SlotProps<SlotData>;
+}) {
+  return (
+    <Comp
+      className={classNames(
+        className,
+        'px-14 py-8 rounded-2xl border border-tab-border-color text-left self-center h-full',
+      )}
+      style={
+        {
+          '--tab-active-color': slot.data.buttonActiveBackgroundColor,
+          '--tab-hover-color':
+            slot.data.buttonHoverBackgroundColor ||
+            slot.data.buttonActiveBackgroundColor,
+          '--tab-border-color':
+            slot.data.buttonBorderColor ||
+            slot.data.buttonActiveBackgroundColor,
+          ...style,
+        } as React.CSSProperties
+      }
+      {...props}
+    >
+      {slot.data.button && (
+        <RichText className="text-base" content={slot.data.button} />
+      )}
+    </Comp>
+  );
+}
+
 function SelectButtons(
   props: LayoutProps<Data, SlotData> & {
     selectedIndex: number;
     setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
   },
 ) {
-  const { slots, selectedIndex, setSelectedIndex } = props;
+  const { slots, data, selectedIndex, setSelectedIndex } = props;
   const onClick = useCallback(
     (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
       if (ev.defaultPrevented) return;
@@ -78,27 +135,28 @@ function SelectButtons(
     [setSelectedIndex],
   );
   return slots.length > 0 ? (
-    <div className="flex flex-wrap justify-center lg:grid lg:grid-cols-3 gap-6 mb-12">
+    <div
+      className="md:flex flex-col flex-wrap lg:grid grid-cols-3 gap-6 mb-12"
+      style={
+        {
+          '--tab-active-color': data.buttonActiveBackgroundColor,
+          '--tab-hover-color':
+            data.buttonHoverBackgroundColor || data.buttonActiveBackgroundColor,
+          '--tab-border-color':
+            data.buttonBorderColor || data.buttonActiveBackgroundColor,
+        } as React.CSSProperties
+      }
+    >
       {slots.map((slot, index) => (
-        <Disclosure key={slot.id}>
-          {({ open }) => (
-            <>
-              <Disclosure.Button
-                className={classNames(
-                  'px-14 py-8 rounded-2xl border border-neutral-200 text-left self-center w-full md:w-96 lg:w-auto h-full',
-                  open && 'bg-neutral-200',
-                  selectedIndex === index &&
-                    'md:bg-neutral-200 md:cursor-default',
-                  selectedIndex !== index &&
-                    'md:bg-transparent hover:bg-neutral-100',
-                )}
-                onClick={(
-                  ev: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-                ) => onClick(ev, index)}
-              >
-                {slot.data.button && (
-                  <RichText className="text-base" content={slot.data.button} />
-                )}
+        <div className={classNames(slot.data.classes)} key={slot.id}>
+          <Disclosure>
+            {({ open }) => (
+              <div className="md:hidden block">
+                <SlotButton
+                  as={Disclosure.Button}
+                  className="w-full ui-open:bg-tab-active-color"
+                  slot={slot}
+                />
                 <Transition
                   show={open}
                   enter="transition-all ease duration-500 transform"
@@ -116,10 +174,23 @@ function SelectButtons(
                     <SlotImage slot={slot} layout={props} />
                   </Disclosure.Panel>
                 </Transition>
-              </Disclosure.Button>
-            </>
-          )}
-        </Disclosure>
+              </div>
+            )}
+          </Disclosure>
+          <SlotButton
+            as="button"
+            className={classNames(
+              'hidden md:flex w-96 lg:w-auto h-full',
+              selectedIndex === index &&
+                'bg-tab-active-color md:cursor-default',
+              selectedIndex !== index && 'hover:bg-tab-hover-color',
+            )}
+            onClick={(ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+              onClick(ev, index)
+            }
+            slot={slot}
+          />
+        </div>
       ))}
     </div>
   ) : null;
@@ -130,10 +201,21 @@ function CrossFadeViewLayoutComp(
 ): JSX.Element {
   const { slots, data, id } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const selectStatusRef = useRef({ selectedIndex, prevSelectedIndex: -1 });
+  if (selectStatusRef.current.selectedIndex !== selectedIndex) {
+    selectStatusRef.current.prevSelectedIndex =
+      selectStatusRef.current.selectedIndex;
+    selectStatusRef.current.selectedIndex = selectedIndex;
+  }
+
+  const patchedData = useMemo(
+    () => ({ ...data, contentBackgroundColor: undefined }),
+    [data],
+  );
 
   return (
-    <Wrapper data={data}>
-      <Container data={data}>
+    <Wrapper data={patchedData}>
+      <Container data={patchedData}>
         {data.renderHeader && (
           <LayoutTitle
             data={{ alignment: data.alignment }}
@@ -147,7 +229,12 @@ function CrossFadeViewLayoutComp(
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
         />
-        <div className="relative my-3 w-full hidden md:flex flex-nowrap rounded-2xl bg-gray-300 overflow-hidden h-[300px] md:h-[500px] lg:h-[725px]">
+        <div
+          className="relative my-3 w-full hidden md:flex flex-nowrap rounded-2xl bg-gray-300 overflow-hidden h-[300px] md:h-[500px] lg:h-[725px]"
+          style={{
+            backgroundColor: data.contentBackgroundColor,
+          }}
+        >
           {slots.map((slot, index) => (
             <Transition
               key={slot.id}
@@ -159,7 +246,17 @@ function CrossFadeViewLayoutComp(
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <SlotImage slot={slot} layout={props} />
+              <SlotImage
+                slot={slot}
+                layout={props}
+                zIndex={
+                  selectStatusRef.current.selectedIndex === index
+                    ? 2
+                    : selectStatusRef.current.prevSelectedIndex === index
+                    ? 1
+                    : 0
+                }
+              />
             </Transition>
           ))}
         </div>

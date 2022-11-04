@@ -1,12 +1,13 @@
-import * as Contentful from 'contentful';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetEntryByIdParams,
   GetTaggedParams,
+  SafeEntryFields,
 } from './types';
 import getClient from '../getContentfulClient.mjs';
 import { safeValue } from './helpers';
+import contentTypeSchemas from './schemas';
 
 export interface GetReviewSourcesParams
   extends GetPaginatedParams,
@@ -21,7 +22,7 @@ const getSingleReviewSourceQuery = (params: GetEntryByIdParams) => ({
 });
 
 function parseReviewSource(
-  rawSource: Contentful.Entry<ContentTypeFieldsMap['reviewSource']>,
+  rawSource: SafeEntryFields.Entry<ContentTypeFieldsMap['reviewSource']>,
 ) {
   return {
     ...rawSource,
@@ -34,7 +35,10 @@ export async function getReviewSource(params: GetEntryByIdParams) {
   const rawSource = await getClient(params.preview).getEntry<
     ContentTypeFieldsMap['reviewSource']
   >(params.id, query);
-  if (!rawSource) return null;
+  const verified = contentTypeSchemas.reviewSource.safeParse(
+    rawSource?.fields,
+  ).success;
+  if (!rawSource || !verified) return null;
   return parseReviewSource(rawSource);
 }
 
@@ -54,9 +58,14 @@ export async function getReviewSources(params: GetReviewSourcesParams) {
   const { items, limit, skip, total } = await getClient(
     params.preview,
   ).getEntries<ContentTypeFieldsMap['reviewSource']>(query);
-  const reviewSources = items.map(parseReviewSource);
+  const reviewSources = items
+    .filter((item) => {
+      return contentTypeSchemas.reviewSource.safeParse(item?.fields).success;
+    })
+    .map(parseReviewSource);
   return {
     reviewSources,
+    fetched: items.length,
     limit,
     skip,
     total,

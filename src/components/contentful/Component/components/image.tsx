@@ -1,11 +1,10 @@
-import * as Contentful from 'contentful';
-import type { ComponentProps } from '..';
 import { SafeEntryFields } from 'src/utils/contentful';
+import type { ComponentProps } from '..';
 import classNames from 'classnames';
 
 type ImageData = {
   asset: SafeEntryFields.Asset;
-  classes: Contentful.EntryFields.Symbol[];
+  classes: SafeEntryFields.Symbol[];
 };
 
 export default function Image(

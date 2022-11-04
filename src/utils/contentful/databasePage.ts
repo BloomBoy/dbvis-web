@@ -1,4 +1,3 @@
-import * as Contentful from 'contentful';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
@@ -11,6 +10,8 @@ import { isLink, SafeValue, safeValue } from './helpers';
 import parseLayout from './parseLayout';
 import type { DatabaseListEntry } from 'src/components/ShowDatabases';
 import { isNonNull } from '../filters';
+import contentTypeSchemas from './schemas';
+import { fromEntries } from '../objects';
 
 const getSingleDatabasePageQuery = (
   params: GetSlugEntryParams,
@@ -33,7 +34,8 @@ const getSingleDatabasePageQuery = (
 async function parseFullDatabasePage<
   T extends Partial<ContentTypeFieldsMap['databasePage']>,
 >(
-  rawPage: Contentful.Entry<T>,
+  preview: boolean,
+  rawPage: SafeEntryFields.Entry<T>,
 ): Promise<{
   page: SafeEntryFields.Entry<SafeValue<T>>;
   collectedData: Record<string, unknown>;
@@ -44,7 +46,7 @@ async function parseFullDatabasePage<
       | Awaited<ReturnType<typeof parseLayout>>['layoutList']
       | undefined;
   if (fields.pageLayout != null) {
-    ({ collectedData, layoutList } = await parseLayout({
+    ({ collectedData, layoutList } = await parseLayout(preview, {
       fields: {
         pageLayout: fields.pageLayout,
         pageAssetReferences: fields.pageAssetReferences ?? [],
@@ -98,16 +100,23 @@ export async function getDatabasePage(
 }> {
   const query = getSingleDatabasePageQuery(params, pickFields);
   const {
-    items: [rawUatabasePage],
+    items: [rawDatabasePage],
   } = await getClient(params.preview).getEntries<
     ContentTypeFieldsMap['databasePage']
   >(query);
-  if (!rawUatabasePage)
+  const pickSchema =
+    pickFields != null
+      ? contentTypeSchemas.databasePage.pick(
+          fromEntries(pickFields.map((key) => [key, true] as const)),
+        )
+      : contentTypeSchemas.databasePage;
+  const verified = pickSchema.safeParse(rawDatabasePage?.fields).success;
+  if (!rawDatabasePage || !verified)
     return {
       page: null,
       collectedData: {},
     };
-  return parseFullDatabasePage(rawUatabasePage);
+  return parseFullDatabasePage(params.preview ?? false, rawDatabasePage);
 }
 
 export interface GetDatabasePagesParams extends GetTaggedParams {
@@ -165,13 +174,24 @@ export type ListEntryFields = Pick<
   typeof listFields[number]
 >;
 
+const listSchema = contentTypeSchemas.databasePage.pick(
+  fromEntries(listFields.map((key) => [key, true] as const)),
+);
+
 export function parseListItem({
   sys: { id },
-  fields: { keywords, listTitle, searchable, slug, logo, weight },
+  fields,
 }: SafeEntryFields.Entry<Partial<ListEntryFields>>): DatabaseListEntry | null {
-  if (listTitle == null) return null;
-  if (slug == null) return null;
-  if (isLink(logo) || logo == null) return null;
+  const { keywords, listTitle, searchable, slug, logo, weight } = fields;
+  const verified = listSchema.safeParse(fields);
+  if (
+    listTitle == null ||
+    slug == null ||
+    isLink(logo) ||
+    logo == null ||
+    !verified
+  )
+    return null;
   return {
     id,
     title: listTitle,
@@ -210,7 +230,7 @@ export async function getAllDatabaseListEntries(
     limit: 100,
     skip: 0,
   };
-  const items: Contentful.Entry<ListEntryFields>[] = [];
+  const items: SafeEntryFields.Entry<ListEntryFields>[] = [];
   let total = Infinity;
   do {
     let newItems;
