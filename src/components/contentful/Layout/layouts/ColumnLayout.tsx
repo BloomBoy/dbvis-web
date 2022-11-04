@@ -75,7 +75,7 @@ function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
   const columns = (
     <div
       className={classNames(
-        'md:grid',
+        'flex flex-wrap md:grid',
         gapX ? gapX : 'gap-x-28',
         gapY ? gapY : '',
       )}
