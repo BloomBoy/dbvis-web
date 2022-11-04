@@ -10,16 +10,26 @@ import {
   DatabasePageEntry,
   getDatabasePage,
 } from 'src/utils/contentful/databasePage';
+import SubHeader from 'src/components/PageLayout/navigation/Header/SubHeader';
 
 type Props = {
   page: DatabasePageEntry;
 };
 
 const Home: NextPage<Props> = (props) => {
-  return <LayoutList layouts={props.page.fields.pageLayout} />;
+  return (
+    <>
+      <SubHeader fields={props.page.fields} />
+      <LayoutList layouts={props.page.fields.pageLayout} />
+    </>
+  );
 };
 
-export default Home;
+export default Object.assign(Home, {
+  pageConfig: {
+    headerMode: 'static',
+  },
+});
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,

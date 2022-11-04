@@ -9,21 +9,25 @@ import { CollectedDataProvider } from 'src/hooks/useCollectedData';
 import { InitialRenderProvider } from 'src/hooks/useIsInitialRender';
 import { UserAgentProvider } from 'src/hooks/useCurrentBrowser';
 import PreloadFonts from 'src/utils/preloadFont';
+import { PageConfigProvider } from 'src/hooks/usePageConfig';
 
 const {
   publicRuntimeConfig: { contentfulAppParameters },
 } = getConfig();
 
-function MyApp({ Component, pageProps, ua }: AppProps & { ua?: string }) {
+function MyApp(props: AppProps & { ua?: string }) {
+  const { Component, pageProps, ua } = props;
   const { collectedData } = pageProps as { collectedData?: unknown };
   return (
-    <UserAgentProvider userAgent={ua}>
-      <CollectedDataProvider data={collectedData}>
-        <PageLayout>
-          <Component {...pageProps} />
-        </PageLayout>
-      </CollectedDataProvider>
-    </UserAgentProvider>
+    <PageConfigProvider appProps={props}>
+      <UserAgentProvider userAgent={ua}>
+        <CollectedDataProvider data={collectedData}>
+          <PageLayout>
+            <Component {...pageProps} />
+          </PageLayout>
+        </CollectedDataProvider>
+      </UserAgentProvider>
+    </PageConfigProvider>
   );
 }
 

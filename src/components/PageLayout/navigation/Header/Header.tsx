@@ -10,7 +10,6 @@ import { Popover } from '@headlessui/react';
 import getMenu from '../../../../utils/menus';
 import ScrollbackHeaderWrapper from './ScrollbackHeaderWrapper';
 import classNames from 'classnames';
-import SubHeader from './SubHeader';
 
 type PopoverProps = Parameters<typeof Popover<'div'>>[0];
 
@@ -18,7 +17,7 @@ export interface PopoverProviderProps {
   children: PopoverProps['children'];
 }
 
-type Props =
+export type Props =
   | {
       behavior: 'sticky' | 'static';
       className?: string;
@@ -114,13 +113,9 @@ function HeaderMode(props: Props) {
 }
 
 export default function Header(props: Props) {
-  const showSubHeader = true;
   return (
-    <>
-      <div className={props.className}>
-        <HeaderMode {...props} />
-      </div>
-      {showSubHeader ? <SubHeader /> : null}
-    </>
+    <div className={props.className}>
+      <HeaderMode {...props} />
+    </div>
   );
 }
