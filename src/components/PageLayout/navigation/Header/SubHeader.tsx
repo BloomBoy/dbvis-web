@@ -68,7 +68,7 @@ export default function SubHeader({
               href={`/database/${slug}/features`}
               className="hidden xl:block"
             >
-              fatures {'->'}
+              features {'->'}
             </MaybeLink>
             <MaybeLink
               href={`/database/${slug}/driver`}
