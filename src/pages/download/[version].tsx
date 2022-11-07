@@ -1,5 +1,9 @@
 import React, { useMemo } from 'react';
-import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
+import {
+  GetStaticPathsResult,
+  GetStaticPropsContext,
+  GetStaticPropsResult,
+} from 'next';
 import { getProductIndex } from 'src/utils/contentful/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
 import { WithGlobals, WithCollectedData } from 'src/utils/types';
@@ -138,4 +142,11 @@ export async function getStaticProps(
       revalidate: 12,
     };
   }
+}
+
+export async function getStaticPaths(): Promise<GetStaticPathsResult> {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 }
