@@ -13,6 +13,8 @@ import reviewSourcesComponent from './components/reviewSources';
 import badgeComponent from './components/badge';
 import releaseQuickLinksComponent from './components/releaseQuickLinks';
 import releasenotesComponent from './components/releasenotes';
+import recommendedInstallersComponent from './components/recommendedInstallers';
+import allInstallersComponent from './components/allInstallers';
 import type { LayoutProps } from '../Layout';
 
 export interface SavedComponentProps<
@@ -68,6 +70,8 @@ export const components: Record<
   badgeComponent,
   releaseQuickLinksComponent,
   releasenotesComponent,
+  recommendedInstallersComponent,
+  allInstallersComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {

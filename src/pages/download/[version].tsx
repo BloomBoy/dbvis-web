@@ -1,63 +1,32 @@
-import React from 'react';
-import RecommendedInstallers from 'src/components/download/RecommendedInstallers';
-import AllInstallers from 'src/components/download/AllInstallers';
-import InstallationInstructions from 'src/components/download/InstallationInstructions';
-import { OsTypes } from 'react-device-detect';
+import React, { useMemo } from 'react';
 import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import { getProductIndex } from 'src/utils/contentful/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
 import { WithGlobals, WithCollectedData } from 'src/utils/types';
 import { SafeValue, ContentTypeFieldsMap } from 'src/utils/contentful';
-
-const installers = [
-  {
-    id: 1,
-    title: 'Windows',
-    url: 'a link',
-    os: OsTypes.Windows,
-    text: 'DMG with Java',
-  },
-  {
-    id: 2,
-    title: 'macOS Silicon',
-    url: 'a link',
-    os: OsTypes.MAC_OS,
-    text: 'DMG with Java',
-  },
-  {
-    id: 3,
-    title: 'Linux Silicon',
-    url: 'a link',
-    os: 'Linux',
-    text: 'DMG with Java',
-  },
-  {
-    id: 4,
-    title: 'macOS Intel',
-    url: 'a link',
-    os: OsTypes.MAC_OS,
-    text: 'DMG with Java',
-  },
-  {
-    id: 5,
-    title: 'Windows Silicon',
-    url: 'a link',
-    os: OsTypes.Windows,
-    text: 'DMG with Java',
-  },
-];
+import { LayoutProps, LayoutList } from 'src/components/contentful/Layout';
+import {
+  ColumnLayoutData,
+  ColumnData,
+} from 'src/components/contentful/Layout/layouts/ColumnLayout';
 
 type DownloadPageProps = {
   productIndex: SafeValue<
     Pick<
       ContentTypeFieldsMap['productIndex'],
-      'slug' | 'downloadLayout' | 'active'
+      | 'slug'
+      | 'downloadLayout'
+      | 'downloadAssetReferences'
+      | 'downloadEntryReferences'
+      | 'active'
     >
   >;
 };
 
-export default function DownloadPage(): JSX.Element {
-  const instructions = [
+export default function DownloadPage({
+  productIndex,
+}: DownloadPageProps): JSX.Element {
+  /* const instructions = [
     {
       id: 1,
       os: OsTypes.MAC_OS,
@@ -76,33 +45,49 @@ export default function DownloadPage(): JSX.Element {
       title: 'FROM TAR-archives',
       text: 'All Files are contained in an enclosing folder named DbVisualizer Unpack the tgz file in a terminal window with the following command or double-click it in the Finder: open dbvis_macos_<version>.tgz Start DbVisualizer by opening the following: DbVisualizer',
     },
-  ];
-  const requirements = `OS Support: Windows 64-bit 11/10/8/7 Linux macOS 10.11+ Windows 64-bit: Java 17 is required macOS: Java 17 is required Linux: Java 17 is required The free Eclipse Temurin ↗ Java Runtime is bundled with installers marked With Java VM.Known Java issues for Windows, Linux, macOS users ↗ `;
+  ]; */
+  // const requirements = `OS Support: Windows 64-bit 11/10/8/7 Linux macOS 10.11+ Windows 64-bit: Java 17 is required macOS: Java 17 is required Linux: Java 17 is required The free Eclipse Temurin ↗ Java Runtime is bundled with installers marked With Java VM.Known Java issues for Windows, Linux, macOS users ↗ `;
+
+  const titleLayout = useMemo<
+    SafeValue<LayoutProps<ColumnLayoutData, ColumnData>>
+  >(() => {
+    return {
+      id: 'injected-titleLayout',
+      data: {
+        subTitle: 'v14.0.0 was released on 2022-09-25',
+        title: 'Get DbVisualizer v14.0',
+        renderHeader: false,
+      },
+      type: 'ColumnLayout',
+      slots: [
+        {
+          components: [
+            {
+              type: 'layoutTitleComponent',
+              data: {
+                classes: ['text-left'],
+              },
+              id: 'injected-titleLayout-title',
+            },
+          ],
+          data: {},
+          id: 'column-1',
+        },
+      ],
+    };
+  }, []);
 
   return (
     <>
-      <div className="mx-auto p-8 rounded-3xl max-w-7xl">
-        <h1>Download</h1>
-      </div>
-      <div className="mx-auto p-8 rounded-3xl max-w-7xl">
-        <h3>Quick Links</h3>
-      </div>
-      <div className="mx-auto p-8 pb-0 rounded-3xl max-w-7xl">
-        <RecommendedInstallers data={installers} />
-        <hr className="border-dashed border-grey-500 mt-16 opacity-20" />
-      </div>
-      <div className="mx-auto p-8 rounded-3xl max-w-7xl">
-        <AllInstallers data={installers} />
-        <hr className="border-dashed border-grey-500 mt-16 opacity-20" />
-      </div>
-      <div
+      <LayoutList layouts={[titleLayout, ...productIndex.downloadLayout]} />
+      {/* <div
         className="width-full"
         style={{ backgroundColor: 'rgb(43, 43, 43)' }}
       >
         <div className="mx-auto my-16 p-8 rounded-3xl max-w-7xl">
           <InstallationInstructions data={instructions} text={requirements} />
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
@@ -124,7 +109,13 @@ export async function getStaticProps(
         locale: ctx.locale,
         preview,
       },
-      ['slug', 'downloadLayout', 'active'],
+      [
+        'slug',
+        'downloadLayout',
+        'downloadAssetReferences',
+        'downloadEntryReferences',
+        'active',
+      ],
     );
     if (productIndex == null) {
       return {
