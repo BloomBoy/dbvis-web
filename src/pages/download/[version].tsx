@@ -3,6 +3,10 @@ import RecommendedInstallers from 'src/components/download/RecommendedInstallers
 import AllInstallers from 'src/components/download/AllInstallers';
 import InstallationInstructions from 'src/components/download/InstallationInstructions';
 import { OsTypes } from 'react-device-detect';
+import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
+import { getPage } from 'src/utils/contentful/content/standardPage';
+import { getGlobalData } from 'src/utils/getGlobalData';
+import { WithGlobals, WithCollectedData } from 'src/utils/types';
 
 const installers = [
   {
@@ -91,4 +95,36 @@ export default function DownloadPage(): JSX.Element {
       </div>
     </>
   );
+}
+
+export async function getStaticProps(
+  ctx: GetStaticPropsContext,
+): Promise<GetStaticPropsResult<WithGlobals<WithCollectedData<{}>>>> {
+  const version = Array.isArray(ctx.params?.version)
+    ? ctx.params?.version.join()
+    : ctx.params?.version;
+  const preview = ctx.preview || false;
+  try {
+    const { page, collectedData } = await getPage({
+      slug,
+      locale: ctx.locale,
+      preview,
+    });
+    if (page == null) {
+      return {
+        notFound: true,
+        revalidate: 12,
+      };
+    }
+    return {
+      props: { page, collectedData, ...(await getGlobalData(ctx)) },
+      revalidate: 12,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      notFound: true,
+      revalidate: 12,
+    };
+  }
 }
