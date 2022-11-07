@@ -17,7 +17,7 @@ export interface PopoverProviderProps {
   children: PopoverProps['children'];
 }
 
-type Props =
+export type Props =
   | {
       behavior: 'sticky' | 'static';
       className?: string;
