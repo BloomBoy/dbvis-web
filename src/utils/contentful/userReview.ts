@@ -7,7 +7,8 @@ import {
 } from './types';
 import getClient from '../getContentfulClient.mjs';
 import { safeValue } from './helpers';
-import contentTypeSchemas from './schemas';
+import { isNonNull } from '../filters';
+import verifyContentfulResult from './verifyContentfulResuls';
 
 export interface GetUserReviewsParams
   extends GetPaginatedParams,
@@ -25,9 +26,16 @@ const getSingleUserReviewQuery = (params: GetEntryByIdParams) => ({
 
 function parseUserReview(
   rawReview: SafeEntryFields.Entry<ContentTypeFieldsMap['userReview']>,
+  preview: boolean | null | undefined,
 ) {
+  const verifiedReview = verifyContentfulResult(
+    'userReview',
+    rawReview,
+    preview,
+  );
+  if (verifiedReview == null) return null;
   return {
-    ...rawReview,
+    ...verifiedReview,
     fields: safeValue(rawReview.fields),
   };
 }
@@ -37,8 +45,7 @@ export async function getUserReview(params: GetEntryByIdParams) {
   const rawUserReview = await getClient(params.preview).getEntry<
     ContentTypeFieldsMap['userReview']
   >(params.id, query);
-  if (!rawUserReview) return null;
-  return parseUserReview(rawUserReview);
+  return rawUserReview && parseUserReview(rawUserReview, params.preview);
 }
 
 const getUserReviewsQuery = (params: GetUserReviewsParams) => ({
@@ -58,10 +65,8 @@ export async function getUserReviews(params: GetUserReviewsParams) {
     params.preview,
   ).getEntries<ContentTypeFieldsMap['userReview']>(query);
   const userReviews = items
-    .filter((item) => {
-      return contentTypeSchemas.userReview.safeParse(item.fields).success;
-    })
-    .map(parseUserReview);
+    .map((entry) => parseUserReview(entry, params.preview))
+    .filter(isNonNull);
   return {
     userReviews,
     limit,
