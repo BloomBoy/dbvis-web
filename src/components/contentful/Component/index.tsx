@@ -15,6 +15,7 @@ import releaseQuickLinksComponent from './components/releaseQuickLinks';
 import releasenotesComponent from './components/releasenotes';
 import recommendedInstallersComponent from './components/recommendedInstallers';
 import allInstallersComponent from './components/allInstallers';
+import installationInstructionsComponent from './components/installationInstructions';
 import type { LayoutProps } from '../Layout';
 
 export interface SavedComponentProps<
@@ -72,6 +73,7 @@ export const components: Record<
   releasenotesComponent,
   recommendedInstallersComponent,
   allInstallersComponent,
+  installationInstructionsComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {
