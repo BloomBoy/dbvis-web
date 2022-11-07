@@ -218,7 +218,7 @@ function CrossFadeViewLayoutComp(
       <Container data={patchedData}>
         {data.renderHeader && (
           <LayoutTitle
-            data={{ alignment: data.alignment }}
+            data={{}}
             id={`${id}-header`}
             layout={props}
             type="layoutTitleComponent"

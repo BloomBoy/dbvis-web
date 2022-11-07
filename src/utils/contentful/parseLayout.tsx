@@ -62,7 +62,7 @@ export type WithLayoutFields<Fields> = {
 };
 
 export interface ParsingContext {
-  collectedData: {
+  collectedData?: {
     [k: string]: unknown;
   };
 }
@@ -166,7 +166,7 @@ export default async function parseLayout(
   if (layouts == null) {
     return {
       layoutList: [],
-      collectedData: {},
+      collectedData: context?.collectedData ?? {},
     };
   }
   const assetList = (

@@ -1,6 +1,5 @@
 import { SafeEntryFields } from 'src/utils/contentful';
 import classNames from 'classnames';
-import getTextAlignment from 'src/utils/getTextAlignment';
 import { CSSProperties } from 'react';
 import { getTextColorStyle } from 'src/utils/getTextColorStyle';
 
@@ -8,50 +7,10 @@ export type HeaderData = {
   title?: SafeEntryFields.Symbol;
   subTitle?: SafeEntryFields.Symbol;
   renderHeader: SafeEntryFields.Boolean;
-  alignment?: SafeEntryFields.Symbol;
 };
 
 export function canRenderMainHeader(data: Partial<HeaderData>): boolean {
   return data.renderHeader === true && data.title != null && data.title !== '';
-}
-
-export function LayoutHeader({
-  title,
-  subTitle,
-  alignment = 'center',
-  mainHeaderIndex,
-}: Partial<HeaderData> & {
-  mainHeaderIndex: number | undefined;
-}) {
-  const HeaderComp = mainHeaderIndex === 0 ? 'h1' : 'h2';
-  const textAlign = getTextAlignment(alignment);
-  const hasTitle = title != null && title !== '';
-  const hasSubTitle = subTitle != null && subTitle !== '';
-  if (!hasTitle && !hasSubTitle) return null;
-  return (
-    <div className="flex flex-col mb-10">
-      {hasSubTitle && (
-        <h3
-          className={`font-mono font-light quote-decoration uppercase text-grey-500 ${textAlign} mb-6`}
-        >
-          {subTitle}
-        </h3>
-      )}
-      {hasTitle && (
-        <HeaderComp
-          className={classNames(
-            mainHeaderIndex === 0
-              ? 'text-5xl md:text-8xl'
-              : 'text-5xl md:text-7xl',
-            'font-normal px-5 md:px-10 lg:px-28 text-gray-900',
-            textAlign,
-          )}
-        >
-          {title}
-        </HeaderComp>
-      )}
-    </div>
-  );
 }
 
 export type ThemeData = {

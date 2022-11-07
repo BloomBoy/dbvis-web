@@ -11,6 +11,11 @@ import titleComponent from './components/title';
 import downloadButtonComponent from './components/downloadButton';
 import reviewSourcesComponent from './components/reviewSources';
 import badgeComponent from './components/badge';
+import releaseQuickLinksComponent from './components/releaseQuickLinks';
+import releasenotesComponent from './components/releasenotes';
+import recommendedInstallersComponent from './components/recommendedInstallers';
+import allInstallersComponent from './components/allInstallers';
+import installationInstructionsComponent from './components/installationInstructions';
 import type { LayoutProps } from '../Layout';
 
 export interface SavedComponentProps<
@@ -64,6 +69,11 @@ export const components: Record<
   downloadButtonComponent,
   reviewSourcesComponent,
   badgeComponent,
+  releaseQuickLinksComponent,
+  releasenotesComponent,
+  recommendedInstallersComponent,
+  allInstallersComponent,
+  installationInstructionsComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {

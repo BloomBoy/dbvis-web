@@ -1,40 +1,43 @@
-import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import React, { useMemo } from 'react';
-import { LayoutList, LayoutProps } from 'src/components/contentful/Layout';
-import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
+import {
+  GetStaticPathsResult,
+  GetStaticPropsContext,
+  GetStaticPropsResult,
+} from 'next';
 import { getProductIndex } from 'src/utils/contentful/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
 import { WithGlobals, WithCollectedData } from 'src/utils/types';
+import { SafeValue, ContentTypeFieldsMap } from 'src/utils/contentful';
+import { LayoutProps, LayoutList } from 'src/components/contentful/Layout';
 import {
-  ColumnData,
   ColumnLayoutData,
+  ColumnData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
-// import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
 
-type ReleaseNotesPageProps = {
+type DownloadPageProps = {
   productIndex: SafeValue<
     Pick<
       ContentTypeFieldsMap['productIndex'],
       | 'slug'
-      | 'changelogIndexLayout'
-      | 'changelogIndexAssetReferences'
-      | 'changelogIndexEntryReferences'
+      | 'downloadLayout'
+      | 'downloadAssetReferences'
+      | 'downloadEntryReferences'
       | 'active'
     >
   >;
 };
 
-export default function ReleaseNotesPage({
+export default function DownloadPage({
   productIndex,
-}: ReleaseNotesPageProps): JSX.Element {
+}: DownloadPageProps): JSX.Element {
   const titleLayout = useMemo<
     SafeValue<LayoutProps<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
       data: {
-        subTitle: 'All Version Quick Links',
-        title: 'Release Notes',
+        subTitle: 'v14.0.0 was released on 2022-09-25',
+        title: 'Get DbVisualizer v14.0',
         renderHeader: false,
       },
       type: 'ColumnLayout',
@@ -55,15 +58,14 @@ export default function ReleaseNotesPage({
       ],
     };
   }, []);
-  return (
-    <LayoutList layouts={[titleLayout, ...productIndex.changelogIndexLayout]} />
-  );
+
+  return <LayoutList layouts={[titleLayout, ...productIndex.downloadLayout]} />;
 }
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
 ): Promise<
-  GetStaticPropsResult<WithGlobals<WithCollectedData<ReleaseNotesPageProps>>>
+  GetStaticPropsResult<WithGlobals<WithCollectedData<DownloadPageProps>>>
 > {
   const preview = ctx.preview || false;
   const productIndexSlug =
@@ -79,9 +81,9 @@ export async function getStaticProps(
       },
       [
         'slug',
-        'changelogIndexLayout',
-        'changelogIndexAssetReferences',
-        'changelogIndexEntryReferences',
+        'downloadLayout',
+        'downloadAssetReferences',
+        'downloadEntryReferences',
         'active',
       ],
     );
@@ -106,4 +108,11 @@ export async function getStaticProps(
       revalidate: 12,
     };
   }
+}
+
+export async function getStaticPaths(): Promise<GetStaticPathsResult> {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 }

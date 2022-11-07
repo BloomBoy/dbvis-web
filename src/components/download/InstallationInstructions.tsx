@@ -3,7 +3,7 @@ import { Disclosure, Transition } from '@headlessui/react';
 import OSIcon from '../Icon';
 
 type InstructionTypeProp = {
-  id: string | number;
+  id: string;
   title: string;
   text: string;
   os: string;
@@ -11,10 +11,8 @@ type InstructionTypeProp = {
 
 export default function InstallationInstructions({
   data,
-  text,
 }: {
   data: InstructionTypeProp[];
-  text: string;
 }): JSX.Element {
   return (
     <>
@@ -74,15 +72,6 @@ export default function InstallationInstructions({
             )}
           </Disclosure>
         ))}
-      </div>
-      <h3
-        className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-6`}
-      >
-        System Requirements
-      </h3>
-      <div className="text-white md:w-1/2">
-        {text}
-        {/* When adding Rich text editor content     <RichText content={text} /> */}
       </div>
     </>
   );

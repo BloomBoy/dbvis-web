@@ -2,25 +2,38 @@ import z, { string } from 'zod';
 import { LayoutFields } from '../parseLayout';
 import { SafeEntryFields } from '../types';
 
+type LayoutZodFields<
+  LayoutFieldId extends string = 'pageLayout',
+  AssetListFieldId extends string = 'pageAssetReferences',
+  ReferenceListFieldId extends string = 'pageEntryReferences',
+> = {
+  readonly [key in keyof LayoutFields<
+    LayoutFieldId,
+    AssetListFieldId,
+    ReferenceListFieldId
+  >]: z.ZodDefault<
+    z.ZodType<
+      LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId>[key]
+    >
+  >;
+};
+
 function withLayoutFields<Obj extends z.ZodRawShape>(
   o: Obj,
-): z.ZodObject<{
-  [key in keyof LayoutFields | keyof Obj]: (LayoutFields &
-    Obj)[key] extends z.ZodType
-    ? (LayoutFields & Obj)[key]
-    : z.ZodType<(LayoutFields & Obj)[key]>;
-}>;
+): {
+  [key in keyof LayoutZodFields | keyof Obj]: (LayoutZodFields & Obj)[key];
+};
 function withLayoutFields<
   Obj extends z.ZodRawShape,
   LayoutFieldId extends string,
 >(
   o: Obj,
   layoutFieldId: LayoutFieldId,
-): z.ZodObject<{
-  [key in keyof LayoutFields<LayoutFieldId> | keyof Obj]: z.ZodType<
-    (LayoutFields<LayoutFieldId> & Obj)[key]
-  >;
-}>;
+): {
+  [key in
+    | keyof LayoutZodFields<LayoutFieldId>
+    | keyof Obj]: (LayoutZodFields<LayoutFieldId> & Obj)[key];
+};
 function withLayoutFields<
   Obj extends z.ZodRawShape,
   LayoutFieldId extends string,
@@ -29,13 +42,11 @@ function withLayoutFields<
   o: Obj,
   layoutFieldId: LayoutFieldId,
   assetListFieldId: AssetListFieldId,
-): z.ZodObject<{
+): {
   [key in
-    | keyof LayoutFields<LayoutFieldId, AssetListFieldId>
-    | keyof Obj]: z.ZodType<
-    (LayoutFields<LayoutFieldId, AssetListFieldId> & Obj)[key]
-  >;
-}>;
+    | keyof LayoutZodFields<LayoutFieldId, AssetListFieldId>
+    | keyof Obj]: (LayoutZodFields<LayoutFieldId, AssetListFieldId> & Obj)[key];
+};
 function withLayoutFields<
   Obj extends z.ZodRawShape,
   LayoutFieldId extends string,
@@ -46,14 +57,20 @@ function withLayoutFields<
   layoutFieldId: LayoutFieldId,
   assetListFieldId: AssetListFieldId,
   referenceListFieldId: ReferenceListFieldId,
-): z.ZodObject<{
+): {
   [key in
-    | keyof LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId>
-    | keyof Obj]: z.ZodType<
-    (LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId> &
-      Obj)[key]
-  >;
-}>;
+    | keyof LayoutZodFields<
+        LayoutFieldId,
+        AssetListFieldId,
+        ReferenceListFieldId
+      >
+    | keyof Obj]: (LayoutZodFields<
+    LayoutFieldId,
+    AssetListFieldId,
+    ReferenceListFieldId
+  > &
+    Obj)[key];
+};
 function withLayoutFields<
   Obj extends z.ZodRawShape,
   LayoutFieldId extends string,
@@ -65,25 +82,27 @@ function withLayoutFields<
   assetListFieldId?: AssetListFieldId,
   referenceListFieldId?: ReferenceListFieldId,
 ) {
-  return z.object({
+  return {
     ...o,
-    [layoutFieldId ?? 'pageLayout']: z.array(z.record(z.unknown())),
-    [assetListFieldId ?? 'pageAssetReferences']: z.array(z.record(z.unknown())),
-    [referenceListFieldId ?? 'pageEntryReferences']: z.array(
-      z.record(z.unknown()),
-    ),
-  }) as unknown as z.ZodObject<{
+    [layoutFieldId ?? 'pageLayout']: z.array(z.record(z.unknown())).default([]),
+    [assetListFieldId ?? 'pageAssetReferences']: z
+      .array(z.record(z.unknown()))
+      .default([]),
+    [referenceListFieldId ?? 'pageEntryReferences']: z
+      .array(z.record(z.unknown()))
+      .default([]),
+  } as {
     [key in
-      | keyof LayoutFields<
+      | keyof LayoutZodFields<
           LayoutFieldId,
           AssetListFieldId,
           ReferenceListFieldId
         >
       | keyof Obj]: z.ZodType<
-      (LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId> &
+      (LayoutZodFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId> &
         Obj)[key]
     >;
-  }>;
+  };
 }
 
 const richText = () =>
@@ -95,10 +114,12 @@ const safeEntry = <T>() =>
 const safeAsset = () =>
   z.record(z.unknown()) as unknown as z.ZodType<SafeEntryFields.SafeAsset>;
 
-const standardPage = withLayoutFields({
-  title: z.string(),
-  slug: z.string(),
-});
+const standardPage = z.object(
+  withLayoutFields({
+    title: z.string(),
+    slug: z.string(),
+  }),
+);
 
 const menuItem = z.object({
   id: z.string(),
@@ -136,16 +157,18 @@ const stringToken = z.object({
   value: z.string(),
 });
 
-const databasePage = withLayoutFields({
-  title: z.string(),
-  listTitle: z.string(),
-  slug: z.string(),
-  logo: safeAsset(),
-  description: z.string(),
-  keywords: z.array(z.string()).optional(),
-  searchable: z.boolean(),
-  weight: z.number(),
-});
+const databasePage = z.object(
+  withLayoutFields({
+    title: z.string(),
+    listTitle: z.string(),
+    slug: z.string(),
+    logo: safeAsset(),
+    description: z.string(),
+    keywords: z.array(z.string()).optional(),
+    searchable: z.boolean(),
+    weight: z.number(),
+  }),
+);
 
 const extraDatabaseSearchResult = z.object({
   title: z.string(),
@@ -156,6 +179,30 @@ const extraDatabaseSearchResult = z.object({
   weight: z.number(),
 });
 
+const productIndex = z.object(
+  withLayoutFields(
+    withLayoutFields(
+      withLayoutFields(
+        {
+          name: z.string(),
+          type: z.string(),
+          active: z.boolean(),
+          slug: z.string(),
+        },
+        'downloadLayout',
+        'downloadAssetReferences',
+        'downloadEntryReferences',
+      ),
+      'changelogIndexLayout',
+      'changelogIndexAssetReferences',
+      'changelogIndexEntryReferences',
+    ),
+    'changelogLayout',
+    'changelogAssetReferences',
+    'changelogEntryReferences',
+  ),
+);
+
 const contentTypeSchemas = {
   standardPage,
   menuItem,
@@ -165,6 +212,7 @@ const contentTypeSchemas = {
   stringToken,
   databasePage,
   extraDatabaseSearchResult,
+  productIndex,
 };
 
 export default contentTypeSchemas;

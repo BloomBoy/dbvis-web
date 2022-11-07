@@ -136,7 +136,7 @@ const databaseSearch = Object.assign(DatabaseSearchComponent, {
             preview,
           }),
           getDatabasePage({ slug: 'generic', preview }, listFields).then(
-            ({ page }) => page && parseListItem(page),
+            ({ page }) => page && parseListItem(page, preview),
           ),
         ]);
         const items = [

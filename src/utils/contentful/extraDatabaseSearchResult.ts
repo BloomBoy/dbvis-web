@@ -8,7 +8,7 @@ import getClient from '../getContentfulClient.mjs';
 import { isLink } from './helpers';
 import { DatabaseListEntry } from 'src/components/ShowDatabases';
 import { isNonNull } from '../filters';
-import contentTypeSchemas from './schemas';
+import verifyContentfulResult from './verifyContentfulResuls';
 
 export interface GetExtraDatabaseSearchResultsParams
   extends GetPaginatedParams,
@@ -32,22 +32,24 @@ const getPagedExtraDatabaseSearchResultsQuery = (
   skip: params.skip,
 });
 
-function parseListItem({
-  sys: { id },
-  fields,
-}: SafeEntryFields.Entry<
-  Partial<ContentTypeFieldsMap['extraDatabaseSearchResult']>
->): DatabaseListEntry | null {
+function parseListItem(
+  entry: SafeEntryFields.Entry<
+    Partial<ContentTypeFieldsMap['extraDatabaseSearchResult']>
+  >,
+  preview: boolean | null | undefined,
+): DatabaseListEntry | null {
+  const verifiedEntry = verifyContentfulResult(
+    'extraDatabaseSearchResult',
+    entry,
+    preview,
+  );
+  if (verifiedEntry == null) return null;
+  const {
+    sys: { id },
+    fields,
+  } = verifiedEntry;
   const { keywords, title, targetUrl, logo, weight } = fields;
-  const verified =
-    contentTypeSchemas.extraDatabaseSearchResult.safeParse(fields).success;
-  if (
-    title == null ||
-    targetUrl == null ||
-    isLink(logo) ||
-    logo == null ||
-    !verified
-  )
+  if (title == null || targetUrl == null || isLink(logo) || logo == null)
     return null;
 
   return {
@@ -72,7 +74,7 @@ export async function getExtraDatabaseSearchResultEntries(
     params.preview,
   ).getEntries<ContentTypeFieldsMap['extraDatabaseSearchResult']>(query);
   const extradatabaseSearchResultListEntries = items
-    .map(parseListItem)
+    .map((entry) => parseListItem(entry, params.preview))
     .filter(isNonNull);
   return {
     extradatabaseSearchResultListEntries,
@@ -108,7 +110,7 @@ export async function getAllExtraDatabaseSearchResultListEntries(
     items.push(...newItems);
   } while (items.length < total);
   const extradatabaseSearchResultListEntries = items
-    .map(parseListItem)
+    .map((entry) => parseListItem(entry, params.preview))
     .filter(isNonNull);
   return extradatabaseSearchResultListEntries;
 }

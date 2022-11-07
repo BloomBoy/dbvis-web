@@ -10,8 +10,7 @@ import { isLink, SafeValue, safeValue } from './helpers';
 import parseLayout from './parseLayout';
 import type { DatabaseListEntry } from 'src/components/ShowDatabases';
 import { isNonNull } from '../filters';
-import contentTypeSchemas from './schemas';
-import { fromEntries } from '../objects';
+import verifyContentfulResult from './verifyContentfulResuls';
 
 const getSingleDatabasePageQuery = (
   params: GetSlugEntryParams,
@@ -104,19 +103,18 @@ export async function getDatabasePage(
   } = await getClient(params.preview).getEntries<
     ContentTypeFieldsMap['databasePage']
   >(query);
-  const pickSchema =
-    pickFields != null
-      ? contentTypeSchemas.databasePage.pick(
-          fromEntries(pickFields.map((key) => [key, true] as const)),
-        )
-      : contentTypeSchemas.databasePage;
-  const verified = pickSchema.safeParse(rawDatabasePage?.fields).success;
-  if (!rawDatabasePage || !verified)
+  const verifiedDatabasePage = verifyContentfulResult(
+    'databasePage',
+    rawDatabasePage,
+    params.preview,
+    pickFields,
+  );
+  if (!verifiedDatabasePage)
     return {
       page: null,
       collectedData: {},
     };
-  return parseFullDatabasePage(params.preview ?? false, rawDatabasePage);
+  return parseFullDatabasePage(params.preview ?? false, verifiedDatabasePage);
 }
 
 export interface GetDatabasePagesParams extends GetTaggedParams {
@@ -174,23 +172,23 @@ export type ListEntryFields = Pick<
   typeof listFields[number]
 >;
 
-const listSchema = contentTypeSchemas.databasePage.pick(
-  fromEntries(listFields.map((key) => [key, true] as const)),
-);
-
-export function parseListItem({
-  sys: { id },
-  fields,
-}: SafeEntryFields.Entry<Partial<ListEntryFields>>): DatabaseListEntry | null {
+export function parseListItem(
+  entry: SafeEntryFields.Entry<Partial<ListEntryFields>>,
+  preview: boolean | undefined | null,
+): DatabaseListEntry | null {
+  const verifiedEntry = verifyContentfulResult(
+    'databasePage',
+    entry,
+    preview,
+    listFields,
+  );
+  if (!verifiedEntry) return null;
+  const {
+    fields,
+    sys: { id },
+  } = verifiedEntry;
   const { keywords, listTitle, searchable, slug, logo, weight } = fields;
-  const verified = listSchema.safeParse(fields);
-  if (
-    listTitle == null ||
-    slug == null ||
-    isLink(logo) ||
-    logo == null ||
-    !verified
-  )
+  if (listTitle == null || slug == null || isLink(logo) || logo == null)
     return null;
   return {
     id,
@@ -213,7 +211,9 @@ export async function getDatabaseListEntries(
   const { items, limit, skip, total } = await getClient(
     params.preview,
   ).getEntries<ListEntryFields>(query);
-  const databasePageListEntries = items.map(parseListItem).filter(isNonNull);
+  const databasePageListEntries = items
+    .map((entry) => parseListItem(entry, params.preview))
+    .filter(isNonNull);
   return {
     databasePageListEntries,
     limit,
@@ -243,7 +243,9 @@ export async function getAllDatabaseListEntries(
     query.skip += newItems.length;
     items.push(...newItems);
   } while (items.length < total);
-  const databasePageListEntries = items.map(parseListItem).filter(isNonNull);
+  const databasePageListEntries = items
+    .map((entry) => parseListItem(entry, params.preview))
+    .filter(isNonNull);
   return databasePageListEntries;
 }
 

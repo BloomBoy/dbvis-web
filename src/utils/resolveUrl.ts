@@ -28,6 +28,9 @@ const typeUrlMap = makeUrlMap({
   menu: null,
   menuItem: null,
   extraDatabaseSearchResult: null,
+  productIndex: ({ fields: { slug } }) => {
+    return `${slug === '/' ? '' : slug}/download`;
+  },
 });
 
 type MapFn<T extends [keyof ContentTypeFieldsMap, string]> = [
