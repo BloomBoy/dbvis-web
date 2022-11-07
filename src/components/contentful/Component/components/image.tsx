@@ -19,7 +19,7 @@ export default function Image(
       <img
         src={assetUrl}
         alt={asset.fields.title}
-        className={classNames(...(props.data?.classes || []))}
+        className={classNames(...(props.data?.classes || []), 'w-full')}
       />
     );
   }
