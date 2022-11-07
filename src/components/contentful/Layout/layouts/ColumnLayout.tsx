@@ -13,13 +13,13 @@ import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
 import LayoutTitle from '../../Component/components/layoutTitle';
 import React from 'react';
 
-type Data = HeaderData &
+export type ColumnLayoutData = HeaderData &
   ThemeData & {
     hGapSize?: Size;
     vGapSize?: Size;
   };
 
-type SlotData = {
+export type ColumnData = {
   title?: SafeEntryFields.Symbol;
   subTitle?: SafeEntryFields.Symbol;
   backgroundColor?: SafeEntryFields.Symbol;
@@ -33,7 +33,9 @@ function renderSlot({
   components,
   data,
   layout,
-}: SlotProps<SlotData> & { layout: LayoutProps<Data, SlotData> }) {
+}: SlotProps<ColumnData> & {
+  layout: LayoutProps<ColumnLayoutData, ColumnData>;
+}) {
   const style =
     data.backgroundColor || data.textColor || data.inlineComponents
       ? {
@@ -58,7 +60,9 @@ function renderSlot({
   );
 }
 
-function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
+function ColumnLayoutComp(
+  props: LayoutProps<ColumnLayoutData, ColumnData>,
+): JSX.Element {
   const { id, slots, data } = props;
   const gapX = getMarginPadding({
     size: data.hGapSize,
@@ -92,7 +96,7 @@ function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
       <Container data={data}>
         {data.renderHeader && (
           <LayoutTitle
-            data={{ alignment: data.alignment }}
+            data={{}}
             id={`${id}-header`}
             layout={props}
             type="layoutTitleComponent"
@@ -106,7 +110,7 @@ function ColumnLayoutComp(props: LayoutProps<Data, SlotData>): JSX.Element {
 
 const ColumnLayout = Object.assign(ColumnLayoutComp, {
   headerCount(
-    props: LayoutProps<Data, SlotData>,
+    props: LayoutProps<ColumnLayoutData, ColumnData>,
     collectedData: Record<string, unknown>,
   ) {
     let count = 0;

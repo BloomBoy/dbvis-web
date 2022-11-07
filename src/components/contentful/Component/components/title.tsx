@@ -8,7 +8,6 @@ import useCollectedData from 'src/hooks/useCollectedData';
 export type TitleData = {
   title: SafeEntryFields.Symbol;
   subTitle: SafeEntryFields.Symbol;
-  alignment?: SafeEntryFields.Symbol;
   classes?: SafeEntryFields.Symbol[];
 };
 
@@ -39,7 +38,7 @@ function TitleComponent({
       },
       collectedData,
     );
-    return layout.mainHeaderIndex + layoutHeaders;
+    return (layout.mainHeaderIndex ?? 0) + layoutHeaders;
   }, [collectedData, id, layout]);
   const HeaderComp = mainHeaderIndex === 0 ? 'h1' : 'h2';
   const hasTitle = title != null && title !== '';

@@ -11,6 +11,8 @@ import titleComponent from './components/title';
 import downloadButtonComponent from './components/downloadButton';
 import reviewSourcesComponent from './components/reviewSources';
 import badgeComponent from './components/badge';
+import releaseQuickLinksComponent from './components/releaseQuickLinks';
+import releasenotesComponent from './components/releasenotes';
 import type { LayoutProps } from '../Layout';
 
 export interface SavedComponentProps<
@@ -64,6 +66,8 @@ export const components: Record<
   downloadButtonComponent,
   reviewSourcesComponent,
   badgeComponent,
+  releaseQuickLinksComponent,
+  releasenotesComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {

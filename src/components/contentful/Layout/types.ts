@@ -23,7 +23,7 @@ export interface LayoutProps<
   type: `${string}Layout`;
   slots: SlotProps<SlotData>[];
   id: string;
-  mainHeaderIndex: number;
+  mainHeaderIndex?: number;
 }
 
 export interface LayoutLinkProps {

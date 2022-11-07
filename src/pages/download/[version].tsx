@@ -4,9 +4,10 @@ import AllInstallers from 'src/components/download/AllInstallers';
 import InstallationInstructions from 'src/components/download/InstallationInstructions';
 import { OsTypes } from 'react-device-detect';
 import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
-import { getPage } from 'src/utils/contentful/content/standardPage';
+import { getProductIndex } from 'src/utils/contentful/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
 import { WithGlobals, WithCollectedData } from 'src/utils/types';
+import { SafeValue, ContentTypeFieldsMap } from 'src/utils/contentful';
 
 const installers = [
   {
@@ -45,6 +46,15 @@ const installers = [
     text: 'DMG with Java',
   },
 ];
+
+type DownloadPageProps = {
+  productIndex: SafeValue<
+    Pick<
+      ContentTypeFieldsMap['productIndex'],
+      'slug' | 'downloadLayout' | 'active'
+    >
+  >;
+};
 
 export default function DownloadPage(): JSX.Element {
   const instructions = [
@@ -99,25 +109,35 @@ export default function DownloadPage(): JSX.Element {
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
-): Promise<GetStaticPropsResult<WithGlobals<WithCollectedData<{}>>>> {
-  const version = Array.isArray(ctx.params?.version)
-    ? ctx.params?.version.join()
-    : ctx.params?.version;
+): Promise<
+  GetStaticPropsResult<WithGlobals<WithCollectedData<DownloadPageProps>>>
+> {
   const preview = ctx.preview || false;
+  const productIndexSlug =
+    (Array.isArray(ctx.params?.productIndexSlug)
+      ? ctx.params?.productIndexSlug.join()
+      : ctx.params?.productIndexSlug) ?? '/';
   try {
-    const { page, collectedData } = await getPage({
-      slug,
-      locale: ctx.locale,
-      preview,
-    });
-    if (page == null) {
+    const { productIndex, collectedData } = await getProductIndex(
+      {
+        slug: productIndexSlug,
+        locale: ctx.locale,
+        preview,
+      },
+      ['slug', 'downloadLayout', 'active'],
+    );
+    if (productIndex == null) {
       return {
         notFound: true,
         revalidate: 12,
       };
     }
     return {
-      props: { page, collectedData, ...(await getGlobalData(ctx)) },
+      props: {
+        productIndex: productIndex.fields,
+        collectedData,
+        ...(await getGlobalData(ctx)),
+      },
       revalidate: 12,
     };
   } catch (err) {

@@ -11,8 +11,10 @@ type LayoutZodFields<
     LayoutFieldId,
     AssetListFieldId,
     ReferenceListFieldId
-  >]: z.ZodType<
-    LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId>[key]
+  >]: z.ZodDefault<
+    z.ZodType<
+      LayoutFields<LayoutFieldId, AssetListFieldId, ReferenceListFieldId>[key]
+    >
   >;
 };
 
@@ -82,11 +84,13 @@ function withLayoutFields<
 ) {
   return {
     ...o,
-    [layoutFieldId ?? 'pageLayout']: z.array(z.record(z.unknown())),
-    [assetListFieldId ?? 'pageAssetReferences']: z.array(z.record(z.unknown())),
-    [referenceListFieldId ?? 'pageEntryReferences']: z.array(
-      z.record(z.unknown()),
-    ),
+    [layoutFieldId ?? 'pageLayout']: z.array(z.record(z.unknown())).default([]),
+    [assetListFieldId ?? 'pageAssetReferences']: z
+      .array(z.record(z.unknown()))
+      .default([]),
+    [referenceListFieldId ?? 'pageEntryReferences']: z
+      .array(z.record(z.unknown()))
+      .default([]),
   } as {
     [key in
       | keyof LayoutZodFields<
@@ -190,8 +194,8 @@ const productIndex = z.object(
         'downloadEntryReferences',
       ),
       'changelogIndexLayout',
-      'changelogAssetReferences',
-      'changelogEntryReferences',
+      'changelogIndexAssetReferences',
+      'changelogIndexEntryReferences',
     ),
     'changelogLayout',
     'changelogAssetReferences',

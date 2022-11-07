@@ -22,7 +22,15 @@ export function objectEntries<In extends { readonly [key: string]: unknown }>(
   }[Keys<In>][];
 }
 
-type FromEntry<T extends readonly [string, unknown]> = (
+type FromStringEntry<T extends readonly [string, unknown]> = (
+  T extends unknown ? () => { [key in T[0]]: T[1] } : never
+) extends () => infer R
+  ? (R extends unknown ? (k: R) => void : never) extends (k: infer I) => void
+    ? I
+    : never
+  : never;
+
+type FromFullEntry<T extends readonly [string | number | symbol, unknown]> = (
   T extends unknown ? () => { [key in T[0]]: T[1] } : never
 ) extends () => infer R
   ? (R extends unknown ? (k: R) => void : never) extends (k: infer I) => void
@@ -32,9 +40,21 @@ type FromEntry<T extends readonly [string, unknown]> = (
 
 export function fromEntries<In extends readonly (readonly [string, unknown])[]>(
   input: In,
-) {
+): {
+  [key in keyof FromStringEntry<In[number]>]: FromStringEntry<In[number]>[key];
+};
+export function fromEntries<
+  In extends readonly (readonly [string | symbol | number, unknown])[],
+>(
+  input: In,
+): {
+  [key in keyof FromFullEntry<In[number]>]: FromFullEntry<In[number]>[key];
+};
+export function fromEntries<
+  In extends readonly (readonly [string | symbol | number, unknown])[],
+>(input: In) {
   return Object.fromEntries(input) as {
-    [key in keyof FromEntry<In[number]>]: FromEntry<In[number]>[key];
+    [key in keyof FromFullEntry<In[number]>]: FromFullEntry<In[number]>[key];
   };
 }
 
