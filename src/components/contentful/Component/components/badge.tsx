@@ -8,7 +8,7 @@ type ImageData = {
   icon?: SafeEntryFields.Asset;
   text?: SafeEntryFields.Symbol;
   linkTarget?: SafeEntryFields.Symbol | SafeEntryFields.Entry;
-  tailwindClasses?: SafeEntryFields.Symbol[];
+  classes?: SafeEntryFields.Symbol[];
 };
 
 function shouldRender(props: ComponentProps<ImageData>): boolean {
@@ -42,7 +42,7 @@ export default function badge(
           }}
           text={text}
           href={targetUrl?.href}
-          className={classNames(props.data.tailwindClasses)}
+          className={classNames(props.data.classes)}
         />
       </div>
     );
