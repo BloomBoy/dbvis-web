@@ -63,6 +63,10 @@ module.exports = {
       pattern: /^title-.+/,
       variants: ['sm', 'md', 'lg'],
     },
+    {
+      pattern: /^(?:center|right|left)$/,
+      variants: ['sm', 'md', 'lg'],
+    },
   ],
   darkMode: 'class',
   theme: {
