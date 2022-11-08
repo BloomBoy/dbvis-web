@@ -57,6 +57,10 @@ module.exports = {
       pattern: /^justify-.+/,
     },
     {
+      pattern: /^bg-.+/,
+      variants: ['sm', 'md', 'lg'],
+    },
+    {
       pattern: /^-?(?:m|p)(?:x|y|t|l|b|r)?-.+/,
     },
     {
