@@ -149,7 +149,7 @@ const userReview = z.object({
   score: z.number(),
   review: richText(),
   source: safeEntry<z.infer<typeof reviewSource>>(),
-  weight: z.number(),
+  weight: z.number().default(0),
 });
 
 const stringToken = z.object({
