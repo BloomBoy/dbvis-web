@@ -66,10 +66,10 @@ export default function Badge({
   return (
     <MaybeLink
       href={href}
-      className="font-normal block decoration-from-font underline-offset-4 justify-between items-center rounded-lg shadow-imageShadow border border-grey-300 bg-badgeBackground"
+      className="font-normal block decoration-from-font underline-offset-4 justify-between items-center rounded-2xl shadow-imageShadow border border-grey-300 bg-badgeBackground"
     >
       <div
-        className={classNames(className, {
+        className={classNames(className, 'p-2', {
           'h-[82px]': !hasHeight && !text,
           'w-[82px]': !hasWidth && !text,
         })}

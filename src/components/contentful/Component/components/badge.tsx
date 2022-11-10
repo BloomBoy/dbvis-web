@@ -34,7 +34,7 @@ export default function badge(
 
   if (iconFields?.file?.contentType?.startsWith?.('image/')) {
     return (
-      <div className="p-4">
+      <div className="p-3">
         <Badge
           icon={{
             url: iconFields.file.url,
