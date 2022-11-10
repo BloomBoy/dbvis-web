@@ -38,6 +38,12 @@ module.exports = async function nextConfig() {
             destination: '/api/manifest',
           },
         ],
+        afterFiles: [
+          {
+            source: '/product_download/:path*',
+            destination: '/api/product_download',
+          },
+        ],
       };
     },
   };
