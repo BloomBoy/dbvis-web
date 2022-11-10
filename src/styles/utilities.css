@@ -22,4 +22,8 @@
   .quote-decoration::after {
     content: " *​\/";
   }
+  .sidebar-height {
+    height: calc(100vh - 5rem);
+    height: calc(var(--vh, 1vh) * 100 - 5rem);
+  }
 }
