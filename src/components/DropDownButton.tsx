@@ -59,7 +59,7 @@ function DropDownButton({
     <Popover
       as="div"
       className={classNames(
-        'relative hidden md:flex',
+        'relative flex',
         !containsPositioning && 'justify-center',
         ...(classes || []),
       )}
@@ -92,7 +92,7 @@ function DropDownButton({
               leaveFrom="transform opacity-100 translate-y-0"
               leaveTo="transform opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute top-12 pt-2">
+              <Popover.Panel className="hidden md:block absolute top-12 pt-2">
                 <div className="rounded-xl overflow-hidden shadow-imageShadow">
                   <div className="font-mono font-light quote-decoration uppercase text-grey-500 text-start pb-3 pt-4 bg-badgeBackground px-6 text-xs">
                     Recommended installer

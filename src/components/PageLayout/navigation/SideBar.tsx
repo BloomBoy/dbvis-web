@@ -1,13 +1,28 @@
 import { Popover, Transition } from '@headlessui/react';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import MaybeLink from '../../contentful/MaybeLink';
 import type { Menu } from '../../../utils/menus';
+import classNames from 'classnames';
 
 interface ISideBar {
   navigation: Menu;
 }
 
 const SideBar: React.FC<ISideBar> = ({ navigation }) => {
+  const innherHeight = () => {
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    const vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', innherHeight);
+
+    return () => {
+      window.removeEventListener('resize', innherHeight);
+    };
+  }, []);
   return (
     <Transition
       as={Fragment}
@@ -22,8 +37,13 @@ const SideBar: React.FC<ISideBar> = ({ navigation }) => {
         focus
         className="relative origin-right transform transition lg:hidden"
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 md:right-0 md:translate-x-0 bg-white w-screen md:w-1/2 h-[calc(100vh-5rem)] rounded-lg">
-          <div className="flex w-full h-full flex-1 flex-col justify-between bg-white">
+        <div
+          className={classNames(
+            'sidebar-height',
+            'absolute top-0 left-1/2 -translate-x-1/2 md:right-0 md:translate-x-0 bg-white w-screen md:w-1/2 rounded-lg',
+          )}
+        >
+          <div className="flex w-full h-full flex-col justify-between bg-white">
             <div className="flex flex-col flex-1 items-center justify-center overflow-y-auto pb-4">
               <nav className="space-y-1 px-2 flex flex-col items-center justify-center">
                 {navigation?.menuItems?.map((menuItem) => (

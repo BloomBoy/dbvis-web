@@ -93,7 +93,7 @@ export default function NewsletterSignup(
           <div className="mb-4 flex flex-col font-mono text-grey-600">
             <div className="relative flex w-full items-center mb-10">
               <input
-                className="uppercase w-full font-extralight text-xl md:text-5xl py-3 md:py-4 pl-6 md:pl-12 pr-28 sm:pr-60 border-grey-300 border rounded-full font-mono outline-none placeholder:text-grey-500"
+                className="uppercase w-full font-extralight text-xl md:text-5xl py-3 md:py-4 pl-6 pr-6 md:pl-12 md:pr-72 border-grey-300 border rounded-full font-mono outline-none placeholder:text-grey-500"
                 type="email"
                 placeholder="MAIL@MAIL.COM"
               />
