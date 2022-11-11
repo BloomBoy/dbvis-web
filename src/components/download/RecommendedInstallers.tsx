@@ -68,7 +68,7 @@ export default function RecommendedInstallers({
       >
         Recommended Installers
       </h3>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full border-b border-dashed pb-16">
         {recommendedInstallers.map((installer) => (
           <div
             className="w-full flex flex-row gap-8 rounded-md mb-3 p-4 items-center flex-wrap lg:flex-nowrap"
