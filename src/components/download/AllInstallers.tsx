@@ -43,7 +43,7 @@ export default function AllInstallers({
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="w-full">
+        <Tab.Panels className="w-full border-b border-dashed pb-10">
           {Object.entries(byOS).map(([os, installers]) => (
             <Tab.Panel
               key={os}
@@ -51,27 +51,26 @@ export default function AllInstallers({
             >
               {installers.map((installer) => (
                 <div
-                  className="flex flex-row gap-4 justify-between w-full md:w-1/2 bg-grey-300 rounded-lg p-4 font-mono "
+                  className="flex flex-row gap-4 items-center justify-between w-full md:w-1/2 bg-grey-300 rounded-lg p-4 font-mono "
                   key={installer.id}
                   style={{ boxShadow: '0px 0px 16px 0px rgba(0, 0, 0, 0.05)' }}
                 >
-                  <div className="self-center">
-                    <OSIcon
-                      os={installer.os}
-                      className=""
-                      style={{ padding: '0px' }}
-                      size={30}
-                    />
-                  </div>
-                  <div className="flex flex-row gap-4 grow self-center">
+                  <OSIcon
+                    os={installer.os}
+                    className=""
+                    style={{ padding: '0px' }}
+                    size={30}
+                  />
+                  <div className="flex flex-row gap-4 grow items-center">
                     <div>{installer.title}</div>
                     <div className="text-grey-500">{installer.text}</div>
                   </div>
-                  <div className="self-center">
-                    <MaybeLink href={installer.url} className="underline">
-                      Download ↓
-                    </MaybeLink>
-                  </div>
+                  <MaybeLink
+                    href={installer.url}
+                    className="text-primary hover:text-primary-700 underline flex-grow-0 flex-shrink-0 basis-auto"
+                  >
+                    Download ↓
+                  </MaybeLink>
                 </div>
               ))}
             </Tab.Panel>
