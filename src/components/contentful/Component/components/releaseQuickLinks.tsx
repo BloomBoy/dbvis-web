@@ -17,6 +17,34 @@ function databaseFetchKey(
   return getFetchKey(type, { preview });
 }
 
+const LinkComponent = ({ link, text }: { link: string; text: string }) => {
+  return (
+    <li>
+      <MaybeLink
+        href={link}
+        className="text-primary hover:text-primary-700 underline"
+      >
+        {text}
+      </MaybeLink>
+    </li>
+  );
+};
+
+const quickLinks = [
+  {
+    link: '/whatsnew',
+    text: "WHAT'S NEW ->",
+  },
+  {
+    link: '/releasenotes',
+    text: 'RELEASE NOTES ->',
+  },
+  {
+    link: '/download',
+    text: 'DOWNLOADS ->',
+  },
+] as const;
+
 function ReleaseQuickLinksComponent() {
   return (
     <div className="border-t border-b border-dashed py-5">
@@ -26,30 +54,9 @@ function ReleaseQuickLinksComponent() {
         All Version Quick Links
       </h3>
       <ul className="flex felx-row gap-6">
-        <li>
-          <MaybeLink
-            href="a-link"
-            className="text-primary hover:text-primary-700 underline"
-          >
-            WHAT&apos;S NEW -&gt;
-          </MaybeLink>
-        </li>
-        <li>
-          <MaybeLink
-            href="a-link"
-            className="text-primary hover:text-primary-700 underline"
-          >
-            RELEASE NOTES -&gt;
-          </MaybeLink>
-        </li>
-        <li>
-          <MaybeLink
-            href="a-link"
-            className="text-primary hover:text-primary-700 underline"
-          >
-            DOWNLOADS -&gt;
-          </MaybeLink>
-        </li>
+        {quickLinks.map(({ link, text }) => (
+          <LinkComponent key={text} link={link} text={text} />
+        ))}
       </ul>
     </div>
   );
