@@ -68,39 +68,35 @@ export default function RecommendedInstallers({
       >
         Recommended Installers
       </h3>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full border-b border-dashed pb-16">
         {recommendedInstallers.map((installer) => (
           <div
-            className="w-full flex flex-row gap-8 rounded-md mb-3 p-4"
+            className="w-full flex flex-row gap-8 rounded-md mb-3 p-4 items-center flex-wrap lg:flex-nowrap"
             style={{
               backgroundColor: 'rgb(43, 43, 43)',
               boxShadow: '0px 0px 44px 0px rgba(0, 0, 0, 0.25)',
             }}
             key={installer.id}
           >
-            <div>
-              <OSIcon
-                os={installer.os}
-                className="text-green-50"
-                style={{ padding: '0px' }}
-                size={50}
-              />
-            </div>
-            <div className="flex flex-col grow pt-1">
+            <OSIcon
+              os={installer.os}
+              className="text-green-50"
+              style={{ padding: '0px' }}
+              size={50}
+            />
+            <div className="flex flex-col pt-1">
               <div className="text-white text-2xl leading-none">
                 {installer.title}
               </div>
               <div className="text-grey leading-none">{installer.text}</div>
             </div>
-            <div>
-              <MaybeLink
-                href={installer.url}
-                aria-label="Home"
-                className="group block flex-shrink-0 w-full border border-transparent px-8 py-2 text-lg font-mono rounded-full text-black text-center bg-primary"
-              >
-                DOWNLOAD THIS INSTALLER ↓
-              </MaybeLink>
-            </div>
+            <MaybeLink
+              href={installer.url}
+              aria-label="Home"
+              className="group flex-grow-0 flex-shrink-0 basis-auto self-center block border border-transparent px-8 py-2 text-lg font-mono rounded-full text-black text-center bg-primary"
+            >
+              DOWNLOAD THIS INSTALLER ↓
+            </MaybeLink>
           </div>
         ))}
       </div>
