@@ -69,7 +69,6 @@ const XMLListData = [
 ];
 
 function VersionSelectorComponent(): JSX.Element | null {
-  console.log('hello');
   const [selectedVersion, setSelectedVersion] = useState(XMLListData[0]);
 
   return (
