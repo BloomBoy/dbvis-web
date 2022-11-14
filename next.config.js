@@ -29,6 +29,9 @@ module.exports = async function nextConfig() {
       CF_DELIVERY_ACCESS_TOKEN: process.env.CF_DELIVERY_ACCESS_TOKEN,
       CF_SPACE_ID: process.env.CF_SPACE_ID,
     },
+    images: {
+      domains: ['images.ctfassets.net'],
+    },
     publicRuntimeConfig,
     async rewrites() {
       return {
