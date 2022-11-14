@@ -100,7 +100,7 @@ function ReleaseNotesComponent() {
                 href={`/releasenotes/${latestVersion?.slug}`}
                 className="underline text-primary"
               >
-                Release Notese -&gt;
+                Release Notes -&gt;
               </MaybeLink>
             </td>
           </tr>
@@ -129,7 +129,7 @@ function ReleaseNotesComponent() {
                   href={`/releasenotes/${item?.slug}`}
                   className="underline text-primary"
                 >
-                  Release Notese -&gt;
+                  Release Notes -&gt;
                 </MaybeLink>
               </td>
             </tr>
