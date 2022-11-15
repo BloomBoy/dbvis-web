@@ -1,40 +1,47 @@
 import { SafeEntryFields } from 'src/utils/contentful';
 import type { ComponentProps } from '..';
-import NextImage from 'next/image';
 import classNames from 'classnames';
 
 type ImageData = {
   asset: SafeEntryFields.Asset;
   classes: SafeEntryFields.Symbol[];
-  priority?: boolean;
 };
 
 export default function Image(
   props: ComponentProps<ImageData>,
 ): JSX.Element | null {
   const {
-    data: { asset, classes, priority },
+    data: { asset, classes },
   } = props;
   if (asset == null) return null;
-  const assetUrl = `https:${asset.fields.file.url}`;
+  const src = `${asset.fields.file.url}?w=1024`;
   const assetType = asset.fields.file.contentType;
-  const dimensions = {
-    h: asset.fields.file.details?.image?.height,
-    w: asset.fields.file.details?.image?.width,
-  };
+
   if (assetType.startsWith('image/')) {
     return (
-      <NextImage
-        src={assetUrl}
-        alt={asset.fields.title}
-        height={dimensions.h}
-        width={dimensions.w}
-        sizes="(max-width: 768px) 100vw,
-              (max-width: 1200px) 50vw,
-              33vw"
-        priority={priority}
-        className={classNames(...(classes || []), 'w-full')}
-      />
+      <picture>
+        <source
+          media="(min-width: 370px)"
+          srcSet={`${asset.fields.file.url}?w=555&q=85 2x`}
+        />
+        <source
+          media="(min-width: 450px)"
+          srcSet={`${asset.fields.file.url}?w=675&q=85 2x`}
+        />
+        <source
+          media="(min-width: 768px)"
+          srcSet={`${asset.fields.file.url}?w=1152&q=85 2x`}
+        />
+        <source
+          media="(min-width: 1920px)"
+          srcSet={`${asset.fields.file.url}?w=1440&q=85 2x`}
+        />
+        <img
+          src={src}
+          alt={asset.fields.title}
+          className={classNames(...(classes || []), 'w-full')}
+        />
+      </picture>
     );
   }
   return null;
