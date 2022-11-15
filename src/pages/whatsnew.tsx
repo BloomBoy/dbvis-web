@@ -1,4 +1,4 @@
-import MaybeLink from 'src/components/contentful/MaybeLink';
+import { Link } from 'react-scroll';
 import RichText from 'src/components/RichText';
 import { SafeEntryFields } from 'src/utils/contentful';
 
@@ -95,21 +95,30 @@ export default function WhatsNewPage({ release }: WhatsNewPageProps) {
         <div className="fixed w-1/4">
           <div className="p-10 flex flex-col items-end">
             <ul>
-              <li key="#link_Welcome">
-                <MaybeLink className="text-grey" href={`#link_Welcome`}>
+              <li key="#link_Welcome" className="cursor-pointer">
+                <Link
+                  type="button"
+                  to="link_Welcome"
+                  className="text-grey"
+                  offset={-64}
+                  smooth
+                >
                   Welcome
-                </MaybeLink>
+                </Link>
               </li>
               {content
                 .filter(({ navLink }) => navLink?.id && navLink?.title)
                 .map(({ navLink }) => (
-                  <li key={navLink.id}>
-                    <MaybeLink
+                  <li key={navLink.id} className="cursor-pointer">
+                    <Link
+                      type="button"
+                      to={`link_${navLink.id}`}
                       className="text-grey"
-                      href={`#link_${navLink.id}`}
+                      offset={-64}
+                      smooth
                     >
                       {navLink.title}
-                    </MaybeLink>
+                    </Link>
                   </li>
                 ))}
             </ul>
@@ -117,7 +126,10 @@ export default function WhatsNewPage({ release }: WhatsNewPageProps) {
         </div>
       </div>
 
-      <div id="link_Welcome" className="flex flex-col flex-1 py-20">
+      <div
+        id="link_Welcome"
+        className="flex flex-col flex-1 py-20 scroll-smooth"
+      >
         {/* Header */}
         <div className="w-full px-10">
           <span className="text-grey">

@@ -10,6 +10,7 @@ import layoutTitleComponent from './components/layoutTitle';
 import titleComponent from './components/title';
 import downloadButtonComponent from './components/downloadButton';
 import reviewSourcesComponent from './components/reviewSources';
+import versionSelectorComponent from './components/versionSelector';
 import badgeComponent from './components/badge';
 import releaseQuickLinksComponent from './components/releaseQuickLinks';
 import releasenotesComponent from './components/releasenotes';
@@ -68,6 +69,7 @@ export const components: Record<
   titleComponent,
   downloadButtonComponent,
   reviewSourcesComponent,
+  versionSelectorComponent,
   badgeComponent,
   releaseQuickLinksComponent,
   releasenotesComponent,
