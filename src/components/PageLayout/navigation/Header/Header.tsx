@@ -21,24 +21,31 @@ export type Props =
   | {
       behavior: 'sticky' | 'static';
       className?: string;
+      isShrunk: boolean;
     }
   | {
       behavior: 'scrollup';
       scrollbackMargin?: number;
       stickyUntil?: number;
       className?: string;
+      isShrunk: boolean;
     };
 
 const navigation = getMenu('main-menu');
 
-function Content({ className }: Props) {
+function Content({ className, isShrunk }: Props) {
   return (
     <div className={classNames(className, 'px-4 sm:px-6 lg:px-16 bg-white')}>
       <div className="max-w-7xl h-full mx-auto">
         <div className="h-full flex items-center justify-between md:space-x-10">
-          <div className="">
+          <div>
             <MaybeLink href="/" aria-label="Home">
-              <HeaderLogo className="h-12 md:h-13 lg:h-[72px]" />
+              <HeaderLogo
+                className={classNames(
+                  isShrunk ? 'lg:h-[50px]' : 'lg:h-[72px]',
+                  'h-12 md:h-13 transition-all duration-300',
+                )}
+              />
             </MaybeLink>
           </div>
 
