@@ -46,7 +46,7 @@ function TitleComponent({
   if (!hasTitle && !hasSubTitle) return null;
 
   return (
-    <div className="flex flex-col text-center">
+    <div className="flex flex-col text-center" id={id}>
       <div className={classNames(...(classes || []))}>
         {hasSubTitle && (
           <span className="block quote-decoration uppercase title-sub mb-6">
