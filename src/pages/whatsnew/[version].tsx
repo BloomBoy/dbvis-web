@@ -34,8 +34,8 @@ export default function ReleaseNotesPage({
   featureVersion,
 }: ReleaseNotesPageProps): JSX.Element {
   return (
-    <div className="flex flex-row w-screen">
-      <div className="hidden lg:block fixed w-1/4 h-full -z-10 border-r border-dotted border-[#dddddd]">
+    <div className="flex flex-row w-screen overflow-hidden relative">
+      <div className="hidden lg:block fixed w-80 h-full">
         <div className="p-10 flex flex-col items-end">
           <ul>
             {content.map(({ title, id }) => (
@@ -54,7 +54,7 @@ export default function ReleaseNotesPage({
           </ul>
         </div>
       </div>
-      <div className="lg:ml-auto lg:w-3/4">
+      <div className="lg:ml-80 border-l border-dotted border-[#dddddd]">
         <WhatsNewLayoutList layouts={featureVersion.whatsNewLayout} />
       </div>
     </div>
