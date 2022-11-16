@@ -21,20 +21,20 @@ export default function Image(
     return (
       <picture>
         <source
-          media="(min-width: 370px)"
-          srcSet={`${asset.fields.file.url}?w=555&q=85 2x`}
+          media="(max-width: 370px)"
+          srcSet={`${asset.fields.file.url}?w=555&q=85`}
         />
         <source
-          media="(min-width: 450px)"
-          srcSet={`${asset.fields.file.url}?w=675&q=85 2x`}
+          media="(max-width: 450px)"
+          srcSet={`${asset.fields.file.url}?w=675&q=85`}
         />
         <source
-          media="(min-width: 768px)"
-          srcSet={`${asset.fields.file.url}?w=1152&q=85 2x`}
+          media="(max-width: 768px)"
+          srcSet={`${asset.fields.file.url}?w=1152&q=85`}
         />
         <source
-          media="(min-width: 1920px)"
-          srcSet={`${asset.fields.file.url}?w=1440&q=85 2x`}
+          media="(max-width: 1920px)"
+          srcSet={`${asset.fields.file.url}?w=1440&q=85`}
         />
         <img
           src={src}
