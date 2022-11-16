@@ -47,13 +47,13 @@ const quickLinks = [
 
 function ReleaseQuickLinksComponent() {
   return (
-    <div className="border-t border-b border-dashed py-5">
+    <div className="py-5">
       <h3
         className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-8`}
       >
         All Version Quick Links
       </h3>
-      <ul className="flex felx-row gap-6">
+      <ul className="flex flex-row gap-6">
         {quickLinks.map(({ link, text }) => (
           <LinkComponent key={text} link={link} text={text} />
         ))}

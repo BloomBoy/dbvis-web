@@ -55,3 +55,32 @@ export default function LayoutList({
     </>
   );
 }
+
+export function WhatsNewLayoutList({
+  layouts,
+  startMainHeaderIndex,
+}: LayoutListProps): JSX.Element {
+  const collectedData = useCollectedData();
+  const layoutsWithHeaderCount = useMemo(() => {
+    let headerCount = startMainHeaderIndex ?? 0;
+    return layouts.map((layout) => {
+      const thisHeaderCount = getHeaderCount(layout, collectedData);
+      const currentCount = headerCount;
+      headerCount = currentCount + thisHeaderCount;
+      return [layout, currentCount] as const;
+    });
+  }, [layouts, startMainHeaderIndex, collectedData]);
+
+  return (
+    <>
+      {layoutsWithHeaderCount.map(([layoutProps, mainHeaderIndex]) => (
+        <div
+          key={layoutProps.id}
+          className="border-t border-dotted border-[#dddddd]"
+        >
+          <LayoutOrLink {...layoutProps} mainHeaderIndex={mainHeaderIndex} />
+        </div>
+      ))}
+    </>
+  );
+}

@@ -203,6 +203,17 @@ const productIndex = z.object(
   ),
 );
 
+const featureVersion = z.object(
+  withLayoutFields(
+    {
+      productIndex: safeEntry<z.infer<typeof productIndex>>(),
+      version: z.string(),
+    },
+    'whatsNewLayout',
+    'whatsNewAssetReferences',
+    'whatsNewEntryReferences',
+  ),
+);
 const contentTypeSchemas = {
   standardPage,
   menuItem,
@@ -213,6 +224,7 @@ const contentTypeSchemas = {
   databasePage,
   extraDatabaseSearchResult,
   productIndex,
+  featureVersion,
 };
 
 export default contentTypeSchemas;
