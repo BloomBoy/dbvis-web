@@ -47,7 +47,7 @@ const quickLinks = [
 
 function ReleaseQuickLinksComponent() {
   return (
-    <div className="border-t border-b border-dashed py-5">
+    <div className="py-5">
       <h3
         className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-8`}
       >
