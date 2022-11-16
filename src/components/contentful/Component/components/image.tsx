@@ -7,6 +7,13 @@ type ImageData = {
   classes: SafeEntryFields.Symbol[];
 };
 
+const breakpointSizes = [
+  { breakpoint: 1920, width: 1440 },
+  { breakpoint: 768, width: 1152 },
+  { breakpoint: 450, width: 675 },
+  { breakpoint: 370, width: 555 },
+];
+
 export default function Image(
   props: ComponentProps<ImageData>,
 ): JSX.Element | null {
@@ -20,26 +27,33 @@ export default function Image(
   if (assetType.startsWith('image/')) {
     return (
       <picture>
+        {breakpointSizes.map((size) => (
+          <source
+            key={size.breakpoint}
+            type="image/webp"
+            media={`(min-width: ${size.breakpoint}px)`}
+            srcSet={`${asset.fields.file.url}?w=${size.width}&q=85&fm=webp`}
+          />
+        ))}
+
         <source
-          media="(min-width: 1920px)"
-          srcSet={`${asset.fields.file.url}?w=1440&q=85`}
+          media="(max-width: 370px)"
+          type="image/webp"
+          srcSet={`${asset.fields.file.url}?w=400&q=85&fm=webp`}
         />
-        <source
-          media="(min-width: 768px)"
-          srcSet={`${asset.fields.file.url}?w=1152&q=85`}
-        />
-        <source
-          media="(min-width: 450px)"
-          srcSet={`${asset.fields.file.url}?w=675&q=85`}
-        />
-        <source
-          media="(min-width: 370px)"
-          srcSet={`${asset.fields.file.url}?w=555&q=85`}
-        />
+        {breakpointSizes.map((size) => (
+          <source
+            key={size.breakpoint}
+            media={`(min-width: ${size.breakpoint}px)`}
+            srcSet={`${asset.fields.file.url}?w=${size.width}&q=85`}
+          />
+        ))}
+
         <source
           media="(max-width: 370px)"
           srcSet={`${asset.fields.file.url}?w=400&q=85`}
         />
+
         <img
           src={src}
           loading="lazy"
