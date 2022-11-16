@@ -25,6 +25,7 @@ const typeUrlMap = makeUrlMap({
   userReview: null,
   reviewSource: null,
   stringToken: null,
+  featureVersion: null,
   menu: null,
   menuItem: null,
   extraDatabaseSearchResult: null,
