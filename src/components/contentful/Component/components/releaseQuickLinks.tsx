@@ -53,7 +53,7 @@ function ReleaseQuickLinksComponent() {
       >
         All Version Quick Links
       </h3>
-      <ul className="flex felx-row gap-6">
+      <ul className="flex flex-row gap-6">
         {quickLinks.map(({ link, text }) => (
           <LinkComponent key={text} link={link} text={text} />
         ))}
