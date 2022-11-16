@@ -36,7 +36,9 @@ export function Wrapper({
     backgroundColor || backgroundURL != null
       ? {
           backgroundColor,
-          backgroundImage: backgroundURL ? `url(${backgroundURL})` : undefined,
+          backgroundImage: backgroundURL
+            ? `url(${backgroundURL}?fm=webp&w=1440)`
+            : undefined,
         }
       : undefined;
   if (style == null && !data.classes) {
