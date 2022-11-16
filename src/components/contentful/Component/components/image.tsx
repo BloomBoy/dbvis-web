@@ -10,17 +10,43 @@ type ImageData = {
 export default function Image(
   props: ComponentProps<ImageData>,
 ): JSX.Element | null {
-  const { asset } = props.data;
+  const {
+    data: { asset, classes },
+  } = props;
   if (asset == null) return null;
-  const assetUrl = asset.fields.file.url;
+  const src = `${asset.fields.file.url}?w=1024`;
   const assetType = asset.fields.file.contentType;
+
   if (assetType.startsWith('image/')) {
     return (
-      <img
-        src={assetUrl}
-        alt={asset.fields.title}
-        className={classNames(...(props.data?.classes || []), 'w-full')}
-      />
+      <picture>
+        <source
+          media="(min-width: 1920px)"
+          srcSet={`${asset.fields.file.url}?w=1440&q=85`}
+        />
+        <source
+          media="(min-width: 768px)"
+          srcSet={`${asset.fields.file.url}?w=1152&q=85`}
+        />
+        <source
+          media="(min-width: 450px)"
+          srcSet={`${asset.fields.file.url}?w=675&q=85`}
+        />
+        <source
+          media="(min-width: 370px)"
+          srcSet={`${asset.fields.file.url}?w=555&q=85`}
+        />
+        <source
+          media="(max-width: 370px)"
+          srcSet={`${asset.fields.file.url}?w=400&q=85`}
+        />
+        <img
+          src={src}
+          loading="lazy"
+          alt={asset.fields.title}
+          className={classNames(...(classes || []), 'w-full')}
+        />
+      </picture>
     );
   }
   return null;
