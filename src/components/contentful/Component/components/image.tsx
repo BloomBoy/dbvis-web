@@ -36,6 +36,10 @@ export default function Image(
           media="(min-width: 370px)"
           srcSet={`${asset.fields.file.url}?w=555&q=85`}
         />
+        <source
+          media="(max-width: 370px)"
+          srcSet={`${asset.fields.file.url}?w=400&q=85`}
+        />
         <img
           src={src}
           alt={asset.fields.title}
