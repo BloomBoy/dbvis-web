@@ -34,29 +34,27 @@ export default function ReleaseNotesPage({
   featureVersion,
 }: ReleaseNotesPageProps): JSX.Element {
   return (
-    <div className="flex flex-row">
-      <div className="w-1/4 hidden lg:block relative border-r border-dotted border-[#dddddd]">
-        <div className="fixed w-1/4">
-          <div className="p-10 flex flex-col items-end">
-            <ul>
-              {content.map(({ title, id }) => (
-                <li key={title} className="cursor-pointer">
-                  <Link
-                    type="button"
-                    to={id}
-                    className="text-grey font-mono uppercase"
-                    offset={-64}
-                    smooth
-                  >
-                    {title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <div className="flex flex-row w-screen">
+      <div className="hidden lg:block fixed w-1/4 h-full -z-10 border-r border-dotted border-[#dddddd]">
+        <div className="p-10 flex flex-col items-end">
+          <ul>
+            {content.map(({ title, id }) => (
+              <li key={title} className="cursor-pointer">
+                <Link
+                  type="button"
+                  to={id}
+                  className="text-grey font-mono uppercase py-1 hover:text-primary"
+                  offset={-64}
+                  smooth
+                >
+                  {title}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-      <div>
+      <div className="lg:ml-auto lg:w-3/4">
         <WhatsNewLayoutList layouts={featureVersion.whatsNewLayout} />
       </div>
     </div>
