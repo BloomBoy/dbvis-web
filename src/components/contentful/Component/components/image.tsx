@@ -42,6 +42,7 @@ export default function Image(
         />
         <img
           src={src}
+          loading="lazy"
           alt={asset.fields.title}
           className={classNames(...(classes || []), 'w-full')}
         />
