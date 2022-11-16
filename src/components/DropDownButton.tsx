@@ -99,9 +99,9 @@ function DropDownButton({
                   </div>
                   <div className="px-6 bg-badgeBackground">
                     <div className="flex py-5">
-                      <div className="flex mr-28">
+                      <div className="flex mr-28 items-center">
                         <img
-                          src="/images/apple_logo.png"
+                          src="//images.ctfassets.net/pzt5zr5p8m4g/4GklqoTJij3i8rkbvKTKSe/d0b393d0604a8fe39ef8c153281bc42c/apple.png?w=64"
                           alt="apple logo"
                           className="mr-3.5 self-center"
                         />
