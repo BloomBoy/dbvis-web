@@ -4,7 +4,7 @@ import {
   GetStaticPropsResult,
 } from 'next';
 import React from 'react';
-import { LayoutList } from 'src/components/contentful/Layout';
+import { WhatsNewLayoutList } from 'src/components/contentful/Layout/LayoutList';
 import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
 import { getFeatureVersion } from 'src/utils/contentful/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
@@ -57,7 +57,7 @@ export default function ReleaseNotesPage({
         </div>
       </div>
       <div>
-        <LayoutList layouts={featureVersion.whatsNewLayout} />
+        <WhatsNewLayoutList layouts={featureVersion.whatsNewLayout} />
       </div>
     </div>
   );
