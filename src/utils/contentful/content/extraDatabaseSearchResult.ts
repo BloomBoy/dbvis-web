@@ -1,14 +1,14 @@
+import getClient from 'src/utils/getContentfulClient.mjs';
+import { DatabaseListEntry } from 'src/components/ShowDatabases';
+import { isNonNull } from 'src/utils/filters';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetTaggedParams,
   SafeEntryFields,
-} from './types';
-import getClient from '../getContentfulClient.mjs';
-import { isLink } from './helpers';
-import { DatabaseListEntry } from 'src/components/ShowDatabases';
-import { isNonNull } from '../filters';
-import verifyContentfulResult from './verifyContentfulResult';
+} from '../types';
+import { isLink } from '../helpers';
+import verifyContentfulResult from '../verifyContentfulResult';
 
 export interface GetExtraDatabaseSearchResultsParams
   extends GetPaginatedParams,

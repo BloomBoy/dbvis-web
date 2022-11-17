@@ -1,23 +1,40 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { OsTypes } from 'react-device-detect';
 import useCurrentSystem from 'src/hooks/useCurrentBrowser';
 import MaybeLink from '../contentful/MaybeLink';
-import OSIcon from '../Icon';
+import OSIcon, { hasOSIcon } from '../Icon';
+import { archMap, InstallerTypeProp } from './AllInstallers';
+import { OS, osMap } from './InstallationInstructions';
 
-type InstallerTypeProp = {
-  id: string | number;
-  title: string;
-  url: string;
-  os: string;
-  text: string;
+const browserOsMap: Record<string, OS> = {
+  [OsTypes.Windows]: 'windows',
+  [OsTypes.MAC_OS]: 'mac',
+  ['Linux']: 'linux',
 };
 
 export default function RecommendedInstallers({
   data,
+  releaseVersion,
 }: {
   data: InstallerTypeProp[];
-}): JSX.Element {
+  releaseVersion: string;
+}): JSX.Element | null {
   const { deviceType, os } = useCurrentSystem();
-  const recommendedInstallers = data.filter((i) => i.os === os);
+  const deviceOs = os != null ? browserOsMap[os] : null;
+  const recommendedInstallers = useMemo(() => {
+    return data
+      .filter((i) => i.type === deviceOs)
+      .flatMap((curOs) => {
+        return curOs.files
+          .filter((file) => file.recommended)
+          .map((file) => ({
+            ...file,
+            arch: curOs.arch,
+            note: curOs.note,
+            os: curOs.type,
+          }));
+      });
+  }, [data, deviceOs]);
   if (deviceType === 'mobile') {
     return (
       <div
@@ -61,6 +78,9 @@ export default function RecommendedInstallers({
       </div>
     );
   }
+  if (recommendedInstallers.length === 0) {
+    return null;
+  }
   return (
     <>
       <h3
@@ -76,24 +96,31 @@ export default function RecommendedInstallers({
               backgroundColor: 'rgb(43, 43, 43)',
               boxShadow: '0px 0px 44px 0px rgba(0, 0, 0, 0.25)',
             }}
-            key={installer.id}
+            key={`${installer.os}-${installer.arch}-${installer.type}-${installer.filename}`}
           >
-            <OSIcon
-              os={installer.os}
-              className="text-green-50"
-              style={{ padding: '0px' }}
-              size={50}
-            />
+            {hasOSIcon(installer.os) && (
+              <OSIcon
+                os={installer.os}
+                className="text-green-50"
+                style={{ padding: '0px' }}
+                size={50}
+              />
+            )}
             <div className="flex flex-col pt-1">
               <div className="text-white text-2xl leading-none">
-                {installer.title}
+                {osMap[installer.os]}
+                {installer.arch != null ? ` ${archMap[installer.arch]}` : ''}
               </div>
-              <div className="text-grey leading-none">{installer.text}</div>
+              <div className="text-grey-500 leading-none">
+                <span className="uppercase">{`${installer.type}`}</span>
+                {installer.type != null &&
+                  (installer.jre === true ? ' with Java' : ' without Java')}
+              </div>
             </div>
             <MaybeLink
-              href={installer.url}
+              href={`https://dbvis.com/product_download/dbvis-${releaseVersion}/media/${installer.filename}`}
               aria-label="Home"
-              className="group flex-grow-0 flex-shrink-0 basis-auto self-center block border border-transparent px-8 py-2 text-lg font-mono rounded-full text-black text-center bg-primary"
+              className="group ml-auto flex-grow-0 flex-shrink-0 basis-auto self-center block border border-transparent px-8 py-2 text-lg font-mono rounded-full text-black text-center bg-primary"
             >
               DOWNLOAD THIS INSTALLER ↓
             </MaybeLink>

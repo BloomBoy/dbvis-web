@@ -5,7 +5,7 @@ import {
   SafeEntryFields,
   SafeValue,
 } from 'src/utils/contentful';
-import { getUserReviews } from 'src/utils/contentful/userReview';
+import { getUserReviews } from 'src/utils/contentful/content/userReview';
 import getFetchKey from 'src/utils/getFetchKey';
 import { useRouter } from 'next/router';
 import useCollectedData from 'src/hooks/useCollectedData';

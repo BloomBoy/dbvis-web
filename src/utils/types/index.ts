@@ -1,4 +1,6 @@
-export type WithGlobals<T> = T &
+import type { PageContext } from '../contentful/pageContext';
+
+export type WithGlobals<T = unknown> = T &
   (
     | {
         preview: false;
@@ -9,8 +11,9 @@ export type WithGlobals<T> = T &
       }
   );
 
-export type WithCollectedData<T> = T & {
+export type WithLayoutData<T = unknown> = T & {
   collectedData?: Record<string, unknown>;
+  pageContext?: PageContext;
 };
 export interface SVGComponent {
   className?: string;

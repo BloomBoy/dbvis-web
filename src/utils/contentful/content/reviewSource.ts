@@ -1,14 +1,14 @@
+import getClient from 'src/utils/getContentfulClient.mjs';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetEntryByIdParams,
   GetTaggedParams,
   SafeEntryFields,
-} from './types';
-import getClient from '../getContentfulClient.mjs';
-import { safeValue } from './helpers';
-import verifyContentfulResult from './verifyContentfulResult';
-import { isNonNull } from '../filters';
+} from '../types';
+import { safeValue } from '../helpers';
+import verifyContentfulResult from '../verifyContentfulResult';
+import { isNonNull } from '../../filters';
 
 export interface GetReviewSourcesParams
   extends GetPaginatedParams,

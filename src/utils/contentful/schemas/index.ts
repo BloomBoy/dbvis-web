@@ -208,12 +208,69 @@ const featureVersion = z.object(
     {
       productIndex: safeEntry<z.infer<typeof productIndex>>(),
       version: z.string(),
+      releaseDate: z.string(),
+      haveUsersGuideHTML: z.boolean(),
+      haveUsersGuidePdf: z.boolean(),
     },
     'whatsNewLayout',
     'whatsNewAssetReferences',
     'whatsNewEntryReferences',
   ),
 );
+
+const productRelease = z.object({
+  version: z.string(),
+  featureVersion: safeEntry<z.infer<typeof featureVersion>>(),
+  releaseDate: z.string(),
+  download: z.object({
+    reqs: z.string(),
+    installers: z.array(
+      z.object({
+        type: z.enum([
+          'windows',
+          'linux',
+          'mac',
+          'unix',
+          'solaris',
+          'aix',
+          'hpux',
+          'java',
+        ]),
+        arch: z.string().optional(),
+        note: z.string().optional(),
+        files: z.array(
+          z.object({
+            filename: z.string(),
+            size: z.string(),
+            sizeInBytes: z.number().optional(),
+            type: z.string(),
+            jre: z.boolean().optional(),
+            recommended: z.boolean().optional(),
+            md5Sum: z.string().optional(),
+            sha256Sum: z.string().optional(),
+            bundledJre: z.string().optional(),
+          }),
+        ),
+      }),
+    ),
+  }),
+  releaseNotes: z
+    .array(
+      z.object({
+        header: z.string(),
+        items: z.array(
+          z.object({
+            components: z.array(z.string()),
+            desc: z.string(),
+            link: z.string().optional(),
+            jira: z.string().optional(),
+          }),
+        ),
+      }),
+    )
+    .optional(),
+});
+
 const contentTypeSchemas = {
   standardPage,
   menuItem,
@@ -225,6 +282,7 @@ const contentTypeSchemas = {
   extraDatabaseSearchResult,
   productIndex,
   featureVersion,
+  productRelease,
 };
 
 export default contentTypeSchemas;

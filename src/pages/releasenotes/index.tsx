@@ -1,10 +1,10 @@
 import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import React, { useMemo } from 'react';
-import { LayoutList, LayoutProps } from 'src/components/contentful/Layout';
+import { LayoutList, SavedLayout } from 'src/components/contentful/Layout';
 import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
-import { getProductIndex } from 'src/utils/contentful/release';
+import { getProductIndex } from 'src/utils/contentful/content/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithCollectedData } from 'src/utils/types';
+import { WithGlobals, WithLayoutData } from 'src/utils/types';
 import {
   ColumnData,
   ColumnLayoutData,
@@ -28,12 +28,12 @@ export default function ReleaseNotesPage({
   productIndex,
 }: ReleaseNotesPageProps): JSX.Element {
   const titleLayout = useMemo<
-    SafeValue<LayoutProps<ColumnLayoutData, ColumnData>>
+    SafeValue<SavedLayout<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
       data: {
-        subTitle: 'All Version Quick Links',
+        subTitle: 'All Versions list',
         title: 'Release Notes',
         renderHeader: false,
       },
@@ -63,7 +63,7 @@ export default function ReleaseNotesPage({
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
 ): Promise<
-  GetStaticPropsResult<WithGlobals<WithCollectedData<ReleaseNotesPageProps>>>
+  GetStaticPropsResult<WithGlobals<WithLayoutData<ReleaseNotesPageProps>>>
 > {
   const preview = ctx.preview || false;
   const productIndexSlug =
@@ -71,19 +71,19 @@ export async function getStaticProps(
       ? ctx.params?.productIndexSlug.join()
       : ctx.params?.productIndexSlug) ?? '/';
   try {
-    const { productIndex, collectedData } = await getProductIndex(
+    const { productIndex, collectedData, pageContext } = await getProductIndex(
       {
         slug: productIndexSlug,
         locale: ctx.locale,
         preview,
       },
-      [
-        'slug',
-        'changelogIndexLayout',
-        'changelogIndexAssetReferences',
-        'changelogIndexEntryReferences',
-        'active',
-      ],
+      {
+        pickFields: [
+          'changelogIndexLayout',
+          'changelogIndexAssetReferences',
+          'changelogIndexEntryReferences',
+        ] as const,
+      },
     );
     if (productIndex == null) {
       return {
@@ -94,6 +94,7 @@ export async function getStaticProps(
     return {
       props: {
         productIndex: productIndex.fields,
+        pageContext,
         collectedData,
         ...(await getGlobalData(ctx)),
       },

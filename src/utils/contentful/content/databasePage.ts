@@ -1,16 +1,16 @@
+import type { DatabaseListEntry } from 'src/components/ShowDatabases';
+import { isNonNull } from 'src/utils/filters';
 import {
   ContentTypeFieldsMap,
   GetPaginatedParams,
   GetTaggedParams,
   GetSlugEntryParams,
   SafeEntryFields,
-} from './types';
-import getClient from '../getContentfulClient.mjs';
-import { isLink, SafeValue, safeValue } from './helpers';
-import parseLayout from './parseLayout';
-import type { DatabaseListEntry } from 'src/components/ShowDatabases';
-import { isNonNull } from '../filters';
-import verifyContentfulResult from './verifyContentfulResult';
+} from '../types';
+import getClient from 'src/utils/getContentfulClient.mjs';
+import { isLink, SafeValue, safeValue } from '../helpers';
+import parseLayout from '../parseLayout';
+import verifyContentfulResult from '../verifyContentfulResult';
 
 const getSingleDatabasePageQuery = (
   params: GetSlugEntryParams,
@@ -30,6 +30,35 @@ const getSingleDatabasePageQuery = (
     : null),
 });
 
+async function parseFullDatabasePage(
+  preview: boolean,
+  rawPage: SafeEntryFields.Entry<ContentTypeFieldsMap['databasePage']>,
+): Promise<{
+  page: SafeEntryFields.Entry<SafeValue<ContentTypeFieldsMap['databasePage']>>;
+  collectedData: Record<string, unknown>;
+}>;
+async function parseFullDatabasePage<
+  T extends Partial<ContentTypeFieldsMap['databasePage']>,
+>(
+  preview: boolean,
+  rawPage: SafeEntryFields.Entry<T>,
+): Promise<{
+  page: SafeEntryFields.Entry<SafeValue<T>>;
+  collectedData: Record<string, unknown>;
+}>;
+async function parseFullDatabasePage<
+  T extends Partial<ContentTypeFieldsMap['databasePage']>,
+>(
+  preview: boolean,
+  rawPage:
+    | SafeEntryFields.Entry<T>
+    | SafeEntryFields.Entry<ContentTypeFieldsMap['databasePage']>,
+): Promise<{
+  page:
+    | SafeEntryFields.Entry<SafeValue<T>>
+    | SafeEntryFields.Entry<SafeValue<T>>;
+  collectedData: Record<string, unknown>;
+}>;
 async function parseFullDatabasePage<
   T extends Partial<ContentTypeFieldsMap['databasePage']>,
 >(

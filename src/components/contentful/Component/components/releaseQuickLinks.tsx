@@ -1,6 +1,9 @@
+import { useRouter } from 'next/router';
 import MaybeLink from 'src/components/contentful/MaybeLink';
+import usePageContext from 'src/hooks/usePageContex';
+import { PageContext } from 'src/utils/contentful/pageContext';
 import getFetchKey from 'src/utils/getFetchKey';
-import { SavedComponentProps } from '..';
+import { ComponentProps, SavedComponentProps } from '..';
 
 type ReleaseQuickLinksData = {
   a?: unknown;
@@ -18,11 +21,14 @@ function databaseFetchKey(
 }
 
 const LinkComponent = ({ link, text }: { link: string; text: string }) => {
+  const { query } = useRouter();
+  const queryVersion =
+    typeof query.version === 'string' ? query.version : undefined;
   return (
     <li>
       <MaybeLink
-        href={link}
-        className="text-primary hover:text-primary-700 underline"
+        href={queryVersion ? `${link}/${queryVersion}` : link}
+        className="text-primary hover:text-primary-700 uppercase underline"
       >
         {text}
       </MaybeLink>
@@ -33,25 +39,30 @@ const LinkComponent = ({ link, text }: { link: string; text: string }) => {
 const quickLinks = [
   {
     link: '/whatsnew',
-    text: "WHAT'S NEW ->",
+    text: "What's New ->",
   },
   {
     link: '/releasenotes',
-    text: 'RELEASE NOTES ->',
+    text: 'Release Notes ->',
   },
   {
     link: '/download',
-    text: 'DOWNLOADS ->',
+    text: 'Downloads ->',
   },
 ] as const;
 
-function ReleaseQuickLinksComponent() {
+function ReleaseQuickLinksComponent({
+  id,
+}: ComponentProps<ReleaseQuickLinksData>) {
+  const context = usePageContext();
+  if (context.featureVersion == null) return null;
   return (
     <div className="py-5">
       <h3
+        id={id}
         className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-8`}
       >
-        All Version Quick Links
+        {context.featureVersion.fields.version} Quick Links
       </h3>
       <ul className="flex flex-row gap-6">
         {quickLinks.map(({ link, text }) => (
@@ -73,6 +84,21 @@ const releaseQuickLinks = Object.assign(ReleaseQuickLinksComponent, {
         return {};
       },
     };
+  },
+  headers(
+    props: ComponentProps<ReleaseQuickLinksData>,
+    collectedDataMap: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ) {
+    if (context.featureVersion == null) return undefined;
+    return [
+      {
+        id: props.id,
+        subTitle: `${context.featureVersion.fields.version} Quick Links`,
+        linkText: 'Quick Links',
+      },
+    ];
   },
 });
 

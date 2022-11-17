@@ -1,12 +1,13 @@
 import type {
   LayoutLinkProps,
   LayoutListEntryProps,
-  LayoutProps,
+  SavedLayout,
 } from 'src/components/contentful/Layout';
 import { SafeAsset, SafeEntry, SafeEntryFields } from './types';
 import { SafeValue, isNotLink, safeValue, isLink } from './helpers';
 import { components, isComponent } from 'src/components/contentful/Component';
 import { asyncMapMaxConcurrent } from '../asyncArray.mjs';
+import { PageContext } from './pageContext';
 
 type InternalLayoutFields<
   LayoutFieldId extends string,
@@ -16,7 +17,7 @@ type InternalLayoutFields<
   [key in LayoutFieldId]:
     | (Extract<key, LayoutFieldId> extends never
         ? never
-        : (LayoutProps | LayoutLinkProps)[])
+        : (SavedLayout | LayoutLinkProps)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -25,7 +26,7 @@ type InternalLayoutFields<
   [key in AssetListFieldId]:
     | (Extract<key, LayoutFieldId> extends never
         ? never
-        : (LayoutProps | LayoutLinkProps)[])
+        : (SavedLayout | LayoutLinkProps)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -34,7 +35,7 @@ type InternalLayoutFields<
   [key in ReferenceListFieldId]:
     | (Extract<key, LayoutFieldId> extends never
         ? never
-        : (LayoutProps | LayoutLinkProps)[])
+        : (SavedLayout | LayoutLinkProps)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -65,6 +66,7 @@ export interface ParsingContext {
   collectedData?: {
     [k: string]: unknown;
   };
+  pageContext?: PageContext;
 }
 
 export default async function parseLayout(
@@ -216,6 +218,7 @@ export default async function parseLayout(
       const dataCollector = componentRenderer?.registerDataCollector?.(
         ret,
         preview,
+        context?.pageContext ?? {},
       );
       if (dataCollector != null) {
         dataCollectors[dataCollector.fetchKey] = dataCollector;
@@ -235,7 +238,9 @@ export default async function parseLayout(
         (data) => [key, data] as const,
       );
     },
-  ).then((entries) => Object.fromEntries(entries));
+  ).then((entries) =>
+    Object.fromEntries(entries.filter(([, val]) => val !== undefined)),
+  );
   return {
     layoutList,
     collectedData,

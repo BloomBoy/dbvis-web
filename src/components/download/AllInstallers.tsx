@@ -1,76 +1,130 @@
-import React from 'react';
 import { Tab } from '@headlessui/react';
-import OSIcon from '../Icon';
+import { useMemo } from 'react';
+import { objectEntries } from 'src/utils/objects';
 import MaybeLink from '../contentful/MaybeLink';
+import OSIcon, { hasOSIcon } from '../Icon';
+import { OS, osMap } from './InstallationInstructions';
 
-type InstallerTypeProp = {
-  id: string | number;
-  title: string;
-  url: string;
-  os: string;
-  text: string;
+export type InstallerTypeProp = {
+  type: OS;
+  arch?: string;
+  note?: string;
+  files: {
+    size: string;
+    sizeInBytes?: number;
+    type: string;
+    jre?: boolean;
+    recommended?: boolean;
+    md5Sum?: string;
+    sha256Sum?: string;
+    bundledJre?: string;
+    filename: string;
+  }[];
+};
+
+export const archMap: Record<string, string | undefined> = {
+  '64bit': '64-bit',
+  '32bit': '32-bit',
+  intel: 'Intel',
+  apple: 'Apple Silicon',
+};
+
+type MappedInstaller = {
+  [key in keyof (InstallerTypeProp['files'][number] &
+    Pick<
+      InstallerTypeProp,
+      'arch' | 'note'
+    >)]: (InstallerTypeProp['files'][number] &
+    Pick<InstallerTypeProp, 'arch' | 'note'>)[key];
 };
 
 export default function AllInstallers({
+  releaseVersion,
   data,
 }: {
+  releaseVersion: string;
   data: InstallerTypeProp[];
 }): JSX.Element {
-  const byOS: Record<string, InstallerTypeProp[]> = {};
-
-  data.forEach((entry) => {
-    if (!byOS[entry.os]) {
-      byOS[entry.os] = [];
-    }
-    byOS[entry.os].push(entry);
-  });
+  const osEntries = useMemo(() => {
+    const ret: {
+      [key in OS]?: MappedInstaller[];
+    } = {};
+    data.forEach((os) => {
+      const installerArr = ret[os.type] ?? [];
+      ret[os.type] = installerArr;
+      installerArr.push(
+        ...os.files.map((file) => ({
+          ...file,
+          arch: os.arch,
+          note: os.note,
+        })),
+      );
+    });
+    return objectEntries(ret).filter(
+      (e): e is [typeof e[0], NonNullable<typeof e[1]>] =>
+        e[1] != null && e[1].length > 0,
+    );
+  }, [data]);
 
   return (
     <>
       <h3
         className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-6`}
       >
-        All Installers - test
+        All Installers - {releaseVersion}
       </h3>
       <Tab.Group>
         <Tab.List>
-          {Object.entries(byOS).map(([os]) => (
+          {osEntries.map(([osType]) => (
             <Tab
-              key={os}
-              className="text-base md:text-xl font-mono py-2 my-8 pr-6 ui-not-selected:text-primary ui-selected:text-black ui-selected:underline underline-offset-8"
+              key={osType}
+              className="text-base md:text-xl font-mono py-2 my-8 mr-4 ui-not-selected:text-primary ui-selected:text-black ui-selected:underline underline-offset-8"
             >
-              {os}
+              {osMap[osType]}
             </Tab>
           ))}
         </Tab.List>
         <Tab.Panels className="w-full border-b border-dashed pb-10">
-          {Object.entries(byOS).map(([os, installers]) => (
+          {osEntries.map(([osType, files]) => (
             <Tab.Panel
-              key={os}
-              className="flex flex-col md:flex-row gap-8 w-full"
+              key={osType}
+              className="flex flex-wrap flex-col md:flex-row -mx-4 gap-y-8 w-full"
             >
-              {installers.map((installer) => (
+              {files.map((file) => (
                 <div
-                  className="flex flex-row gap-4 items-center justify-between w-full md:w-1/2 bg-grey-300 rounded-lg p-4 font-mono "
-                  key={installer.id}
-                  style={{ boxShadow: '0px 0px 16px 0px rgba(0, 0, 0, 0.05)' }}
+                  className="px-4 w-full md:w-1/2"
+                  key={`${file.type}-${file.arch}-${file.filename}`}
                 >
-                  <OSIcon
-                    os={installer.os}
-                    className=""
-                    style={{ padding: '0px' }}
-                    size={30}
-                  />
-                  <div className="flex flex-row gap-4 grow items-center">
-                    <div>{installer.title}</div>
-                    <div className="text-grey-500">{installer.text}</div>
-                  </div>
-                  <MaybeLink
-                    href={installer.url}
-                    className="text-primary hover:text-primary-700 underline flex-grow-0 flex-shrink-0 basis-auto"
+                  <div
+                    className="flex flex-row gap-4 items-center justify-between w-full bg-grey-300 rounded-lg p-4 font-mono"
+                    style={{
+                      boxShadow: '0px 0px 16px 0px rgba(0, 0, 0, 0.05)',
+                    }}
                   >
-                    Download ↓
-                  </MaybeLink>
+                    {hasOSIcon(osType) && (
+                      <OSIcon
+                        os={osType}
+                        className=""
+                        style={{ padding: '0px' }}
+                        size={30}
+                      />
+                    )}
+                    <div>
+                      {osMap[osType]}
+                      {file.arch != null ? ` ${archMap[file.arch]}` : null}
+                    </div>
+                    <div className="text-grey-500 uppercase">
+                      {file.type}
+                      {file.jre != null &&
+                        (file.jre === true ? ' with Java' : ' without Java')}
+                    </div>
+                    <MaybeLink
+                      href={`https://dbvis.com/product_download/dbvis-${releaseVersion}/media/${file.filename}`}
+                      className="text-primary hover:text-primary-700 underline flex-grow-0 flex-shrink-0 basis-auto ml-auto"
+                    >
+                      Download ↓
+                    </MaybeLink>
+                  </div>
                 </div>
               ))}
             </Tab.Panel>

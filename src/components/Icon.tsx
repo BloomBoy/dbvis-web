@@ -2,15 +2,19 @@ import React from 'react';
 import Windows from './icons/Windows';
 import Mac from './icons/MacOS';
 import Linux from './icons/Linux';
-import { OsTypes } from 'react-device-detect';
 
 const OSComponent = {
-  [OsTypes.Windows]: Windows,
-  [OsTypes.MAC_OS]: Mac,
-  Linux,
+  windows: Windows,
+  mac: Mac,
+  linux: Linux,
 };
 
 export type OS = keyof typeof OSComponent;
+export const supportedOs = Object.keys(OSComponent) as OS[];
+
+export function hasOSIcon(os: string): os is OS {
+  return supportedOs.includes(os as OS);
+}
 
 type GetBrowser = {
   os: OS;
@@ -20,7 +24,6 @@ type GetBrowser = {
 };
 export default function OSIcon({ os, className, style, size }: GetBrowser) {
   const Component = OSComponent[os] ?? Windows;
-
   return (
     <Component
       className={className}

@@ -11,11 +11,11 @@ export type SlotProps<
 };
 
 export type BlockFields = {
-  pageLayout: LayoutListEntryProps[];
+  pageLayout: SavedLayoutListEntry[];
   title: SafeEntryFields.Symbol;
 };
 
-export interface LayoutProps<
+export interface SavedLayout<
   Data extends Record<string, unknown> = Record<string, any>,
   SlotData extends Record<string, unknown> = Record<string, any>,
 > {
@@ -23,15 +23,29 @@ export interface LayoutProps<
   type: `${string}Layout`;
   slots: SlotProps<SlotData>[];
   id: string;
-  mainHeaderIndex?: number;
 }
 
-export interface LayoutLinkProps {
+export interface LayoutProps<
+  Data extends Record<string, unknown> = Record<string, any>,
+  SlotData extends Record<string, unknown> = Record<string, any>,
+> extends SavedLayout<Data, SlotData> {
+  mainHeaderIndex: number;
+}
+
+export interface SavedLayoutLink {
   target: SafeEntryFields.SafeEntry<BlockFields>;
   type: `${string}Link`;
   id: string;
-  mainHeaderIndex?: number;
 }
+
+export interface LayoutLinkProps extends SavedLayoutLink {
+  mainHeaderIndex: number;
+}
+
+export type SavedLayoutListEntry<
+  Data extends Record<string, unknown> = Record<string, any>,
+  SlotData extends Record<string, unknown> = Record<string, any>,
+> = SafeValue<SavedLayout<Data, SlotData>> | SafeValue<SavedLayoutLink>;
 
 export type LayoutListEntryProps<
   Data extends Record<string, unknown> = Record<string, any>,

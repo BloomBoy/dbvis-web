@@ -1,7 +1,12 @@
 import { useRouter } from 'next/router';
-import { OsTypes } from 'react-device-detect';
-import InstallationInstructions from 'src/components/download/InstallationInstructions';
+import { useMemo } from 'react';
+import InstallationInstructions, {
+  isSupportedOs,
+} from 'src/components/download/InstallationInstructions';
 import useCollectedData from 'src/hooks/useCollectedData';
+import { SafeEntryFields, SafeValue, safeValue } from 'src/utils/contentful';
+import { isNonNull } from 'src/utils/filters';
+import getContentfulClient from 'src/utils/getContentfulClient.mjs';
 import getFetchKey from 'src/utils/getFetchKey';
 import { ComponentProps, SavedComponentProps } from '..';
 
@@ -9,29 +14,46 @@ type InstallationInstructionsData = {
   a?: unknown;
 };
 
-type CollectedData = {
-  id: string;
-  title: string;
-  os: string;
-  text: string;
-}[];
+type CollectedData = SafeEntryFields.Entry<
+  SafeValue<{
+    title: SafeEntryFields.Symbol;
+    operatingSystem: SafeEntryFields.Symbol;
+    text: SafeEntryFields.RichText;
+  }>
+>[];
 
-function installersFetchKey(
+function installationInstructionsFetchKey(
   { data: {} }: SavedComponentProps<InstallationInstructionsData>,
   preview: boolean,
 ) {
-  return getFetchKey('installers', { preview });
+  return getFetchKey('installationInstructions', { preview });
 }
 
 function InstallationInstructionsComponent(
   props: ComponentProps<InstallationInstructionsData>,
 ) {
   const { isPreview } = useRouter();
-  const key = installersFetchKey(props, isPreview);
-  const installers = useCollectedData<CollectedData>(key, []);
+  const key = installationInstructionsFetchKey(props, isPreview);
+  const installationInstructions = useCollectedData<CollectedData>(key, []);
+  const mappedInstructions = useMemo(
+    () =>
+      installationInstructions
+        .map((instruction) => {
+          const { title, operatingSystem, text } = instruction.fields;
+          if (!isSupportedOs(operatingSystem)) return null;
+          return {
+            id: instruction.sys.id,
+            title,
+            os: operatingSystem,
+            text,
+          };
+        })
+        .filter(isNonNull),
+    [installationInstructions],
+  );
   return (
     <div className="py-5">
-      <InstallationInstructions data={installers} />
+      <InstallationInstructions data={mappedInstructions} />
     </div>
   );
 }
@@ -44,28 +66,19 @@ const installationInstructions = Object.assign(
       preview: boolean,
     ) {
       return {
-        fetchKey: installersFetchKey(props, preview),
+        fetchKey: installationInstructionsFetchKey(props, preview),
         async collect(): Promise<CollectedData> {
-          return [
-            {
-              id: '1',
-              os: OsTypes.MAC_OS,
-              title: 'FROM TGZ-archives',
-              text: `All Files are contained in an enclosing folder named DbVisualizer Unpack the tgz file in a terminal window with the following command or double-click it in the Finder: open dbvis_macos_<version>.tgz Start DbVisualizer by opening the following: DbVisualizer`,
-            },
-            {
-              id: '2',
-              os: OsTypes.Windows,
-              title: 'FROM ZIP-archives',
-              text: `All Files are contained in an enclosing folder named DbVisualizer Unpack the tgz file in a terminal window with the following command or double-click it in the Finder: open dbvis_macos_<version>.tgz Start DbVisualizer by opening the following: DbVisualizer`,
-            },
-            {
-              id: '3',
-              os: 'Linux',
-              title: 'FROM TAR-archives',
-              text: 'All Files are contained in an enclosing folder named DbVisualizer Unpack the tgz file in a terminal window with the following command or double-click it in the Finder: open dbvis_macos_<version>.tgz Start DbVisualizer by opening the following: DbVisualizer',
-            },
-          ];
+          const client = await getContentfulClient(preview);
+          const { items } = await client.getEntries<{
+            title: SafeEntryFields.Symbol;
+            weight: SafeEntryFields.Number;
+            operatingSystem: SafeEntryFields.Symbol;
+            text: SafeEntryFields.RichText;
+          }>({
+            include: 2,
+            content_type: 'installationInstruction',
+          });
+          return items.map((item) => safeValue(item));
         },
       };
     },

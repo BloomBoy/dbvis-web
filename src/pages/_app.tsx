@@ -10,6 +10,8 @@ import { InitialRenderProvider } from 'src/hooks/useIsInitialRender';
 import { UserAgentProvider } from 'src/hooks/useCurrentBrowser';
 import PreloadFonts from 'src/utils/preloadFont';
 import { PageConfigProvider } from 'src/hooks/usePageConfig';
+import { PageContextProvider } from 'src/hooks/usePageContex';
+import { WithGlobals, WithLayoutData } from 'src/utils/types';
 
 const {
   publicRuntimeConfig: { contentfulAppParameters },
@@ -17,15 +19,18 @@ const {
 
 function MyApp(props: AppProps & { ua?: string }) {
   const { Component, pageProps, ua } = props;
-  const { collectedData } = pageProps as { collectedData?: unknown };
+  const { collectedData, pageContext } =
+    pageProps as WithGlobals<WithLayoutData>;
   return (
     <PageConfigProvider appProps={props}>
       <UserAgentProvider userAgent={ua}>
-        <CollectedDataProvider data={collectedData}>
-          <PageLayout>
-            <Component {...pageProps} />
-          </PageLayout>
-        </CollectedDataProvider>
+        <PageContextProvider data={pageContext}>
+          <CollectedDataProvider data={collectedData}>
+            <PageLayout>
+              <Component {...pageProps} />
+            </PageLayout>
+          </CollectedDataProvider>
+        </PageContextProvider>
       </UserAgentProvider>
     </PageConfigProvider>
   );

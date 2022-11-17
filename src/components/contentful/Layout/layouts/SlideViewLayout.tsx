@@ -13,6 +13,8 @@ import RichText from 'src/components/RichText';
 import classNames from 'classnames';
 import LayoutTitle from '../../Component/components/layoutTitle';
 import { SafeEntryFields } from 'src/utils/contentful';
+import { isNonNull } from 'src/utils/filters';
+import { PageContext } from 'src/utils/contentful/pageContext';
 
 type Data = HeaderData &
   ThemeData & {
@@ -284,6 +286,40 @@ const CrossFadeViewLayout = Object.assign(CrossFadeViewLayoutComp, {
       });
     });
     return count;
+  },
+  headers(
+    props: LayoutProps<Data, SlotData>,
+    collectedData: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ) {
+    const componentHeaders = props.slots
+      .flatMap((slot) =>
+        slot.components.flatMap((component) =>
+          Component.headers(
+            {
+              ...component,
+              layout: props,
+            },
+            collectedData,
+            preview,
+            context,
+          ),
+        ),
+      )
+      .filter(isNonNull);
+    return props.data.renderHeader
+      ? [
+          {
+            id: `${props.id}-header`,
+            ...(props.data.title != null && { mainTitle: props.data.title }),
+            ...(props.data.subTitle != null && {
+              subtitle: props.data.subTitle,
+            }),
+          },
+          ...componentHeaders,
+        ]
+      : componentHeaders;
   },
 });
 

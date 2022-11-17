@@ -47,14 +47,18 @@ export default function verifyContentfulResult<
 export default function verifyContentfulResult<
   ZType extends z.ZodObject<z.ZodRawShape>,
   EntryType extends SafeEntryFields.Entry<any>,
+  Picks extends keyof z.infer<ZType>,
 >(
   schema: ZType,
   entry: EntryType,
   preview: boolean | undefined | null,
-  pickFields?: readonly (keyof z.infer<ZType>)[],
+  pickFields?: readonly Picks[],
 ): EntryType extends Entry<any>
-  ? Entry<Partial<z.infer<ZType>>> | null
-  : SafeEntryFields.Entry<Partial<z.infer<ZType>>> | null;
+  ? Entry<Partial<z.infer<ZType>>> | Entry<Pick<z.infer<ZType>, Picks>> | null
+  :
+      | SafeEntryFields.Entry<z.infer<ZType>>
+      | SafeEntryFields.Entry<Pick<z.infer<ZType>, Picks>>
+      | null;
 export default function verifyContentfulResult<
   SchemaName extends keyof typeof contentTypeSchemas,
   EntryType extends SafeEntryFields.Entry<any>,
@@ -80,17 +84,24 @@ export default function verifyContentfulResult<
 export default function verifyContentfulResult<
   SchemaName extends keyof typeof contentTypeSchemas,
   EntryType extends SafeEntryFields.Entry<any>,
+  Picks extends keyof ContentTypeFieldsMap[SchemaName],
 >(
   schema: SchemaName,
   entry: EntryType,
   preview: boolean | undefined | null,
-  pickFields?: readonly (keyof ContentTypeFieldsMap[SchemaName])[],
+  pickFields?: readonly Picks[],
 ): EntryType extends Entry<any>
-  ? Entry<Partial<ContentTypeFieldsMap[SchemaName]>> | null
-  : SafeEntryFields.Entry<Partial<ContentTypeFieldsMap[SchemaName]>> | null;
+  ?
+      | Entry<ContentTypeFieldsMap[SchemaName]>
+      | Entry<Pick<ContentTypeFieldsMap[SchemaName], Picks>>
+      | null
+  :
+      | SafeEntryFields.Entry<ContentTypeFieldsMap[SchemaName]>
+      | SafeEntryFields.Entry<Pick<ContentTypeFieldsMap[SchemaName], Picks>>
+      | null;
 export default function verifyContentfulResult(
   schema: z.ZodObject<z.ZodRawShape> | keyof typeof contentTypeSchemas,
-  entry: SafeEntryFields.Entry<unknown>,
+  entry: SafeEntryFields.Entry<unknown> | undefined,
   preview: boolean | undefined | null,
   pickFields?: readonly (string | symbol | number)[],
 ): SafeEntryFields.Entry<unknown> | null {
@@ -105,6 +116,9 @@ export default function verifyContentfulResult(
             fromEntries(pickFields.map((key) => [key, true] as const)),
           )
         : baseSchema;
+    if (entry == null) {
+      return null;
+    }
     const parsed = parseSchema.safeParse(entry.fields);
     if (parsed.success) return entry;
     // If we're in development mode, and not preview mode, crash the page
@@ -121,5 +135,5 @@ export default function verifyContentfulResult(
   // and hope for the best, as we want to maintain a sane failure mode
   // that isn't impossible to debug, and Contentful presents some guarantees for
   // published content.
-  return entry;
+  return entry ?? null;
 }

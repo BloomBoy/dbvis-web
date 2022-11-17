@@ -14,10 +14,14 @@ import versionSelectorComponent from './components/versionSelector';
 import badgeComponent from './components/badge';
 import releaseQuickLinksComponent from './components/releaseQuickLinks';
 import releasenotesComponent from './components/releasenotes';
-import recommendedInstallersComponent from './components/recommendedInstallers';
-import allInstallersComponent from './components/allInstallers';
 import installationInstructionsComponent from './components/installationInstructions';
+import {
+  systemRequirementsComponent,
+  allInstallersComponent,
+  recommendedInstallersComponent,
+} from './components/installers';
 import type { LayoutProps } from '../Layout';
+import { PageContext } from 'src/utils/contentful/pageContext';
 
 export interface SavedComponentProps<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,9 +49,25 @@ interface ComponentRenderer<
         props: ComponentProps<Data>,
         collectedData: Record<string, unknown>,
       ) => number);
+  headers?: (
+    props: ComponentProps<Data>,
+    collectedData: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ) =>
+    | {
+        id: string;
+        mainTitle?: string;
+        subTitle?: string;
+        linkText?: string;
+      }[]
+    | undefined
+    | null;
+
   registerDataCollector?: (
     props: SavedComponentProps<Data>,
     preview: boolean,
+    context: PageContext,
   ) => {
     fetchKey: string;
     collect: () => unknown | Promise<unknown>;
@@ -76,6 +96,7 @@ export const components: Record<
   recommendedInstallersComponent,
   allInstallersComponent,
   installationInstructionsComponent,
+  systemRequirementsComponent,
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {
@@ -111,6 +132,19 @@ const Component = Object.assign(ComponentComp, {
       return Comp.headerCount(props, collectedData);
     }
     return Comp.headerCount ?? 0;
+  },
+  headers(
+    props: ComponentProps,
+    collectedData: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ) {
+    const { type } = props;
+    const Comp = components[type];
+    if (Comp?.headers == null) {
+      return [];
+    }
+    return Comp.headers(props, collectedData, preview, context);
   },
 });
 
