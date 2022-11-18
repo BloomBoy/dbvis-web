@@ -1,22 +1,24 @@
+import { AppProps } from 'next/app';
 import { createContext, useContext } from 'react';
+import { WithLayoutData } from 'src/utils/types';
 
 const defaultData: Record<string, unknown> = {};
 
 const CollectedDataContext = createContext(defaultData);
 
-export function CollectedDataProvider({
+export function CollectedDataProvider<PageProps>({
   children,
-  data,
-}: {
-  children: React.ReactNode;
-  data: unknown;
-}) {
+  pageProps,
+}: React.PropsWithChildren<AppProps<WithLayoutData<PageProps>>>) {
+  const { collectedData } = pageProps;
   return (
     <CollectedDataContext.Provider
       value={
-        typeof data !== 'object' || data == null || Array.isArray(data)
+        typeof collectedData !== 'object' ||
+        collectedData == null ||
+        Array.isArray(collectedData)
           ? defaultData
-          : (data as Record<string, unknown>)
+          : (collectedData as Record<string, unknown>)
       }
     >
       {children}

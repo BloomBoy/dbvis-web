@@ -1,15 +1,27 @@
-import type { PageContext } from '../contentful/pageContext';
+import type { SafeEntryFields, SafeValue } from '../contentful';
+import type { PickedProductRelease } from '../contentful/content/release/productRelease';
+import type {
+  PageContext,
+  PageContextFeatureVersionFields,
+  PageContextProductIndexFields,
+} from '../contentful/pageContext';
 
-export type WithGlobals<T = unknown> = T &
-  (
-    | {
-        preview: false;
-      }
-    | {
-        preview: true;
-        stringSymbols: Record<string, string>;
-      }
-  );
+type BaseGlobals = {
+  stringSymbols: Record<string, string> | null;
+  defaultProductIndex: SafeEntryFields.Entry<
+    SafeValue<PageContextProductIndexFields>
+  > | null;
+  latestFeatureVersion: SafeEntryFields.Entry<
+    SafeValue<PageContextFeatureVersionFields>
+  > | null;
+  latestProductRelease: SafeEntryFields.Entry<
+    SafeValue<PickedProductRelease<'download'>>
+  > | null;
+};
+
+export type WithGlobals<T = unknown> = {
+  [key in keyof (T & BaseGlobals)]: (T & BaseGlobals)[key];
+};
 
 export type WithLayoutData<T = unknown> = T & {
   collectedData?: Record<string, unknown>;

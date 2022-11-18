@@ -1,9 +1,19 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import { ComponentType } from 'react';
+/* eslint-disable @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any */
+import React, { ComponentType } from 'react';
 
-type HOC = <Props extends {}>(
+type HOC<Props extends {}> = (
   Comp: ComponentType<Props>,
 ) => ComponentType<Props>;
+
+type UnifiedProps<HOCs extends readonly HOC<any>[]> = {
+  [key in keyof HOCs]: (
+    props: React.ComponentPropsWithoutRef<ReturnType<HOCs[key]>>,
+  ) => void;
+}[number] extends (props: infer Q) => void
+  ? {
+      [key in keyof Q]: Q[key];
+    }
+  : never;
 
 /**
  * Composes multiple HOCs into a single HOC
@@ -17,11 +27,11 @@ type HOC = <Props extends {}>(
  * @param HOCs The HOCs to be composed
  * @returns A single HOC that composes all the specified HOCs
  */
-export default function composeHOCs(...HOCs: HOC[]) {
-  return function ComposeComp<Props extends {}>(
-    Comp: ComponentType<Props>,
-  ): ComponentType<Props> {
-    const composedHOC = HOCs.reduceRight<ComponentType<Props>>(
+export default function composeHOCs<HOCs extends HOC<any>[]>(...hocs: HOCs) {
+  return function ComposeComp(
+    Comp: ComponentType<UnifiedProps<HOCs>>,
+  ): ComponentType<UnifiedProps<HOCs>> {
+    const composedHOC = hocs.reduceRight<ComponentType<UnifiedProps<HOCs>>>(
       (acc, HOC) => HOC(acc),
       Comp,
     );

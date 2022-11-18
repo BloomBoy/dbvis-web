@@ -14,9 +14,16 @@ import componentDisplayName from './componentDisplayName';
  * @returns A function that takes a as an argument and returns
  * a new component that wraps the original component with the ProviderComponent
  */
+export default function asHOC(
+  ProviderComponent: ComponentType,
+): <U extends {}>(Comp: ComponentType<U>) => ComponentType<U>;
 export default function asHOC<P extends {}>(
   ProviderComponent: ComponentType<P>,
   providerProps: P,
+): <U extends {}>(Comp: ComponentType<U>) => ComponentType<U>;
+export default function asHOC<P extends {}>(
+  ProviderComponent: ComponentType<P>,
+  providerProps?: P,
 ): <U extends {}>(Comp: ComponentType<U>) => ComponentType<U> {
   function Wrapper<U extends {}>(Comp: ComponentType<U>) {
     function WrappedComponent(props: U) {

@@ -9,11 +9,8 @@ const context = createContext(empty);
 
 export function PageConfigProvider({
   children,
-  appProps: { Component },
-}: {
-  children?: React.ReactNode;
-  appProps: AppProps;
-}) {
+  Component,
+}: React.PropsWithChildren<AppProps>) {
   const componentPageConfig = (
     Component as typeof Component & { pageConfig?: PageConfig }
   ).pageConfig;

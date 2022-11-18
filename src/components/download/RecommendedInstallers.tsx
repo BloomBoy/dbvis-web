@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react';
-import { OsTypes } from 'react-device-detect';
 import useCurrentSystem from 'src/hooks/useCurrentBrowser';
+import {
+  browserOsMap,
+  knownOsNameMap,
+  archMap,
+} from 'src/utils/deviceSystemConstants';
 import MaybeLink from '../contentful/MaybeLink';
 import OSIcon, { hasOSIcon } from '../Icon';
-import { archMap, InstallerTypeProp } from './AllInstallers';
-import { OS, osMap } from './InstallationInstructions';
-
-const browserOsMap: Record<string, OS> = {
-  [OsTypes.Windows]: 'windows',
-  [OsTypes.MAC_OS]: 'mac',
-  ['Linux']: 'linux',
-};
+import { InstallerTypeProp } from './AllInstallers';
 
 export default function RecommendedInstallers({
   data,
@@ -108,12 +105,12 @@ export default function RecommendedInstallers({
             )}
             <div className="flex flex-col pt-1">
               <div className="text-white text-2xl leading-none">
-                {osMap[installer.os]}
+                {knownOsNameMap[installer.os]}
                 {installer.arch != null ? ` ${archMap[installer.arch]}` : ''}
               </div>
               <div className="text-grey-500 leading-none">
                 <span className="uppercase">{`${installer.type}`}</span>
-                {installer.type != null &&
+                {installer.jre != null &&
                   (installer.jre === true ? ' with Java' : ' without Java')}
               </div>
             </div>

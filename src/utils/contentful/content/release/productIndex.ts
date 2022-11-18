@@ -138,7 +138,7 @@ async function parseProductIndex<
       | Awaited<ReturnType<typeof parseLayout>>['layoutList']
       | undefined;
   if (fields.downloadLayout != null) {
-    ({ collectedData, layoutList: downloadLayoutList } = await parseLayout(
+    ({ layoutList: downloadLayoutList } = await parseLayout(
       preview,
       {
         fields: {
@@ -151,21 +151,20 @@ async function parseProductIndex<
     ));
   }
   if (fields.changelogIndexLayout != null) {
-    ({ collectedData, layoutList: changelogIndexLayoutList } =
-      await parseLayout(
-        preview,
-        {
-          fields: {
-            pageLayout: fields.changelogIndexLayout,
-            pageAssetReferences: fields.changelogIndexAssetReferences ?? [],
-            pageEntryReferences: fields.changelogIndexEntryReferences ?? [],
-          },
+    ({ layoutList: changelogIndexLayoutList } = await parseLayout(
+      preview,
+      {
+        fields: {
+          pageLayout: fields.changelogIndexLayout,
+          pageAssetReferences: fields.changelogIndexAssetReferences ?? [],
+          pageEntryReferences: fields.changelogIndexEntryReferences ?? [],
         },
-        { collectedData, pageContext },
-      ));
+      },
+      { collectedData, pageContext },
+    ));
   }
   if (fields.changelogLayout != null) {
-    ({ collectedData, layoutList: changelogLayoutList } = await parseLayout(
+    ({ layoutList: changelogLayoutList } = await parseLayout(
       preview,
       {
         fields: {

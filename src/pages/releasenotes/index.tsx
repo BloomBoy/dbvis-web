@@ -1,14 +1,13 @@
-import { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import React, { useMemo } from 'react';
 import { LayoutList, SavedLayout } from 'src/components/contentful/Layout';
 import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
 import { getProductIndex } from 'src/utils/contentful/content/release';
-import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithLayoutData } from 'src/utils/types';
+import { WithLayoutData } from 'src/utils/types';
 import {
   ColumnData,
   ColumnLayoutData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
+import { patchStaticProps } from 'src/utils/patchStaticProps';
 // import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
 
 type ReleaseNotesPageProps = {
@@ -60,11 +59,9 @@ export default function ReleaseNotesPage({
   );
 }
 
-export async function getStaticProps(
-  ctx: GetStaticPropsContext,
-): Promise<
-  GetStaticPropsResult<WithGlobals<WithLayoutData<ReleaseNotesPageProps>>>
-> {
+export const getStaticProps = patchStaticProps<
+  WithLayoutData<ReleaseNotesPageProps>
+>(async (ctx) => {
   const preview = ctx.preview || false;
   const productIndexSlug =
     (Array.isArray(ctx.params?.productIndexSlug)
@@ -96,7 +93,6 @@ export async function getStaticProps(
         productIndex: productIndex.fields,
         pageContext,
         collectedData,
-        ...(await getGlobalData(ctx)),
       },
       revalidate: 12,
     };
@@ -107,4 +103,4 @@ export async function getStaticProps(
       revalidate: 12,
     };
   }
-}
+});

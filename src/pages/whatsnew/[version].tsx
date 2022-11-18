@@ -1,8 +1,4 @@
-import {
-  GetStaticPathsResult,
-  GetStaticPropsContext,
-  GetStaticPropsResult,
-} from 'next';
+import { GetStaticPathsResult } from 'next';
 import React, { useMemo } from 'react';
 import LayoutList, {
   WhatsNewLayoutList,
@@ -10,13 +6,14 @@ import LayoutList, {
 import {
   getFeatureVersionById,
   getProductIndex,
+  LATEST,
 } from 'src/utils/contentful/content/release';
-import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithLayoutData } from 'src/utils/types';
+import { WithLayoutData } from 'src/utils/types';
 import { Link } from 'react-scroll';
 import { SavedLayoutListEntry } from 'src/components/contentful/Layout';
 import { useHeaderEntries } from 'src/components/contentful/Layout/helpers';
 import { isNonNull } from 'src/utils/filters';
+import { patchStaticProps } from 'src/utils/patchStaticProps';
 
 type ReleaseNotesPageProps = {
   layouts: SavedLayoutListEntry[];
@@ -55,7 +52,7 @@ export default function ReleaseNotesPage({
     return <LayoutList layouts={layouts} />;
   }
   return (
-    <div className="flex flex-row w-screen overflow-hidden relative">
+    <div className="flex flex-row w-screen relative">
       <div className="hidden lg:block fixed w-80 h-full">
         <div className="p-10 flex flex-col items-end">
           <ul>
@@ -82,11 +79,9 @@ export default function ReleaseNotesPage({
   );
 }
 
-export async function getStaticProps(
-  ctx: GetStaticPropsContext,
-): Promise<
-  GetStaticPropsResult<WithGlobals<WithLayoutData<ReleaseNotesPageProps>>>
-> {
+export const getStaticProps = patchStaticProps<
+  WithLayoutData<ReleaseNotesPageProps>
+>(async (ctx) => {
   const preview = ctx.preview || false;
   const productIndexSlug =
     (Array.isArray(ctx.params?.productIndex)
@@ -95,7 +90,7 @@ export async function getStaticProps(
   const featureVersionSlug =
     (Array.isArray(ctx.params?.version)
       ? ctx.params?.version.join()
-      : ctx.params?.version) ?? '/';
+      : ctx.params?.version) ?? LATEST;
   try {
     const { productIndex, collectedData, pageContext } = await getProductIndex(
       {
@@ -136,7 +131,6 @@ export async function getStaticProps(
         layouts: featureVersion.fields.whatsNewLayout,
         collectedData,
         pageContext,
-        ...(await getGlobalData(ctx)),
       },
       revalidate: 12,
     };
@@ -147,7 +141,7 @@ export async function getStaticProps(
       revalidate: 12,
     };
   }
-}
+});
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   return {

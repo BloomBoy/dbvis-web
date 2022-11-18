@@ -1,5 +1,5 @@
 import '../styles/globals.css';
-import App, { AppContext, AppProps } from 'next/app';
+import App, { AppContext } from 'next/app';
 import PageLayout from 'src/components/PageLayout';
 import { SEOProvider } from 'src/components/SEO';
 import asHOC from 'src/utils/asHOC';
@@ -11,33 +11,15 @@ import { UserAgentProvider } from 'src/hooks/useCurrentBrowser';
 import PreloadFonts from 'src/utils/preloadFont';
 import { PageConfigProvider } from 'src/hooks/usePageConfig';
 import { PageContextProvider } from 'src/hooks/usePageContex';
-import { WithGlobals, WithLayoutData } from 'src/utils/types';
+import asNextHOC from 'src/utils/asNextHOC';
+import { GlobalDataProvider } from 'src/hooks/useGlobalData';
 
 const {
   publicRuntimeConfig: { contentfulAppParameters },
 } = getConfig();
 
-function MyApp(props: AppProps & { ua?: string }) {
-  const { Component, pageProps, ua } = props;
-  const { collectedData, pageContext } =
-    pageProps as WithGlobals<WithLayoutData>;
-  return (
-    <PageConfigProvider appProps={props}>
-      <UserAgentProvider userAgent={ua}>
-        <PageContextProvider data={pageContext}>
-          <CollectedDataProvider data={collectedData}>
-            <PageLayout>
-              <Component {...pageProps} />
-            </PageLayout>
-          </CollectedDataProvider>
-        </PageContextProvider>
-      </UserAgentProvider>
-    </PageConfigProvider>
-  );
-}
-
 const withProviders = composeHOCs(
-  asHOC(InitialRenderProvider, {}),
+  asHOC(InitialRenderProvider),
   asHOC(PreloadFonts, {
     fonts: [
       {
@@ -52,6 +34,11 @@ const withProviders = composeHOCs(
       },
     ],
   }),
+  asNextHOC(UserAgentProvider),
+  asNextHOC(PageConfigProvider),
+  asNextHOC(PageContextProvider),
+  asNextHOC(CollectedDataProvider),
+  asNextHOC(GlobalDataProvider),
   asHOC(SEOProvider, {
     title: contentfulAppParameters.siteTagline,
     description: contentfulAppParameters.siteDescription,
@@ -61,6 +48,7 @@ const withProviders = composeHOCs(
     siteTwitterHandle: contentfulAppParameters.siteTwitterHandle,
     twitterCard: 'summary_large_image',
   }),
+  asHOC(PageLayout),
 );
 
 const getInitialProps =
@@ -72,4 +60,7 @@ const getInitialProps =
       }
     : undefined;
 
-export default Object.assign(withProviders(MyApp), { getInitialProps });
+export default Object.assign(
+  withProviders(({ Component, pageProps }) => <Component {...pageProps} />),
+  { getInitialProps },
+);

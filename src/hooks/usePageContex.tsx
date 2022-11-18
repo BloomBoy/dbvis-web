@@ -1,23 +1,25 @@
+import { AppProps } from 'next/app';
 import { createContext, useContext } from 'react';
 import { PageContext } from 'src/utils/contentful/pageContext';
+import { WithLayoutData } from 'src/utils/types';
 
 const defaultData: PageContext = {};
 
 const PageReactContext = createContext(defaultData);
 
-export function PageContextProvider({
+export function PageContextProvider<PageProps>({
+  pageProps,
   children,
-  data,
-}: {
-  children: React.ReactNode;
-  data: unknown;
-}) {
+}: React.PropsWithChildren<AppProps<WithLayoutData<PageProps>>>) {
+  const { pageContext } = pageProps;
   return (
     <PageReactContext.Provider
       value={
-        typeof data !== 'object' || data == null || Array.isArray(data)
+        typeof pageContext !== 'object' ||
+        pageContext == null ||
+        Array.isArray(pageContext)
           ? defaultData
-          : (data as Record<string, unknown>)
+          : (pageContext as Record<string, unknown>)
       }
     >
       {children}

@@ -205,7 +205,7 @@ export default async function parseLayout(
 
   const preCollectedData = context?.collectedData ?? {};
 
-  const layoutList = safeValue(layouts, (o) => {
+  function valueParser<U>(o: U): SafeValue<U> | undefined {
     let ret = o as SafeValue<typeof o> | typeof o;
     if (isLink(o)) {
       const resolvedLink = linkMap[o.sys.id] as SafeValue<typeof o>;
@@ -225,7 +225,13 @@ export default async function parseLayout(
       }
     }
     return ret !== o ? (ret as SafeValue<typeof o>) : undefined;
+  }
+
+  referenceList.forEach((reference) => {
+    reference.fields = safeValue(reference.fields, valueParser);
   });
+
+  const layoutList = safeValue(layouts, valueParser);
 
   const collectedData = await asyncMapMaxConcurrent(
     10,
@@ -238,9 +244,11 @@ export default async function parseLayout(
         (data) => [key, data] as const,
       );
     },
-  ).then((entries) =>
-    Object.fromEntries(entries.filter(([, val]) => val !== undefined)),
-  );
+  )
+    .then((entries) =>
+      Object.fromEntries(entries.filter(([, val]) => val !== undefined)),
+    )
+    .then((collected) => Object.assign(preCollectedData, collected));
   return {
     layoutList,
     collectedData,

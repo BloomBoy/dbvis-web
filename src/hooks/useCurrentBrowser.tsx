@@ -1,6 +1,7 @@
 import useIsInitialRender from './useIsInitialRender';
 import { useDeviceData } from 'react-device-detect';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { AppProps } from 'next/app';
 
 const defaultSystem = {
   browser: null as string | null,
@@ -14,11 +15,8 @@ const context = createContext(
 
 export function UserAgentProvider({
   children,
-  userAgent,
-}: {
-  children: React.ReactNode;
-  userAgent?: string;
-}) {
+  ua: userAgent,
+}: React.PropsWithChildren<AppProps> & { ua?: string }) {
   const [resolvedUa, setResolvedUa] = useState(
     typeof window !== 'undefined' ? userAgent ?? '' : 'Next.JS/SSR',
   );
