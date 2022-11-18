@@ -20,7 +20,7 @@ import {
 import contentTypeSchemas from '../../schemas';
 import { isNonNull } from 'src/utils/filters';
 
-const obligatoryFields = objectKeys(
+export const obligatoryReleaseFields = objectKeys(
   contentTypeSchemas.productRelease.shape,
 ).filter(
   (
@@ -64,7 +64,7 @@ const getSingleProductReleaseQuery = (
     ? { 'fields.featureVersion.sys.id': params.featureVersion }
     : null),
   content_type: 'productRelease',
-  ...pickFieldsQuery(pickFields && [...obligatoryFields, ...pickFields]),
+  ...pickFieldsQuery(pickFields && [...obligatoryReleaseFields, ...pickFields]),
 });
 
 async function parseProductRelease<
@@ -160,7 +160,7 @@ export async function getProductRelease<
     'productRelease',
     rawProductRelease,
     params.preview,
-    pickFields ? [...obligatoryFields, ...pickFields] : undefined,
+    pickFields ? [...obligatoryReleaseFields, ...pickFields] : undefined,
   );
   if (!verifiedProductRelease) return null;
   return parseProductRelease(verifiedProductRelease, {
@@ -269,7 +269,7 @@ const getMultiProductReleasesQuery = (
     : null),
   content_type: 'productRelease',
   ...pickFieldsQuery(
-    pickFields != null ? [...obligatoryFields, ...pickFields] : null,
+    pickFields != null ? [...obligatoryReleaseFields, ...pickFields] : null,
   ),
 });
 
@@ -298,7 +298,7 @@ export async function getProductReleaseList<
           'productRelease',
           rawFeatureVersion,
           params.preview,
-          pickFields ? [...obligatoryFields, ...pickFields] : undefined,
+          pickFields ? [...obligatoryReleaseFields, ...pickFields] : undefined,
         ),
       )
       .filter(isNonNull)

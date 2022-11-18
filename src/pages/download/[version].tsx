@@ -1,18 +1,14 @@
 import React, { useMemo } from 'react';
-import {
-  GetStaticPathsResult,
-  GetStaticPropsContext,
-  GetStaticPropsResult,
-} from 'next';
+import { GetStaticPathsResult } from 'next';
 import { getProductIndex, LATEST } from 'src/utils/contentful/content/release';
-import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithLayoutData } from 'src/utils/types';
+import { WithLayoutData } from 'src/utils/types';
 import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
 import { LayoutList, SavedLayout } from 'src/components/contentful/Layout';
 import {
   ColumnLayoutData,
   ColumnData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
+import { patchStaticProps } from 'src/utils/patchStaticProps';
 
 type DownloadPageProps = {
   layouts: SafeValue<ContentTypeFieldsMap['productIndex']>['downloadLayout'];
@@ -57,11 +53,9 @@ export default function DownloadPage({
   return <LayoutList layouts={[titleLayout, ...layouts]} />;
 }
 
-export async function getStaticProps(
-  ctx: GetStaticPropsContext,
-): Promise<
-  GetStaticPropsResult<WithGlobals<WithLayoutData<DownloadPageProps>>>
-> {
+export const getStaticProps = patchStaticProps<
+  WithLayoutData<DownloadPageProps>
+>(async (ctx) => {
   const preview = ctx.preview || false;
   const productIndexSlug =
     (Array.isArray(ctx.params?.productIndex)
@@ -104,7 +98,6 @@ export async function getStaticProps(
       props: {
         layouts: downloadLayout,
         collectedData,
-        ...(await getGlobalData(ctx)),
         pageContext,
         version: pageContext.productRelease.fields.version,
         releaseDate: pageContext.productRelease.fields.releaseDate,
@@ -118,7 +111,7 @@ export async function getStaticProps(
       revalidate: 12,
     };
   }
-}
+});
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   return {

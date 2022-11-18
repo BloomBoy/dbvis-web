@@ -1,12 +1,16 @@
 import { Tab } from '@headlessui/react';
 import { useMemo } from 'react';
+import {
+  archMap,
+  KnownOS,
+  knownOsNameMap,
+} from 'src/utils/deviceSystemConstants';
 import { objectEntries } from 'src/utils/objects';
 import MaybeLink from '../contentful/MaybeLink';
 import OSIcon, { hasOSIcon } from '../Icon';
-import { OS, osMap } from './InstallationInstructions';
 
 export type InstallerTypeProp = {
-  type: OS;
+  type: KnownOS;
   arch?: string;
   note?: string;
   files: {
@@ -20,13 +24,6 @@ export type InstallerTypeProp = {
     bundledJre?: string;
     filename: string;
   }[];
-};
-
-export const archMap: Record<string, string | undefined> = {
-  '64bit': '64-bit',
-  '32bit': '32-bit',
-  intel: 'Intel',
-  apple: 'Apple Silicon',
 };
 
 type MappedInstaller = {
@@ -47,7 +44,7 @@ export default function AllInstallers({
 }): JSX.Element {
   const osEntries = useMemo(() => {
     const ret: {
-      [key in OS]?: MappedInstaller[];
+      [key in KnownOS]?: MappedInstaller[];
     } = {};
     data.forEach((os) => {
       const installerArr = ret[os.type] ?? [];
@@ -80,7 +77,7 @@ export default function AllInstallers({
               key={osType}
               className="text-base md:text-xl font-mono py-2 my-8 mr-4 ui-not-selected:text-primary ui-selected:text-black ui-selected:underline underline-offset-8"
             >
-              {osMap[osType]}
+              {knownOsNameMap[osType]}
             </Tab>
           ))}
         </Tab.List>
@@ -104,13 +101,12 @@ export default function AllInstallers({
                     {hasOSIcon(osType) && (
                       <OSIcon
                         os={osType}
-                        className=""
                         style={{ padding: '0px' }}
                         size={30}
                       />
                     )}
                     <div>
-                      {osMap[osType]}
+                      {knownOsNameMap[osType]}
                       {file.arch != null ? ` ${archMap[file.arch]}` : null}
                     </div>
                     <div className="text-grey-500 uppercase">

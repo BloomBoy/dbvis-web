@@ -10,7 +10,7 @@ import classNames from 'classnames';
 export default function PageLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }): JSX.Element {
   const { headerMode } = usePageConfig();
   const { isPreview } = useRouter();

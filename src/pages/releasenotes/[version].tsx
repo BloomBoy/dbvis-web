@@ -1,8 +1,4 @@
-import {
-  GetStaticPathsResult,
-  GetStaticPropsContext,
-  GetStaticPropsResult,
-} from 'next';
+import { GetStaticPathsResult, GetStaticPropsContext } from 'next';
 import React, { useMemo } from 'react';
 import {
   LayoutList,
@@ -11,12 +7,12 @@ import {
 } from 'src/components/contentful/Layout';
 import { SafeValue } from 'src/utils/contentful';
 import { getProductIndex } from 'src/utils/contentful/content/release';
-import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithLayoutData } from 'src/utils/types';
+import { WithLayoutData } from 'src/utils/types';
 import {
   ColumnData,
   ColumnLayoutData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
+import { patchStaticProps } from 'src/utils/patchStaticProps';
 
 type ReleaseNotesPageProps = {
   layouts: SavedLayoutListEntry[];
@@ -60,11 +56,9 @@ export default function ReleaseNotesPage({
   return <LayoutList layouts={[titleLayout, ...layouts]} />;
 }
 
-export async function getStaticProps(
-  ctx: GetStaticPropsContext,
-): Promise<
-  GetStaticPropsResult<WithGlobals<WithLayoutData<ReleaseNotesPageProps>>>
-> {
+export const getStaticProps = patchStaticProps<
+  WithLayoutData<ReleaseNotesPageProps>
+>(async (ctx: GetStaticPropsContext) => {
   const preview = ctx.preview || false;
   const productIndexSlug =
     (Array.isArray(ctx.params?.productIndex)
@@ -107,7 +101,6 @@ export async function getStaticProps(
         releaseDate: pageContext.featureVersion.fields.releaseDate,
         collectedData,
         pageContext,
-        ...(await getGlobalData(ctx)),
       },
       revalidate: 12,
     };
@@ -118,7 +111,7 @@ export async function getStaticProps(
       revalidate: 12,
     };
   }
-}
+});
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   return {

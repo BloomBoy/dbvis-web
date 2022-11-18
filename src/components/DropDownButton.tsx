@@ -3,13 +3,35 @@ import React, { Fragment, useCallback, useRef } from 'react';
 import { Popover, Transition } from '@headlessui/react';
 import MaybeLink from './contentful/MaybeLink';
 import classNames from 'classnames';
+import OSIcon, { hasOSIcon } from './Icon';
+import {
+  knownOsNameMap,
+  archMap,
+  KnownOS,
+} from 'src/utils/deviceSystemConstants';
 
 const TIMEOUT_DURATION = 500;
 function DropDownButton({
   children,
+  releaseVersion,
+  recommendedInstallers,
   classes,
 }: {
   children?: React.ReactNode;
+  releaseVersion: string;
+  recommendedInstallers: {
+    readonly arch: string | undefined;
+    readonly note: string | undefined;
+    readonly os: KnownOS;
+    readonly sizeInBytes?: number | undefined;
+    readonly jre?: boolean | undefined;
+    readonly md5Sum?: string | undefined;
+    readonly sha256Sum?: string | undefined;
+    readonly bundledJre?: string | undefined;
+    readonly type: string;
+    readonly filename: string;
+    readonly size: string;
+  }[];
   classes?: Contentful.EntryFields.Symbol[];
 }) {
   const timeoutRef = useRef<NodeJS.Timeout | number>(); // NodeJS.Timeout
@@ -53,7 +75,9 @@ function DropDownButton({
 
   // check if the classes contains any of the justify
   // classes so we can overwrte the positioning
-  const containsPositioning = classes?.some((r) => /^justify-.+/.test(r));
+  const containsPositioning = classes?.some((r) =>
+    /^(left$|center$|right$|justify-.+)/.test(r),
+  );
 
   return (
     <Popover
@@ -98,29 +122,44 @@ function DropDownButton({
                     Recommended installer
                   </div>
                   <div className="px-6 bg-badgeBackground">
-                    <div className="flex py-5">
-                      <div className="flex mr-28 items-center">
-                        <img
-                          src="//images.ctfassets.net/pzt5zr5p8m4g/4GklqoTJij3i8rkbvKTKSe/d0b393d0604a8fe39ef8c153281bc42c/apple.png?w=64"
-                          alt="apple logo"
-                          className="mr-3.5 self-center"
-                        />
-                        <div>
-                          <span className="block text-xs font-mono">
-                            macOS Intel
-                          </span>
-                          <span className="block text-xs font-mono text-grey-500">
-                            with Java
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        className="uppercase font-light font-mono text-xs rounded-3xl py-1 px-5 bg-primary-500 self-center"
+                    {recommendedInstallers.map((installer) => (
+                      <div
+                        className="flex py-5"
+                        key={`${installer.os}-${installer.arch}-${installer.type}-${installer.filename}`}
                       >
-                        {children}
-                      </button>
-                    </div>
+                        <div className="flex mr-28 items-center">
+                          {hasOSIcon(installer.os) && (
+                            <OSIcon
+                              className="mr-3.5 self-center"
+                              os={installer.os}
+                              style={{ padding: '0px' }}
+                              size={64}
+                            />
+                          )}
+                          <div>
+                            <span className="block text-xs font-mono">
+                              {knownOsNameMap[installer.os]}
+                              {installer.arch != null
+                                ? ` ${archMap[installer.arch]}`
+                                : ''}
+                            </span>
+                            {installer.jre != null && (
+                              <span className="block text-xs font-mono text-grey-500">
+                                {installer.jre === true
+                                  ? ' with Java'
+                                  : ' without Java'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <MaybeLink
+                          href={`https://dbvis.com/product_download/dbvis-${releaseVersion}/media/${installer.filename}`}
+                          className="uppercase font-light font-mono text-xs rounded-3xl py-1 px-5 bg-primary-500 self-center ml-auto"
+                        >
+                          {children}
+                        </MaybeLink>
+                      </div>
+                    ))}
                     <div className="flex justify-center -mx-2 py-4 border-t border-dashed border-grey-500">
                       <MaybeLink
                         className="font-mono text-[10px] uppercase text-primary-500 underline"

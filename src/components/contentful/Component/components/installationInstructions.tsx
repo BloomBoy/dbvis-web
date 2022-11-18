@@ -1,18 +1,16 @@
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import InstallationInstructions, {
-  isSupportedOs,
-} from 'src/components/download/InstallationInstructions';
+import InstallationInstructions from 'src/components/download/InstallationInstructions';
 import useCollectedData from 'src/hooks/useCollectedData';
 import { SafeEntryFields, SafeValue, safeValue } from 'src/utils/contentful';
+import { isKnownnOS } from 'src/utils/deviceSystemConstants';
 import { isNonNull } from 'src/utils/filters';
 import getContentfulClient from 'src/utils/getContentfulClient.mjs';
 import getFetchKey from 'src/utils/getFetchKey';
 import { ComponentProps, SavedComponentProps } from '..';
 
-type InstallationInstructionsData = {
-  a?: unknown;
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type InstallationInstructionsData = {};
 
 type CollectedData = SafeEntryFields.Entry<
   SafeValue<{
@@ -40,7 +38,7 @@ function InstallationInstructionsComponent(
       installationInstructions
         .map((instruction) => {
           const { title, operatingSystem, text } = instruction.fields;
-          if (!isSupportedOs(operatingSystem)) return null;
+          if (!isKnownnOS(operatingSystem)) return null;
           return {
             id: instruction.sys.id,
             title,

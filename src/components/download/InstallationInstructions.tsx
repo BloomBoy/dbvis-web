@@ -1,31 +1,14 @@
 import React from 'react';
 import { Disclosure, Transition } from '@headlessui/react';
+import { KnownOS, knownOsNameMap } from 'src/utils/deviceSystemConstants';
 import { SafeEntryFields } from 'src/utils/contentful';
 import RichText from '../RichText';
 import OSIcon, { hasOSIcon as osHasIcon } from '../Icon';
 
-export const osMap = {
-  windows: 'Windows',
-  linux: 'Linux',
-  mac: 'macOS',
-  unix: 'Unix',
-  solaris: 'Solaris',
-  aix: 'AIX',
-  hpux: 'HP-UX',
-  java: 'Java',
-};
-
-export type OS = keyof typeof osMap;
-export const supportedOs = Object.keys(osMap) as OS[];
-
-export function isSupportedOs(os: string): os is OS {
-  return supportedOs.includes(os as OS);
-}
-
 type InstructionTypeProp = {
   id: string;
   title: string;
-  os: keyof typeof osMap;
+  os: KnownOS;
   text: SafeEntryFields.RichText;
 };
 
@@ -65,7 +48,7 @@ export default function InstallationInstructions({
                       </div>
                     )}
                     <div className="text-white self-center md:w-1/12 text-left">
-                      {osMap[instruction.os]}
+                      {knownOsNameMap[instruction.os]}
                     </div>
                     <div className="text-white uppercase text-left grow self-center">
                       {instruction.title}
