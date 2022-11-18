@@ -1,0 +1,283 @@
+import type { DatabaseListEntry } from 'src/components/ShowDatabases';
+import { isNonNull } from 'src/utils/filters';
+import {
+  ContentTypeFieldsMap,
+  GetPaginatedParams,
+  GetTaggedParams,
+  GetSlugEntryParams,
+  SafeEntryFields,
+} from '../types';
+import getClient from 'src/utils/getContentfulClient.mjs';
+import { isLink, SafeValue, safeValue } from '../helpers';
+import parseLayout from '../parseLayout';
+import verifyContentfulResult from '../verifyContentfulResult';
+
+const getSingleDatabasePageQuery = (
+  params: GetSlugEntryParams,
+  pickFields?: readonly (keyof ContentTypeFieldsMap['databasePage'])[],
+) => ({
+  limit: 1,
+  include: 2,
+  locale: params.locale,
+  'fields.slug': params.slug,
+  content_type: 'databasePage',
+  ...(pickFields != null
+    ? {
+        select: ['sys', ...pickFields.map((field) => `fields.${field}`)].join(
+          ',',
+        ),
+      }
+    : null),
+});
+
+async function parseFullDatabasePage(
+  preview: boolean,
+  rawPage: SafeEntryFields.Entry<ContentTypeFieldsMap['databasePage']>,
+): Promise<{
+  page: SafeEntryFields.Entry<SafeValue<ContentTypeFieldsMap['databasePage']>>;
+  collectedData: Record<string, unknown>;
+}>;
+async function parseFullDatabasePage<
+  T extends Partial<ContentTypeFieldsMap['databasePage']>,
+>(
+  preview: boolean,
+  rawPage: SafeEntryFields.Entry<T>,
+): Promise<{
+  page: SafeEntryFields.Entry<SafeValue<T>>;
+  collectedData: Record<string, unknown>;
+}>;
+async function parseFullDatabasePage<
+  T extends Partial<ContentTypeFieldsMap['databasePage']>,
+>(
+  preview: boolean,
+  rawPage:
+    | SafeEntryFields.Entry<T>
+    | SafeEntryFields.Entry<ContentTypeFieldsMap['databasePage']>,
+): Promise<{
+  page:
+    | SafeEntryFields.Entry<SafeValue<T>>
+    | SafeEntryFields.Entry<SafeValue<T>>;
+  collectedData: Record<string, unknown>;
+}>;
+async function parseFullDatabasePage<
+  T extends Partial<ContentTypeFieldsMap['databasePage']>,
+>(
+  preview: boolean,
+  rawPage: SafeEntryFields.Entry<T>,
+): Promise<{
+  page: SafeEntryFields.Entry<SafeValue<T>>;
+  collectedData: Record<string, unknown>;
+}> {
+  const { sys, fields, metadata } = rawPage;
+  let collectedData,
+    layoutList:
+      | Awaited<ReturnType<typeof parseLayout>>['layoutList']
+      | undefined;
+  if (fields.pageLayout != null) {
+    ({ collectedData, layoutList } = await parseLayout(preview, {
+      fields: {
+        pageLayout: fields.pageLayout,
+        pageAssetReferences: fields.pageAssetReferences ?? [],
+        pageEntryReferences: fields.pageEntryReferences ?? [],
+      },
+    }));
+  } else {
+    collectedData = {};
+  }
+  const safeFields = safeValue<typeof fields>(fields);
+  const newFields = {
+    ...safeFields,
+    pageLayout: layoutList,
+  };
+  const page: SafeEntryFields.Entry<SafeValue<T>> = {
+    sys,
+    fields: newFields,
+    metadata,
+  };
+  return {
+    page,
+    collectedData,
+  };
+}
+
+export async function getDatabasePage(params: GetSlugEntryParams): Promise<{
+  page: SafeEntryFields.Entry<
+    SafeValue<ContentTypeFieldsMap['databasePage']>
+  > | null;
+  collectedData: Record<string, unknown>;
+}>;
+export async function getDatabasePage<
+  T extends readonly (keyof ContentTypeFieldsMap['databasePage'])[],
+>(
+  params: GetSlugEntryParams,
+  pickFields: T,
+): Promise<{
+  page: SafeEntryFields.Entry<
+    Pick<SafeValue<ContentTypeFieldsMap['databasePage']>, T[number]>
+  > | null;
+  collectedData: Record<string, unknown>;
+}>;
+export async function getDatabasePage(
+  params: GetSlugEntryParams,
+  pickFields?: readonly (keyof ContentTypeFieldsMap['databasePage'])[],
+): Promise<{
+  page: Partial<
+    Awaited<ReturnType<typeof parseFullDatabasePage>>['page']
+  > | null;
+  collectedData: Record<string, unknown>;
+}> {
+  const query = getSingleDatabasePageQuery(params, pickFields);
+  const {
+    items: [rawDatabasePage],
+  } = await getClient(params.preview).getEntries<
+    ContentTypeFieldsMap['databasePage']
+  >(query);
+  const verifiedDatabasePage = verifyContentfulResult(
+    'databasePage',
+    rawDatabasePage,
+    params.preview,
+    pickFields,
+  );
+  if (!verifiedDatabasePage)
+    return {
+      page: null,
+      collectedData: {},
+    };
+  return parseFullDatabasePage(params.preview ?? false, verifiedDatabasePage);
+}
+
+export interface GetDatabasePagesParams extends GetTaggedParams {
+  searchable?: boolean;
+}
+
+export interface GetPagedDatabasePagesParams
+  extends GetDatabasePagesParams,
+    GetPaginatedParams {}
+
+const getDatabasePagesQuery = (
+  params: GetDatabasePagesParams,
+  pickFields?: readonly (keyof ContentTypeFieldsMap['databasePage'])[],
+) => ({
+  include: 2,
+  locale: params.locale,
+  ...(params.tags != null
+    ? { 'metadata.tags.sys.id[in]': params.tags?.join(',') }
+    : null),
+  ...(params.searchable != null
+    ? { 'fields.searchable': params.searchable }
+    : null),
+  content_type: 'databasePage',
+  order: 'fields.weight,fields.title',
+  ...(pickFields != null
+    ? {
+        select: ['sys', ...pickFields.map((field) => `fields.${field}`)].join(
+          ',',
+        ),
+      }
+    : null),
+});
+
+const getPagedDatabasePagesQuery = (
+  params: GetPagedDatabasePagesParams,
+  pickFields?: readonly (keyof ContentTypeFieldsMap['databasePage'])[],
+) => ({
+  ...getDatabasePagesQuery(params, pickFields),
+  limit: params.count,
+  skip: params.skip,
+});
+
+export const listFields = [
+  'listTitle',
+  'slug',
+  'weight',
+  'logo',
+  'description',
+  'keywords',
+  'searchable',
+] as const;
+
+export type ListEntryFields = Pick<
+  ContentTypeFieldsMap['databasePage'],
+  typeof listFields[number]
+>;
+
+export function parseListItem(
+  entry: SafeEntryFields.Entry<Partial<ListEntryFields>>,
+  preview: boolean | undefined | null,
+): DatabaseListEntry | null {
+  const verifiedEntry = verifyContentfulResult(
+    'databasePage',
+    entry,
+    preview,
+    listFields,
+  );
+  if (!verifiedEntry) return null;
+  const {
+    fields,
+    sys: { id },
+  } = verifiedEntry;
+  const { keywords, listTitle, searchable, slug, logo, weight } = fields;
+  if (listTitle == null || slug == null || isLink(logo) || logo == null)
+    return null;
+  return {
+    id,
+    title: listTitle,
+    keywords: keywords ?? [],
+    logo: {
+      src: logo.fields.file.url,
+      alt: listTitle,
+    },
+    searchable: searchable ?? false,
+    url: `/database/${encodeURIComponent(slug)}`,
+    weight: weight ?? 0,
+  };
+}
+
+export async function getDatabaseListEntries(
+  params: GetPagedDatabasePagesParams,
+) {
+  const query = getPagedDatabasePagesQuery(params, listFields);
+  const { items, limit, skip, total } = await getClient(
+    params.preview,
+  ).getEntries<ListEntryFields>(query);
+  const databasePageListEntries = items
+    .map((entry) => parseListItem(entry, params.preview))
+    .filter(isNonNull);
+  return {
+    databasePageListEntries,
+    limit,
+    skip,
+    total,
+  };
+}
+
+export async function getAllDatabaseListEntries(
+  params: GetDatabasePagesParams,
+) {
+  const query = {
+    ...getDatabasePagesQuery(params, listFields),
+    limit: 100,
+    skip: 0,
+  };
+  const items: SafeEntryFields.Entry<ListEntryFields>[] = [];
+  let total = Infinity;
+  do {
+    let newItems;
+    ({
+      items: newItems,
+      skip: query.skip,
+      total,
+    } = await getClient(params.preview).getEntries<ListEntryFields>(query));
+    if (newItems.length === 0) break;
+    query.skip += newItems.length;
+    items.push(...newItems);
+  } while (items.length < total);
+  const databasePageListEntries = items
+    .map((entry) => parseListItem(entry, params.preview))
+    .filter(isNonNull);
+  return databasePageListEntries;
+}
+
+export type DatabasePageEntry = SafeEntryFields.Entry<
+  SafeValue<ContentTypeFieldsMap['databasePage']>
+>;

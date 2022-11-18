@@ -1,5 +1,5 @@
-import { ContentTypeFieldsMap, GetTaggedParams } from './types';
-import getClient from '../getContentfulClient.mjs';
+import getClient from 'src/utils/getContentfulClient.mjs';
+import { ContentTypeFieldsMap, GetTaggedParams } from '../types';
 
 const getStringTokensQuery = (params: GetTaggedParams) => ({
   limit: 100,

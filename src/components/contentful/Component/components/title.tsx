@@ -8,6 +8,7 @@ import useCollectedData from 'src/hooks/useCollectedData';
 export type TitleData = {
   title: SafeEntryFields.Symbol;
   subTitle: SafeEntryFields.Symbol;
+  linkText?: SafeEntryFields.Symbol;
   classes?: SafeEntryFields.Symbol[];
 };
 
@@ -19,9 +20,10 @@ function TitleComponent({
   const collectedData = useCollectedData();
   const mainHeaderIndex = useMemo(() => {
     let foundSelf = false;
+    const { mainHeaderIndex: startIndex, ...savedLayou } = layout;
     const layoutHeaders = layoutHeaderCount(
       {
-        ...layout,
+        ...savedLayou,
         slots: layout.slots.map((slot) => ({
           ...slot,
           components: foundSelf
@@ -37,6 +39,7 @@ function TitleComponent({
         })),
       },
       collectedData,
+      startIndex ?? 0,
     );
     return (layout.mainHeaderIndex ?? 0) + layoutHeaders;
   }, [collectedData, id, layout]);
@@ -62,6 +65,24 @@ function TitleComponent({
 const title = Object.assign(TitleComponent, {
   headerCount(props: ComponentProps<TitleData>) {
     return props.data.title != null && props.data.title !== '' ? 1 : 0;
+  },
+  headers(props: ComponentProps<TitleData>) {
+    return props.data.title != null && props.data.title !== ''
+      ? [
+          {
+            id: props.id,
+            ...(props.data.title != null
+              ? { mainTitle: props.data.title }
+              : null),
+            ...(props.data.subTitle != null
+              ? { subTitle: props.data.subTitle }
+              : null),
+            ...(props.data.linkText != null
+              ? { linkText: props.data.linkText }
+              : null),
+          },
+        ]
+      : undefined;
   },
 });
 

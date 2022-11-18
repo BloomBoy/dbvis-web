@@ -3,9 +3,12 @@ import type {
   GetStaticPropsResult,
   NextPage,
 } from 'next';
-import { StandardPageEntry, getPage } from 'src/utils/contentful/standardPage';
+import {
+  StandardPageEntry,
+  getPage,
+} from 'src/utils/contentful/content/standardPage';
 import { LayoutList } from 'src/components/contentful/Layout';
-import { WithCollectedData, WithGlobals } from 'src/utils/types';
+import { WithLayoutData, WithGlobals } from 'src/utils/types';
 import { getGlobalData } from 'src/utils/getGlobalData';
 
 type Props = {
@@ -20,7 +23,7 @@ export default Home;
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
-): Promise<GetStaticPropsResult<WithGlobals<WithCollectedData<Props>>>> {
+): Promise<GetStaticPropsResult<WithGlobals<WithLayoutData<Props>>>> {
   const path =
     typeof ctx.params?.path === 'string' ? [ctx.params.path] : ctx.params?.path;
   let slug: string;

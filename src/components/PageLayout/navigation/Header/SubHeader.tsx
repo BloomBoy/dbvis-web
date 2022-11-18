@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Popover } from '@headlessui/react';
 import classNames from 'classnames';
-import { DatabasePageEntry } from 'src/utils/contentful/databasePage';
+import { useRouter } from 'next/router';
 
 const context = createContext<HTMLElement | null>(null);
 
@@ -24,11 +24,26 @@ export function SubHeaderProvider({
 }
 
 export default function SubHeader({
-  fields,
+  title,
+  subTitle,
+  icon,
+  links,
 }: {
-  fields: DatabasePageEntry['fields'];
+  title: string;
+  subTitle?: string;
+  icon?: {
+    src: string;
+    alt: string;
+  };
+  links: {
+    id: string;
+    href?: string;
+    text: string;
+    suffix?: string;
+    className?: string;
+  }[];
 }) {
-  const { listTitle, logo, slug } = fields;
+  const asPath = useRouter().asPath;
   const el = (
     <Popover className="sticky top-0 w-full z-20">
       <div
@@ -42,43 +57,39 @@ export default function SubHeader({
           )}
         >
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-md mr-3 flex justify-center items-center border border-[rgba(0,0,0,0.25)]">
-              <img
-                src={logo?.fields.file.url}
-                alt="postgreSQL"
-                className="h-4 w-4"
-              />
-            </div>
-            <div className="font-sans font-bold mr-3">{listTitle}</div>
-            <div className="text-grey-500 hidden sm:block">
-              {'/* TESTED FOR VERSION 8-11 */'}
-            </div>
+            {icon != null && (
+              <div className="h-8 w-8 rounded-md mr-3 flex justify-center items-center border border-[rgba(0,0,0,0.25)]">
+                <img src={icon.src} alt={icon.alt} className="h-4 w-4" />
+              </div>
+            )}
+            <div className="font-sans font-bold mr-3">{title}</div>
+            {subTitle ? (
+              <div className="text-grey-500 uppercase hidden sm:block quote-decoration">
+                {subTitle}
+              </div>
+            ) : null}
           </div>
           <div className="uppercase flex gap-x-9">
-            <MaybeLink href={`/database/${slug}`} className="text-grey-500">
-              [ overview ]
-            </MaybeLink>
-            <MaybeLink
-              href={`/database/${slug}/support`}
-              className="hidden xl:block"
-            >
-              Supported objects {'->'}
-            </MaybeLink>
-            <MaybeLink
-              href={`/database/${slug}/features`}
-              className="hidden xl:block"
-            >
-              features {'->'}
-            </MaybeLink>
-            <MaybeLink
-              href={`/database/${slug}/driver`}
-              className="hidden xl:block"
-            >
-              Jdbc drivers {'->'}
-            </MaybeLink>
-            <MaybeLink className="text-primary-500" href="/download">
-              download ↓
-            </MaybeLink>
+            {links.map((link) => (
+              <MaybeLink
+                key={link.id}
+                href={
+                  link.href == null || asPath !== link.href
+                    ? link.href
+                    : undefined
+                }
+                className={classNames(
+                  link.href != null && asPath === link.href && 'text-grey-500',
+                  link.className,
+                )}
+              >
+                {link.href != null && asPath === link.href && ' ['}
+                {link.text}
+                {(link.href == null || asPath !== link.href) &&
+                  ` ${link.suffix}`}
+                {link.href != null && asPath === link.href && ' ]'}
+              </MaybeLink>
+            ))}
           </div>
         </div>
       </div>

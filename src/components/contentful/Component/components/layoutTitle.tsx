@@ -41,6 +41,23 @@ const layoutTitle = Object.assign(LayoutTitleComponent, {
       },
     });
   },
+  headers(props: ComponentProps<TitleData>) {
+    const { layout } = props;
+    const title =
+      typeof layout.data.title === 'string' ? layout.data.title : undefined;
+    const subTitle =
+      typeof layout.data.subTitle === 'string'
+        ? layout.data.subTitle
+        : undefined;
+    return Title.headers({
+      ...props,
+      data: {
+        ...props.data,
+        title,
+        subTitle,
+      },
+    });
+  },
 });
 
 export default layoutTitle;

@@ -10,7 +10,7 @@ import { isLink, SafeValue, safeValue } from './helpers';
 import parseLayout from './parseLayout';
 import type { DatabaseListEntry } from 'src/components/ShowDatabases';
 import { isNonNull } from '../filters';
-import verifyContentfulResult from './verifyContentfulResuls';
+import verifyContentfulResult from './verifyContentfulResult';
 
 const getSingleDatabasePageQuery = (
   params: GetSlugEntryParams,

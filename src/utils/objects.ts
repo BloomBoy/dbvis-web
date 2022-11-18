@@ -1,4 +1,4 @@
-type Keys<
+export type Keys<
   T extends readonly unknown[] | { readonly [key: string | number]: unknown },
 > = T extends readonly unknown[]
   ?

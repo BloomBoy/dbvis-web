@@ -1,24 +1,25 @@
 import React, { useMemo } from 'react';
 import Layout from './Layout';
 import LayoutLink from './LayoutLink';
-import { LayoutListEntryProps } from './types';
+import { LayoutListEntryProps, SavedLayoutListEntry } from './types';
 import { isLinkProps } from './helpers';
 import { layoutHeaderCount } from './LayoutRenderers';
 import useCollectedData from 'src/hooks/useCollectedData';
 
 export interface LayoutListProps {
-  layouts: LayoutListEntryProps[];
+  layouts: SavedLayoutListEntry[];
   startMainHeaderIndex?: number;
 }
 
 function getHeaderCount(
-  layout: LayoutListEntryProps,
+  layout: SavedLayoutListEntry,
   collectedData: Record<string, unknown>,
+  startHeaderIndex: number,
 ): number {
   if (isLinkProps(layout)) {
-    return LayoutLink.headerCount(layout, collectedData);
+    return LayoutLink.headerCount(layout, collectedData, startHeaderIndex);
   }
-  return layoutHeaderCount(layout, collectedData);
+  return layoutHeaderCount(layout, collectedData, startHeaderIndex);
 }
 
 function LayoutOrLink(props: LayoutListEntryProps) {
@@ -36,7 +37,11 @@ export default function LayoutList({
   const layoutsWithHeaderCount = useMemo(() => {
     let headerCount = startMainHeaderIndex ?? 0;
     return layouts.map((layout) => {
-      const thisHeaderCount = getHeaderCount(layout, collectedData);
+      const thisHeaderCount = getHeaderCount(
+        layout,
+        collectedData,
+        startMainHeaderIndex ?? 0,
+      );
       const currentCount = headerCount;
       headerCount = currentCount + thisHeaderCount;
       return [layout, currentCount] as const;
@@ -64,7 +69,11 @@ export function WhatsNewLayoutList({
   const layoutsWithHeaderCount = useMemo(() => {
     let headerCount = startMainHeaderIndex ?? 0;
     return layouts.map((layout) => {
-      const thisHeaderCount = getHeaderCount(layout, collectedData);
+      const thisHeaderCount = getHeaderCount(
+        layout,
+        collectedData,
+        startMainHeaderIndex ?? 0,
+      );
       const currentCount = headerCount;
       headerCount = currentCount + thisHeaderCount;
       return [layout, currentCount] as const;

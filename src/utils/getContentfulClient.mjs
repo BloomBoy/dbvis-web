@@ -26,7 +26,7 @@ let previewClient =
 
 /**
  * Get a contentful client, based on whether we're in preview mode or not.
- * @param {boolean | { CF_PREVIEW_ACCESS_TOKEN: string }} [preview]
+ * @param {boolean} [preview]
  * @returns {import('contentful').ContentfulClientApi} the client
  */
 const getContentfulClient = (preview) => {

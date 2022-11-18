@@ -4,40 +4,38 @@ import {
   GetStaticPropsResult,
 } from 'next';
 import React, { useMemo } from 'react';
-import { LayoutList, LayoutProps } from 'src/components/contentful/Layout';
-import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
-import { getProductIndex } from 'src/utils/contentful/release';
+import {
+  LayoutList,
+  SavedLayout,
+  SavedLayoutListEntry,
+} from 'src/components/contentful/Layout';
+import { SafeValue } from 'src/utils/contentful';
+import { getProductIndex } from 'src/utils/contentful/content/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithCollectedData } from 'src/utils/types';
+import { WithGlobals, WithLayoutData } from 'src/utils/types';
 import {
   ColumnData,
   ColumnLayoutData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
-// import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
 
 type ReleaseNotesPageProps = {
-  productIndex: SafeValue<
-    Pick<
-      ContentTypeFieldsMap['productIndex'],
-      | 'slug'
-      | 'changelogLayout'
-      | 'changelogAssetReferences'
-      | 'changelogEntryReferences'
-      | 'active'
-    >
-  >;
+  layouts: SavedLayoutListEntry[];
+  version: string;
+  releaseDate: string;
 };
 
 export default function ReleaseNotesPage({
-  productIndex,
+  layouts,
+  version,
+  releaseDate,
 }: ReleaseNotesPageProps): JSX.Element {
   const titleLayout = useMemo<
-    SafeValue<LayoutProps<ColumnLayoutData, ColumnData>>
+    SafeValue<SavedLayout<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
       data: {
-        subTitle: 'All Version Quick Links',
+        subTitle: `${version} was released on ${releaseDate}`,
         title: 'Release Notes',
         renderHeader: false,
       },
@@ -58,38 +56,45 @@ export default function ReleaseNotesPage({
         },
       ],
     };
-  }, []);
-  return (
-    <LayoutList layouts={[titleLayout, ...productIndex.changelogLayout]} />
-  );
+  }, [releaseDate, version]);
+  return <LayoutList layouts={[titleLayout, ...layouts]} />;
 }
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
 ): Promise<
-  GetStaticPropsResult<WithGlobals<WithCollectedData<ReleaseNotesPageProps>>>
+  GetStaticPropsResult<WithGlobals<WithLayoutData<ReleaseNotesPageProps>>>
 > {
   const preview = ctx.preview || false;
   const productIndexSlug =
-    (Array.isArray(ctx.params?.productIndexSlug)
-      ? ctx.params?.productIndexSlug.join()
-      : ctx.params?.productIndexSlug) ?? '/';
+    (Array.isArray(ctx.params?.productIndex)
+      ? ctx.params?.productIndex.join()
+      : ctx.params?.productIndex) ?? '/';
+  const featureVersionSlug =
+    (Array.isArray(ctx.params?.version)
+      ? ctx.params?.version.join()
+      : ctx.params?.version) ?? undefined;
   try {
-    const { productIndex, collectedData } = await getProductIndex(
+    const { productIndex, collectedData, pageContext } = await getProductIndex(
       {
         slug: productIndexSlug,
         locale: ctx.locale,
         preview,
       },
-      [
-        'slug',
-        'changelogLayout',
-        'changelogAssetReferences',
-        'changelogEntryReferences',
-        'active',
-      ],
+      {
+        pickFields: [
+          'changelogLayout',
+          'changelogAssetReferences',
+          'changelogEntryReferences',
+        ],
+        featureVersion: featureVersionSlug,
+      },
     );
-    if (productIndex == null) {
+    if (
+      productIndex == null ||
+      productIndex.fields.changelogLayout == null ||
+      pageContext.featureVersion == null
+    ) {
       return {
         notFound: true,
         revalidate: 12,
@@ -97,8 +102,11 @@ export async function getStaticProps(
     }
     return {
       props: {
-        productIndex: productIndex.fields,
+        layouts: productIndex.fields.changelogLayout,
+        version: pageContext.featureVersion.fields.version,
+        releaseDate: pageContext.featureVersion.fields.releaseDate,
         collectedData,
+        pageContext,
         ...(await getGlobalData(ctx)),
       },
       revalidate: 12,

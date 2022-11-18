@@ -1,5 +1,5 @@
 import { GetStaticPropsContext } from 'next';
-import { getAllStringTokens } from './contentful/stringTokens';
+import { getAllStringTokens } from './contentful/content/stringTokens';
 import { WithGlobals } from './types';
 
 export async function getGlobalData(

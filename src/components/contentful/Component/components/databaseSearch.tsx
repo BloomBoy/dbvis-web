@@ -10,9 +10,9 @@ import {
   getDatabasePage,
   listFields,
   parseListItem,
-} from 'src/utils/contentful/databasePage';
+} from 'src/utils/contentful/content/databasePage';
 import ShowDatabases, { DatabaseListEntry } from 'src/components/ShowDatabases';
-import { getExtraDatabaseSearchResultEntries } from 'src/utils/contentful/extraDatabaseSearchResult';
+import { getExtraDatabaseSearchResultEntries } from 'src/utils/contentful/content/extraDatabaseSearchResult';
 
 type DatabaseSearchData = {
   count?: SafeEntryFields.Integer;

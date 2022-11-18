@@ -1,12 +1,32 @@
 import React from 'react';
 import { Disclosure, Transition } from '@headlessui/react';
-import OSIcon from '../Icon';
+import { SafeEntryFields } from 'src/utils/contentful';
+import RichText from '../RichText';
+import OSIcon, { hasOSIcon as osHasIcon } from '../Icon';
+
+export const osMap = {
+  windows: 'Windows',
+  linux: 'Linux',
+  mac: 'macOS',
+  unix: 'Unix',
+  solaris: 'Solaris',
+  aix: 'AIX',
+  hpux: 'HP-UX',
+  java: 'Java',
+};
+
+export type OS = keyof typeof osMap;
+export const supportedOs = Object.keys(osMap) as OS[];
+
+export function isSupportedOs(os: string): os is OS {
+  return supportedOs.includes(os as OS);
+}
 
 type InstructionTypeProp = {
   id: string;
   title: string;
-  text: string;
-  os: string;
+  os: keyof typeof osMap;
+  text: SafeEntryFields.RichText;
 };
 
 export default function InstallationInstructions({
@@ -22,8 +42,8 @@ export default function InstallationInstructions({
         Installation Instructions
       </h3>
       <div className="pb-16">
-        {data.map((instruction, key) => (
-          <Disclosure key={instruction.id} defaultOpen={!key}>
+        {data.map((instruction) => (
+          <Disclosure key={instruction.id}>
             {({ open }) => (
               <div
                 className="rounded-lg bg-grey-300 p-3 mb-2 font-mono"
@@ -35,15 +55,17 @@ export default function InstallationInstructions({
               >
                 <Disclosure.Button className="py-2 px-3 w-full">
                   <div className="w-full flex flex-row gap-4 rounded-md">
-                    <div className="self-center w-4 text-center">
-                      <OSIcon
-                        os={instruction.os}
-                        style={{ padding: '0px' }}
-                        size={16}
-                      />
-                    </div>
+                    {osHasIcon(instruction.os) && (
+                      <div className="self-center w-4 text-center">
+                        <OSIcon
+                          os={instruction.os}
+                          style={{ padding: '0px' }}
+                          size={16}
+                        />
+                      </div>
+                    )}
                     <div className="text-white self-center md:w-1/12 text-left">
-                      {instruction.os}
+                      {osMap[instruction.os]}
                     </div>
                     <div className="text-white uppercase text-left grow self-center">
                       {instruction.title}
@@ -65,7 +87,7 @@ export default function InstallationInstructions({
                     static
                     className="text-grey-400 md:w-1/2 ml-12 mt-12 mb-8"
                   >
-                    {instruction.text}
+                    <RichText content={instruction.text} />
                   </Disclosure.Panel>
                 </Transition>
               </div>

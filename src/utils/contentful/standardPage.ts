@@ -6,7 +6,7 @@ import {
 import parseLayout from './parseLayout';
 import getClient from '../getContentfulClient.mjs';
 import { SafeValue, safeValue } from './helpers';
-import verifyContentfulResult from './verifyContentfulResuls';
+import verifyContentfulResult from './verifyContentfulResult';
 
 const getStandardPageQuery = (params: GetSlugEntryParams) => ({
   limit: 1,

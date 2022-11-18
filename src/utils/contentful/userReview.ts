@@ -8,7 +8,7 @@ import {
 import getClient from '../getContentfulClient.mjs';
 import { safeValue } from './helpers';
 import { isNonNull } from '../filters';
-import verifyContentfulResult from './verifyContentfulResuls';
+import verifyContentfulResult from './verifyContentfulResult';
 
 export interface GetUserReviewsParams
   extends GetPaginatedParams,

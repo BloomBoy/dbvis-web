@@ -370,7 +370,7 @@ function cleanupObject<T extends Record<string, unknown>>(
       const a = {
         sys: o.sys,
         fields: safeValue(o.fields),
-        metadata: o.metadata,
+        ...(o.metadata !== undefined ? { metadata: o.metadata } : null),
       } as any;
       return a;
     }
@@ -386,4 +386,18 @@ function cleanupObject<T extends Record<string, unknown>>(
     ) as SafeValue<T>;
   }
   return o as SafeValue<T>;
+}
+
+export function pickFieldsQuery(
+  pickFields: readonly string[] | null | undefined,
+) {
+  return pickFields != null
+    ? {
+        select: [
+          'sys',
+          'metadata',
+          ...pickFields.map((field) => `fields.${field}`),
+        ].join(','),
+      }
+    : null;
 }

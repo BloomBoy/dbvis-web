@@ -1,34 +1,56 @@
-import type { LayoutLinkProps } from './types';
+import type { LayoutLinkProps, SavedLayoutLink } from './types';
 import React from 'react';
 import { SafeValue } from 'src/utils/contentful';
 import layoutBlockLink from './links/layoutBlockLink';
+import { PageContext } from 'src/utils/contentful/pageContext';
 
-interface LinkComponent<Props> extends React.FC<Props> {
+interface LinkComponent<SavedEntity, Props extends SavedEntity>
+  extends React.FC<Props> {
   headerCount?:
     | number
-    | ((props: Props, collectedData: Record<string, unknown>) => number);
+    | ((
+        props: SavedEntity,
+        collectedData: Record<string, unknown>,
+        startHeaderIndex: number,
+      ) => number);
+  headers?: (
+    props: SavedEntity,
+    collectedData: Record<string, unknown>,
+    startHeaderIndex: number,
+    preview: boolean,
+    context: PageContext,
+  ) =>
+    | {
+        id: string;
+        mainTitle?: string;
+        subTitle?: string;
+        linkText?: string;
+      }[]
+    | undefined;
 }
 
 export const links: Record<
   string,
-  LinkComponent<SafeValue<LayoutLinkProps>> | undefined
+  | LinkComponent<SafeValue<SavedLayoutLink>, SafeValue<LayoutLinkProps>>
+  | undefined
 > = {
   layoutBlockLink,
 };
 
 function LayoutLinkComp(props: SafeValue<LayoutLinkProps>): JSX.Element | null {
   const { type } = props;
-  const LinkComponent = links[type];
-  if (LinkComponent == null) {
+  const LinkComp = links[type];
+  if (LinkComp == null) {
     return null;
   }
-  return <LinkComponent {...props} />;
+  return <LinkComp {...props} />;
 }
 
 const LayoutLink = Object.assign(LayoutLinkComp, {
   headerCount(
-    props: SafeValue<LayoutLinkProps>,
+    props: SafeValue<SavedLayoutLink>,
     collectedData: Record<string, unknown>,
+    startHeaderIndex: number,
   ) {
     const { type } = props;
     const LayoutComponent = links[type];
@@ -36,9 +58,33 @@ const LayoutLink = Object.assign(LayoutLinkComp, {
       return 0;
     }
     if (typeof LayoutComponent.headerCount === 'function') {
-      return LayoutComponent.headerCount(props, collectedData);
+      return LayoutComponent.headerCount(
+        props,
+        collectedData,
+        startHeaderIndex,
+      );
     }
     return LayoutComponent.headerCount ?? 0;
+  },
+  headers(
+    props: SafeValue<SavedLayoutLink>,
+    collectedData: Record<string, unknown>,
+    startHeaderIndex: number,
+    preview: boolean,
+    context: PageContext,
+  ) {
+    const { type } = props;
+    const LayoutComponent = links[type];
+    if (LayoutComponent?.headers == null) {
+      return [];
+    }
+    return LayoutComponent.headers(
+      props,
+      collectedData,
+      startHeaderIndex,
+      preview,
+      context,
+    );
   },
 });
 

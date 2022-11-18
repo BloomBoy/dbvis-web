@@ -7,7 +7,7 @@ import {
 } from './types';
 import getClient from '../getContentfulClient.mjs';
 import { safeValue } from './helpers';
-import verifyContentfulResult from './verifyContentfulResuls';
+import verifyContentfulResult from './verifyContentfulResult';
 import { isNonNull } from '../filters';
 
 export interface GetReviewSourcesParams

@@ -1,154 +1,148 @@
+import { useRouter } from 'next/router';
+import FeatureVersionReleaseNotesList, {
+  FeatureVersionReleaseNotesListEntry,
+} from 'src/components/releaseNotes/FeatureVersionReleaseNotesList';
+import ReleaseNotesDetails, {
+  ReleaseNoteDetails,
+} from 'src/components/releaseNotes/ReleaseNotesDetails';
+import useCollectedData from 'src/hooks/useCollectedData';
+import usePageContext from 'src/hooks/usePageContex';
+import {
+  getFeatureVersionList,
+  LATEST,
+} from 'src/utils/contentful/content/release';
+import {
+  getProductRelease,
+  getProductReleaseList,
+} from 'src/utils/contentful/content/release/productRelease';
+import { PageContext } from 'src/utils/contentful/pageContext';
+import { isNonNull } from 'src/utils/filters';
 import getFetchKey from 'src/utils/getFetchKey';
-import { SavedComponentProps } from '..';
-import MaybeLink from '../../MaybeLink';
+import { ComponentProps, SavedComponentProps } from '..';
 
 type ReleaseNotesData = {
   a?: unknown;
 };
 
-interface CollectedData {
-  b?: unknown;
-}
+type CollectedData =
+  | {
+      readonly variant: 'listFeatureVersions';
+      readonly featureVersions: FeatureVersionReleaseNotesListEntry[];
+    }
+  | {
+      readonly variant: 'productRelease';
+      readonly productReleases: ReleaseNoteDetails[];
+    };
 
-function databaseFetchKey(
+function releasenotesFetchKey(
   { data: {}, type }: SavedComponentProps<ReleaseNotesData>,
+  context: PageContext,
   preview: boolean,
 ) {
-  return getFetchKey(type, { preview });
+  return getFetchKey(
+    type,
+    { preview },
+    context.productIndex?.sys.id,
+    context.featureVersion?.sys.id,
+  );
 }
 
-const XMLData = [
-  {
-    id: 'a-string-1',
-    title: 'DbVisualizer  14.0 - 14.0.1',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-2',
-    title: 'DbVisualizer  13.0 - 13.0.6',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-3',
-    title: 'DbVisualizer  12.1 - 12.1.9',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-4',
-    title: 'DbVisualizer  12.0 - 12.0.9',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-5',
-    title: 'DbVisualizer  11.0 - 11.0.7',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-6',
-    title: 'DbVisualizer  10.0 - 10.0.27',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-7',
-    title: 'DbVisualizer  9.5 - 9.5.8',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-8',
-    title: 'DbVisualizer  9.2 - 9.2.17',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-  {
-    id: 'a-string-9',
-    title: 'DbVisualizer  9.1 - 9.1.13',
-    releaseDate: '2022-10-14',
-    slug: 'a-string-1',
-  },
-];
-const latestVersion = XMLData.shift();
-
-function ReleaseNotesComponent() {
-  return (
-    <>
-      <h3
-        className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-8`}
-      >
-        LATEST VERSION
-      </h3>
-      <table className="">
-        <thead className="">
-          <tr className="">
-            <th>Version</th>
-            <th>Release Date</th>
-            <th>View</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="">
-            <td>{latestVersion?.title}</td>
-            <td className="text-grey-400">{latestVersion?.releaseDate}</td>
-            <td>
-              <MaybeLink
-                href={`/releasenotes/${latestVersion?.slug}`}
-                className="underline text-primary"
-              >
-                Release Notes -&gt;
-              </MaybeLink>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h3
-        className={`font-mono font-light quote-decoration uppercase text-grey-500 mb-8`}
-      >
-        PREVIOUS VERSIONS
-      </h3>
-      <table className="">
-        <thead className="">
-          <tr className="">
-            <th>Version</th>
-            <th>Release Date</th>
-            <th>View</th>
-          </tr>
-        </thead>
-        <tbody>
-          {XMLData.map((item) => (
-            <tr className="" key={item.id}>
-              <td>{item?.title}</td>
-              <td className="text-grey-400">{item?.releaseDate}</td>
-              <td>
-                <MaybeLink
-                  href={`/releasenotes/${item?.slug}`}
-                  className="underline text-primary"
-                >
-                  Release Notes -&gt;
-                </MaybeLink>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
-  );
+function ReleaseNotesComponent(props: ComponentProps<ReleaseNotesData>) {
+  const { isPreview } = useRouter();
+  const pageContext = usePageContext();
+  const key = releasenotesFetchKey(props, pageContext, isPreview);
+  const releaseNotes = useCollectedData<CollectedData>(key);
+  if (releaseNotes == null) return null;
+  if (releaseNotes.variant == 'listFeatureVersions') {
+    return (
+      <FeatureVersionReleaseNotesList
+        featureVersions={releaseNotes.featureVersions}
+      />
+    );
+  }
+  if (releaseNotes.variant == 'productRelease') {
+    return <ReleaseNotesDetails details={releaseNotes.productReleases} />;
+  }
+  return null;
 }
 
 const releaseNotes = Object.assign(ReleaseNotesComponent, {
   registerDataCollector(
     props: SavedComponentProps<ReleaseNotesData>,
     preview: boolean,
+    context: PageContext,
   ) {
     return {
-      fetchKey: databaseFetchKey(props, preview),
-      async collect(): Promise<CollectedData> {
-        return {};
+      fetchKey: releasenotesFetchKey(props, context, preview),
+      async collect(): Promise<CollectedData | undefined> {
+        const { featureVersion, productIndex } = context;
+        if (productIndex == null) {
+          return undefined;
+        }
+        if (featureVersion == null) {
+          const { featureVersions } = await getFeatureVersionList(
+            {
+              productIndex: productIndex.sys.id,
+              preview,
+            },
+            { pickFields: [] },
+          );
+          const mappedFeatureVersions = await Promise.all(
+            featureVersions.map(async (v) => {
+              const release = await getProductRelease(
+                {
+                  version: LATEST,
+                  featureVersion: v.sys.id,
+                  preview,
+                },
+                { pickFields: [], pageContext: context },
+              );
+              if (release == null) return null;
+              return {
+                id: v.sys.id,
+                featureVersion: v.fields.version,
+                featureReleaseDate: v.fields.releaseDate,
+                latestReleaseVersion: release.fields.version,
+                latestReleaseDate: release.fields.releaseDate,
+              };
+            }),
+          ).then((arr) => arr.filter(isNonNull));
+          return {
+            variant: 'listFeatureVersions',
+            featureVersions: mappedFeatureVersions,
+          };
+        }
+        const productReleases = await getProductReleaseList(
+          {
+            featureVersion: featureVersion.sys.id,
+            preview,
+          },
+          {
+            pickFields: ['releaseNotes'],
+          },
+        );
+        return {
+          variant: 'productRelease',
+          productReleases: productReleases.map((r) => ({
+            id: r.sys.id,
+            releaseDate: r.fields.releaseDate,
+            verison: r.fields.version,
+            ...(r.fields.releaseNotes != null
+              ? {
+                  sections: r.fields.releaseNotes?.map((s) => ({
+                    type: s.header,
+                    items: s.items.map((i, index) => ({
+                      id: `${r.sys.id}-${s.header}-${index}`,
+                      components: i.components,
+                      description: i.desc,
+                      ...(i.link != null ? { link: i.link } : null),
+                      ...(i.jira != null ? { jira: i.jira } : null),
+                    })),
+                  })),
+                }
+              : null),
+          })),
+        };
       },
     };
   },

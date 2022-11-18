@@ -4,40 +4,35 @@ import {
   GetStaticPropsContext,
   GetStaticPropsResult,
 } from 'next';
-import { getProductIndex } from 'src/utils/contentful/release';
+import { getProductIndex, LATEST } from 'src/utils/contentful/content/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithCollectedData } from 'src/utils/types';
-import { SafeValue, ContentTypeFieldsMap } from 'src/utils/contentful';
-import { LayoutProps, LayoutList } from 'src/components/contentful/Layout';
+import { WithGlobals, WithLayoutData } from 'src/utils/types';
+import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
+import { LayoutList, SavedLayout } from 'src/components/contentful/Layout';
 import {
   ColumnLayoutData,
   ColumnData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
 
 type DownloadPageProps = {
-  productIndex: SafeValue<
-    Pick<
-      ContentTypeFieldsMap['productIndex'],
-      | 'slug'
-      | 'downloadLayout'
-      | 'downloadAssetReferences'
-      | 'downloadEntryReferences'
-      | 'active'
-    >
-  >;
+  layouts: SafeValue<ContentTypeFieldsMap['productIndex']>['downloadLayout'];
+  version: string;
+  releaseDate: string;
 };
 
 export default function DownloadPage({
-  productIndex,
+  layouts,
+  version,
+  releaseDate,
 }: DownloadPageProps): JSX.Element {
   const titleLayout = useMemo<
-    SafeValue<LayoutProps<ColumnLayoutData, ColumnData>>
+    SafeValue<SavedLayout<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
       data: {
-        subTitle: 'v14.0.0 was released on 2022-09-25',
-        title: 'Get DbVisualizer v14.0',
+        subTitle: `${version} was released on ${releaseDate}`,
+        title: `Get DbVisualizer ${version}`,
         renderHeader: false,
       },
       type: 'ColumnLayout',
@@ -57,37 +52,49 @@ export default function DownloadPage({
         },
       ],
     };
-  }, []);
+  }, [version, releaseDate]);
 
-  return <LayoutList layouts={[titleLayout, ...productIndex.downloadLayout]} />;
+  return <LayoutList layouts={[titleLayout, ...layouts]} />;
 }
 
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
 ): Promise<
-  GetStaticPropsResult<WithGlobals<WithCollectedData<DownloadPageProps>>>
+  GetStaticPropsResult<WithGlobals<WithLayoutData<DownloadPageProps>>>
 > {
   const preview = ctx.preview || false;
   const productIndexSlug =
-    (Array.isArray(ctx.params?.productIndexSlug)
-      ? ctx.params?.productIndexSlug.join()
-      : ctx.params?.productIndexSlug) ?? '/';
+    (Array.isArray(ctx.params?.productIndex)
+      ? ctx.params?.productIndex.join()
+      : ctx.params?.productIndex) ?? '/';
+  const versionSlug =
+    (Array.isArray(ctx.params?.version)
+      ? ctx.params?.version.join()
+      : ctx.params?.version) ?? LATEST;
   try {
-    const { productIndex, collectedData } = await getProductIndex(
+    const { productIndex, collectedData, pageContext } = await getProductIndex(
       {
         slug: productIndexSlug,
         locale: ctx.locale,
         preview,
       },
-      [
-        'slug',
-        'downloadLayout',
-        'downloadAssetReferences',
-        'downloadEntryReferences',
-        'active',
-      ],
+      {
+        pickFields: [
+          'downloadLayout',
+          'downloadAssetReferences',
+          'downloadEntryReferences',
+        ] as const,
+        featureVersion: versionSlug,
+        releaseVersion: LATEST,
+      },
     );
-    if (productIndex == null) {
+    const downloadLayout = productIndex?.fields?.downloadLayout;
+    if (
+      downloadLayout == null ||
+      pageContext.productIndex == null ||
+      pageContext.featureVersion == null ||
+      pageContext.productRelease == null
+    ) {
       return {
         notFound: true,
         revalidate: 12,
@@ -95,9 +102,12 @@ export async function getStaticProps(
     }
     return {
       props: {
-        productIndex: productIndex.fields,
+        layouts: downloadLayout,
         collectedData,
         ...(await getGlobalData(ctx)),
+        pageContext,
+        version: pageContext.productRelease.fields.version,
+        releaseDate: pageContext.productRelease.fields.releaseDate,
       },
       revalidate: 12,
     };

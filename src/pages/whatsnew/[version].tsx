@@ -3,42 +3,63 @@ import {
   GetStaticPropsContext,
   GetStaticPropsResult,
 } from 'next';
-import React from 'react';
-import { WhatsNewLayoutList } from 'src/components/contentful/Layout/LayoutList';
-import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
-import { getFeatureVersion } from 'src/utils/contentful/release';
+import React, { useMemo } from 'react';
+import LayoutList, {
+  WhatsNewLayoutList,
+} from 'src/components/contentful/Layout/LayoutList';
+import {
+  getFeatureVersionById,
+  getProductIndex,
+} from 'src/utils/contentful/content/release';
 import { getGlobalData } from 'src/utils/getGlobalData';
-import { WithGlobals, WithCollectedData } from 'src/utils/types';
+import { WithGlobals, WithLayoutData } from 'src/utils/types';
 import { Link } from 'react-scroll';
+import { SavedLayoutListEntry } from 'src/components/contentful/Layout';
+import { useHeaderEntries } from 'src/components/contentful/Layout/helpers';
+import { isNonNull } from 'src/utils/filters';
 
 type ReleaseNotesPageProps = {
-  featureVersion: SafeValue<
-    Pick<
-      ContentTypeFieldsMap['featureVersion'],
-      | 'version'
-      | 'whatsNewLayout'
-      | 'whatsNewAssetReferences'
-      | 'whatsNewEntryReferences'
-    >
-  >;
+  layouts: SavedLayoutListEntry[];
 };
 
-const content = [
-  { title: 'Welcome', id: 'brjovjyu' },
-  { title: "What's new in 13.0", id: 'buv5zx9y' },
-  { title: 'Support for four new data sources.', id: 'lfd780cj' },
-  { title: '... and more', id: 'knjvierh' },
-] as const;
-
 export default function ReleaseNotesPage({
-  featureVersion,
+  layouts,
 }: ReleaseNotesPageProps): JSX.Element {
+  const headers = useHeaderEntries(layouts);
+  const mappedTitles = useMemo(() => {
+    return headers
+      .map((header) => {
+        if (header.linkText) {
+          return {
+            title: header.linkText,
+            id: header.id,
+          };
+        }
+        if (header.subTitle) {
+          return {
+            title: header.subTitle,
+            id: header.id,
+          };
+        }
+        if (header.mainTitle) {
+          return {
+            title: header.mainTitle,
+            id: header.id,
+          };
+        }
+        return null;
+      })
+      .filter(isNonNull);
+  }, [headers]);
+  if (mappedTitles.length === 0) {
+    return <LayoutList layouts={layouts} />;
+  }
   return (
     <div className="flex flex-row w-screen overflow-hidden relative">
       <div className="hidden lg:block fixed w-80 h-full">
         <div className="p-10 flex flex-col items-end">
           <ul>
-            {content.map(({ title, id }) => (
+            {mappedTitles.map(({ title, id }) => (
               <li key={title} className="cursor-pointer">
                 <Link
                   type="button"
@@ -55,7 +76,7 @@ export default function ReleaseNotesPage({
         </div>
       </div>
       <div className="lg:ml-80 border-l border-dotted border-[#dddddd]">
-        <WhatsNewLayoutList layouts={featureVersion.whatsNewLayout} />
+        <WhatsNewLayoutList layouts={layouts} />
       </div>
     </div>
   );
@@ -64,27 +85,46 @@ export default function ReleaseNotesPage({
 export async function getStaticProps(
   ctx: GetStaticPropsContext,
 ): Promise<
-  GetStaticPropsResult<WithGlobals<WithCollectedData<ReleaseNotesPageProps>>>
+  GetStaticPropsResult<WithGlobals<WithLayoutData<ReleaseNotesPageProps>>>
 > {
   const preview = ctx.preview || false;
+  const productIndexSlug =
+    (Array.isArray(ctx.params?.productIndex)
+      ? ctx.params?.productIndex.join()
+      : ctx.params?.productIndex) ?? '/';
   const featureVersionSlug =
     (Array.isArray(ctx.params?.version)
       ? ctx.params?.version.join()
       : ctx.params?.version) ?? '/';
   try {
-    const { featureVersion, collectedData } = await getFeatureVersion(
+    const { productIndex, collectedData, pageContext } = await getProductIndex(
       {
-        version: featureVersionSlug,
+        slug: productIndexSlug,
         locale: ctx.locale,
         preview,
       },
-      [
-        'version',
+      {
+        pickFields: [],
+        featureVersion: featureVersionSlug,
+      },
+    );
+    const featureVersionId = pageContext?.featureVersion?.sys?.id;
+    if (productIndex == null || featureVersionId == null) {
+      return {
+        notFound: true,
+        revalidate: 12,
+      };
+    }
+    const { featureVersion } = await getFeatureVersionById(featureVersionId, {
+      preview,
+      collectedData,
+      pageContext,
+      pickFields: [
         'whatsNewLayout',
         'whatsNewAssetReferences',
         'whatsNewEntryReferences',
       ],
-    );
+    });
     if (featureVersion == null) {
       return {
         notFound: true,
@@ -93,8 +133,9 @@ export async function getStaticProps(
     }
     return {
       props: {
-        featureVersion: featureVersion.fields,
+        layouts: featureVersion.fields.whatsNewLayout,
         collectedData,
+        pageContext,
         ...(await getGlobalData(ctx)),
       },
       revalidate: 12,

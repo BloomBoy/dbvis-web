@@ -8,7 +8,7 @@ import getClient from '../getContentfulClient.mjs';
 import { isLink } from './helpers';
 import { DatabaseListEntry } from 'src/components/ShowDatabases';
 import { isNonNull } from '../filters';
-import verifyContentfulResult from './verifyContentfulResuls';
+import verifyContentfulResult from './verifyContentfulResult';
 
 export interface GetExtraDatabaseSearchResultsParams
   extends GetPaginatedParams,
