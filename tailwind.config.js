@@ -28,6 +28,10 @@ const brandGreyScale = {
 brandPrimaryColors.DEFAULT = brandPrimaryColors[500];
 brandGreyScale.DEFAULT = brandGreyScale[500];
 
+const colorNames = Object.keys(colors).map((name) =>
+  name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+);
+
 /**
  * @typedef {import('tailwindcss').Config} TailwindConfig
  */
@@ -57,7 +61,7 @@ module.exports = {
       pattern: /^justify-.+/,
     },
     {
-      pattern: /^bg-.+/,
+      pattern: new RegExp(`^bg-(?!${colorNames.join('|')}).+`),
       variants: ['sm', 'md', 'lg'],
     },
     {

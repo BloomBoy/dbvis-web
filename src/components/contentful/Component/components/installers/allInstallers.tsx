@@ -9,9 +9,8 @@ import {
 } from './shared';
 import usePageContext from 'src/hooks/usePageContex';
 
-type AllInstallersData = {
-  a?: unknown;
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type AllInstallersData = {};
 
 function AllInstallersComponent(props: ComponentProps<AllInstallersData>) {
   const { isPreview } = useRouter();

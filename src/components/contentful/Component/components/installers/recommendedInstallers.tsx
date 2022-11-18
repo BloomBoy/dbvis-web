@@ -9,9 +9,8 @@ import {
 } from './shared';
 import usePageContext from 'src/hooks/usePageContex';
 
-type RecommendedInstallersData = {
-  a?: unknown;
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+type RecommendedInstallersData = {};
 
 function RecommendedInstallersComponent(
   props: ComponentProps<RecommendedInstallersData>,
