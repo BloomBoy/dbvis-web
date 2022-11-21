@@ -1,3 +1,4 @@
+import 'src/init/polyfills';
 import '../styles/globals.css';
 import App, { AppContext } from 'next/app';
 import PageLayout from 'src/components/PageLayout';

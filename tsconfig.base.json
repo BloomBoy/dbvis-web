@@ -16,5 +16,9 @@
     "incremental": true,
     "baseUrl": "src/",
     "noErrorTruncation": false,
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ],
   }
 }

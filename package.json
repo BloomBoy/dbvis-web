@@ -1,6 +1,9 @@
 {
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=16.0.0 <17"
+  },
   "scripts": {
     "dev": "nodemon -w buildtimeData -w .env -w .env.\\* -w next.config.js -x \"next dev\"",
     "dev:prod": "nodemon -x \"cross-env NODE_ENV=production next build && cross-env NODE_ENV=production next start\"",
@@ -26,6 +29,7 @@
     "@contentful/rich-text-types": "^15.13.2",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.13",
+    "array.prototype.at": "^1.1.1",
     "axios": "^0.27.2",
     "classnames": "^2.3.2",
     "contentful": "^9.2.5",
