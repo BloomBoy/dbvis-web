@@ -1,9 +1,10 @@
-import { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 const SEOContext = createContext({
   siteName: '',
+  siteKeywords: undefined as string[] | undefined,
 });
 
 /**
@@ -20,6 +21,7 @@ const SEOContext = createContext({
 type InitialSEOProps = {
   description: string;
   image: string;
+  keywords?: string[];
   title?: string;
   url?: string;
   type: string;
@@ -27,6 +29,7 @@ type InitialSEOProps = {
   twitterCard: 'summary_large_image' | 'summary';
   creatorTwitterHandle?: string;
   children?: React.ReactNode;
+  mergeKeywords?: boolean;
 };
 
 /**
@@ -35,6 +38,15 @@ type InitialSEOProps = {
  * to override the default values.
  */
 export type SEOProps = Partial<InitialSEOProps>;
+
+/**
+ * We can use this component to
+ * remove any unwanted elements from
+ * the head tag of the page.
+ */
+const Void = () => {
+  return null;
+};
 
 /**
  * The SEO component implementation
@@ -57,28 +69,74 @@ export default function SEO({
   twitterCard,
   creatorTwitterHandle,
   children,
+  keywords,
+  mergeKeywords = true,
 }: SEOProps): JSX.Element {
-  const { siteName } = useContext(SEOContext);
+  const { siteName, siteKeywords } = useContext(SEOContext);
+  const keywordString = useMemo(() => {
+    if (mergeKeywords && (keywords == null || keywords.length === 0)) {
+      return null;
+    }
+    if (keywords == null || keywords.length === 0) {
+      return '';
+    }
+    const keywordSet = new Set<string>(
+      siteKeywords != null && mergeKeywords
+        ? [...keywords, ...siteKeywords]
+        : keywords,
+    );
+    return [...keywordSet].join(', ');
+  }, [keywords, mergeKeywords, siteKeywords]);
   return (
     <Head>
       {!!title && <title>{`${title} - ${siteName}`}</title>}
-      {!!description && <meta name="description" content={description} />}
-      {!!title && <meta property="og:title" content={title} />}
       {!!description && (
-        <meta property="og:description" content={description} />
+        <meta name="description" key="description" content={description} />
       )}
-      {!!image && <meta property="og:image" content={image} />}
-      {!!url && <meta property="og:url" content={url} />}
-      {!!type && <meta property="og:type" content={type} />}
-      {!!date && <meta property="article:published_time" content={date} />}
-      {!!title && <meta name="twitter:title" content={title} />}
+      {!!keywordString && (
+        <meta name="keywords" key="keywords" content={keywordString} />
+      )}
+      {keywordString === '' && <Void key="keywords" />}
+      {!!title && <meta property="og:title" key="og-title" content={title} />}
       {!!description && (
-        <meta name="twitter:description" content={description} />
+        <meta
+          property="og:description"
+          key="og-description"
+          content={description}
+        />
       )}
-      {!!image && <meta name="twitter:image" content={image} />}
-      {!!twitterCard && <meta name="twitter:card" content={twitterCard} />}
+      {!!image && <meta property="og:image" key="og-image" content={image} />}
+      {!!url && <meta property="og:url" key="og-url" content={url} />}
+      {!!type && <meta property="og:type" key="og-type" content={type} />}
+      {!!date && (
+        <meta
+          property="article:published_time"
+          key="article-published_time"
+          content={date}
+        />
+      )}
+      {!!title && (
+        <meta name="twitter:title" key="twitter-title" content={title} />
+      )}
+      {!!description && (
+        <meta
+          name="twitter:description"
+          key="twitter-description"
+          content={description}
+        />
+      )}
+      {!!image && (
+        <meta name="twitter:image" key="twitter-image" content={image} />
+      )}
+      {!!twitterCard && (
+        <meta name="twitter:card" key="twitter-card" content={twitterCard} />
+      )}
       {creatorTwitterHandle ? (
-        <meta name="twitter:creator" content={creatorTwitterHandle} />
+        <meta
+          name="twitter:creator"
+          key="twitter-creator"
+          content={creatorTwitterHandle}
+        />
       ) : null}
       {children}
     </Head>
@@ -111,6 +169,7 @@ export function SEOProvider({
   siteName,
   siteTwitterHandle,
   children,
+  keywords,
   ...props
 }: SEOProviderProps): JSX.Element {
   const { asPath } = useRouter();
@@ -118,17 +177,22 @@ export function SEOProvider({
   const value = useMemo(
     () => ({
       siteName,
+      siteKeywords: keywords,
     }),
-    [siteName],
+    [siteName, keywords],
   );
   return (
     <SEOContext.Provider value={value}>
       <Head>
-        <meta name="twitter:site" content={siteTwitterHandle} />
-        <meta property="og:site_name" content={siteName} />
+        <meta
+          name="twitter:site"
+          key="twitter-site"
+          content={siteTwitterHandle}
+        />
+        <meta property="og:site_name" key="og-site_name" content={siteName} />
         <title>{siteName}</title>
       </Head>
-      <InitialSEO url={currentUrl} {...props} />
+      <InitialSEO url={currentUrl} keywords={keywords} {...props} />
       {children}
     </SEOContext.Provider>
   );

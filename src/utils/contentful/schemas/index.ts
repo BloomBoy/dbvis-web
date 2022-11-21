@@ -116,7 +116,11 @@ const safeAsset = () =>
 
 const standardPage = z.object(
   withLayoutFields({
-    title: z.string(),
+    internalTitle: z.string(),
+    title: z.string().optional(),
+    seoDescription: z.string().optional(),
+    seoKeywords: z.array(z.string()).optional(),
+    seoEmbedImage: safeAsset().optional(),
     slug: z.string(),
   }),
 );

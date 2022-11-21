@@ -1,7 +1,7 @@
 import type {
-  LayoutLinkProps,
-  LayoutListEntryProps,
   SavedLayout,
+  SavedLayoutLink,
+  SavedLayoutListEntry,
 } from 'src/components/contentful/Layout';
 import { SafeAsset, SafeEntry, SafeEntryFields } from './types';
 import { SafeValue, isNotLink, safeValue, isLink } from './helpers';
@@ -17,7 +17,7 @@ type InternalLayoutFields<
   [key in LayoutFieldId]:
     | (Extract<key, LayoutFieldId> extends never
         ? never
-        : (SavedLayout | LayoutLinkProps)[])
+        : (SavedLayout | SavedLayoutLink)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -26,7 +26,7 @@ type InternalLayoutFields<
   [key in AssetListFieldId]:
     | (Extract<key, LayoutFieldId> extends never
         ? never
-        : (SavedLayout | LayoutLinkProps)[])
+        : (SavedLayout | SavedLayoutLink)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -35,7 +35,7 @@ type InternalLayoutFields<
   [key in ReferenceListFieldId]:
     | (Extract<key, LayoutFieldId> extends never
         ? never
-        : (SavedLayout | LayoutLinkProps)[])
+        : (SavedLayout | SavedLayoutLink)[])
     | (Extract<key, AssetListFieldId> extends never ? never : SafeAsset[])
     | (Extract<key, ReferenceListFieldId> extends never
         ? never
@@ -76,7 +76,7 @@ export default async function parseLayout(
   },
   context?: ParsingContext,
 ): Promise<{
-  layoutList: LayoutListEntryProps[];
+  layoutList: SavedLayoutListEntry[];
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout<LayoutFieldId extends string>(
@@ -87,7 +87,7 @@ export default async function parseLayout<LayoutFieldId extends string>(
   layoutFieldId: LayoutFieldId,
   context?: ParsingContext,
 ): Promise<{
-  layoutList: LayoutListEntryProps[];
+  layoutList: SavedLayoutListEntry[];
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout<
@@ -102,7 +102,7 @@ export default async function parseLayout<
   assetListFieldId: AssetListFieldId,
   context?: ParsingContext,
 ): Promise<{
-  layoutList: LayoutListEntryProps[];
+  layoutList: SavedLayoutListEntry[];
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout<
@@ -123,7 +123,7 @@ export default async function parseLayout<
   referenceListFieldId: ReferenceListFieldId,
   context?: ParsingContext,
 ): Promise<{
-  layoutList: LayoutListEntryProps[];
+  layoutList: SavedLayoutListEntry[];
   collectedData: Record<string, unknown>;
 }>;
 export default async function parseLayout(
@@ -136,7 +136,7 @@ export default async function parseLayout(
   referenceListFieldId?: ParsingContext | string,
   context?: ParsingContext,
 ): Promise<{
-  layoutList: LayoutListEntryProps[];
+  layoutList: SavedLayoutListEntry[];
   collectedData: Record<string, unknown>;
 }> {
   context = (() => {
@@ -163,7 +163,7 @@ export default async function parseLayout(
       : 'pageEntryReferences';
 
   const layouts = entry.fields[layoutFieldId] as
-    | LayoutListEntryProps[]
+    | SavedLayoutListEntry[]
     | undefined;
   if (layouts == null) {
     return {
