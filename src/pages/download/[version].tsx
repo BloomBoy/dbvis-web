@@ -2,16 +2,20 @@ import React, { useMemo } from 'react';
 import { GetStaticPathsResult } from 'next';
 import { getProductIndex, LATEST } from 'src/utils/contentful/content/release';
 import { WithLayoutData } from 'src/utils/types';
-import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
-import { LayoutList, SavedLayout } from 'src/components/contentful/Layout';
+import { SafeValue } from 'src/utils/contentful';
+import {
+  LayoutList,
+  LayoutListEntryProps,
+} from 'src/components/contentful/Layout';
 import {
   ColumnLayoutData,
   ColumnData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
 import { patchStaticProps } from 'src/utils/patchStaticProps';
+import { savedLayoutListToProps } from 'src/utils/contentful/parseLayout';
 
 type DownloadPageProps = {
-  layouts: SafeValue<ContentTypeFieldsMap['productIndex']>['downloadLayout'];
+  layouts: LayoutListEntryProps[];
   version: string;
   releaseDate: string;
 };
@@ -22,7 +26,7 @@ export default function DownloadPage({
   releaseDate,
 }: DownloadPageProps): JSX.Element {
   const titleLayout = useMemo<
-    SafeValue<SavedLayout<ColumnLayoutData, ColumnData>>
+    SafeValue<LayoutListEntryProps<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
@@ -47,6 +51,7 @@ export default function DownloadPage({
           id: 'column-1',
         },
       ],
+      mainHeaderIndex: 0,
     };
   }, [version, releaseDate]);
 
@@ -96,7 +101,13 @@ export const getStaticProps = patchStaticProps<
     }
     return {
       props: {
-        layouts: downloadLayout,
+        layouts: await savedLayoutListToProps(
+          downloadLayout,
+          collectedData,
+          preview,
+          pageContext,
+          1,
+        ),
         collectedData,
         pageContext,
         version: pageContext.productRelease.fields.version,

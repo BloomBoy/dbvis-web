@@ -38,7 +38,9 @@ async function parseStandardPage(
 }
 
 export async function getPage(params: GetSlugEntryParams): Promise<{
-  page: StandardPageEntry | null;
+  page: SafeEntryFields.Entry<
+    SafeValue<ContentTypeFieldsMap['standardPage']>
+  > | null;
   collectedData: Record<string, unknown>;
 }> {
   const query = getStandardPageQuery(params);
@@ -56,7 +58,3 @@ export async function getPage(params: GetSlugEntryParams): Promise<{
   }
   return parseStandardPage(params.preview ?? false, verifiedPage);
 }
-
-export type StandardPageEntry = SafeEntryFields.Entry<
-  SafeValue<ContentTypeFieldsMap['standardPage']>
->;

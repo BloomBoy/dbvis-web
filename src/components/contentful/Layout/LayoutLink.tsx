@@ -6,27 +6,26 @@ import { PageContext } from 'src/utils/contentful/pageContext';
 
 interface LinkComponent<SavedEntity, Props extends SavedEntity>
   extends React.FC<Props> {
-  headerCount?:
-    | number
-    | ((
-        props: SavedEntity,
-        collectedData: Record<string, unknown>,
-        startHeaderIndex: number,
-      ) => number);
-  headers?: (
+  headerCount(
     props: SavedEntity,
     collectedData: Record<string, unknown>,
     startHeaderIndex: number,
     preview: boolean,
     context: PageContext,
-  ) =>
-    | {
-        id: string;
-        mainTitle?: string;
-        subTitle?: string;
-        linkText?: string;
-      }[]
-    | undefined;
+  ): Promise<number>;
+  headers(
+    props: Props,
+    collectedData: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ): Promise<
+    {
+      id: string;
+      mainTitle?: string;
+      subTitle?: string;
+      linkText?: string;
+    }[]
+  >;
 }
 
 export const links: Record<
@@ -51,40 +50,34 @@ const LayoutLink = Object.assign(LayoutLinkComp, {
     props: SafeValue<SavedLayoutLink>,
     collectedData: Record<string, unknown>,
     startHeaderIndex: number,
+    preview: boolean,
+    context?: PageContext,
   ) {
     const { type } = props;
     const LayoutComponent = links[type];
     if (LayoutComponent == null) {
-      return 0;
+      return Promise.resolve(0);
     }
-    if (typeof LayoutComponent.headerCount === 'function') {
-      return LayoutComponent.headerCount(
-        props,
-        collectedData,
-        startHeaderIndex,
-      );
-    }
-    return LayoutComponent.headerCount ?? 0;
+    return LayoutComponent.headerCount(
+      props,
+      collectedData,
+      startHeaderIndex,
+      preview,
+      context ?? {},
+    );
   },
   headers(
-    props: SafeValue<SavedLayoutLink>,
+    props: SafeValue<LayoutLinkProps>,
     collectedData: Record<string, unknown>,
-    startHeaderIndex: number,
     preview: boolean,
     context: PageContext,
   ) {
     const { type } = props;
     const LayoutComponent = links[type];
     if (LayoutComponent?.headers == null) {
-      return [];
+      return Promise.resolve([]);
     }
-    return LayoutComponent.headers(
-      props,
-      collectedData,
-      startHeaderIndex,
-      preview,
-      context,
-    );
+    return LayoutComponent.headers(props, collectedData, preview, context);
   },
 });
 

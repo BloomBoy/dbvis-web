@@ -120,6 +120,14 @@ const standardPage = z.object(
     title: z.string().optional(),
     seoDescription: z.string().optional(),
     seoKeywords: z.array(z.string()).optional(),
+    seoKeywordsMode: z
+      .enum([
+        'Only include the keywords specified above',
+        'Include site keywords',
+        'Include content tags',
+        'Include content tags and site keywords',
+      ])
+      .optional(),
     seoEmbedImage: safeAsset().optional(),
     slug: z.string(),
   }),

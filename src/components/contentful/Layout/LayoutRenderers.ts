@@ -7,23 +7,31 @@ import UnstyledLayout from './layouts/UnstyledLayout';
 
 interface LayoutComponent<SavedEntity, Props extends SavedEntity>
   extends React.FC<Props> {
-  headerCount?:
-    | number
-    | ((props: LayoutProps, collectedData: Record<string, unknown>) => number);
-  headers?: (
+  selfHeaderCount(
     props: LayoutProps,
     collectedData: Record<string, unknown>,
     preview: boolean,
     context: PageContext,
-  ) =>
+  ): number;
+  headerCount(
+    props: LayoutProps,
+    collectedData: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ): Promise<number>;
+  headers(
+    props: LayoutProps,
+    collectedData: Record<string, unknown>,
+    preview: boolean,
+    context: PageContext,
+  ): Promise<
     | {
         id: string;
         mainTitle?: string;
         subTitle?: string;
         linkText?: string;
       }[]
-    | null
-    | undefined;
+  >;
 }
 
 export const layouts: Record<
@@ -39,25 +47,26 @@ export function layoutHeaderCount(
   props: SavedLayout,
   collectedData: Record<string, unknown>,
   startHeaderIndex: number,
+  preview: boolean,
+  context?: PageContext,
 ) {
   const { type } = props;
   const LayoutComponent = layouts[type];
   if (LayoutComponent == null) {
-    return 0;
+    return Promise.resolve(0);
   }
-  if (typeof LayoutComponent.headerCount === 'function') {
-    return LayoutComponent.headerCount(
-      {
-        ...props,
-        mainHeaderIndex: startHeaderIndex,
-      },
-      collectedData,
-    );
-  }
-  return LayoutComponent.headerCount ?? 0;
+  return LayoutComponent.headerCount(
+    {
+      ...props,
+      mainHeaderIndex: startHeaderIndex,
+    },
+    collectedData,
+    preview,
+    context ?? {},
+  );
 }
 
-export function layoutHeaders(
+export function layoutSelfHeaderCount(
   props: SavedLayout,
   collectedData: Record<string, unknown>,
   startHeaderIndex: number,
@@ -67,17 +76,29 @@ export function layoutHeaders(
   const { type } = props;
   const LayoutComponent = layouts[type];
   if (LayoutComponent == null) {
-    return [];
+    return 0;
   }
-  return (
-    LayoutComponent.headers?.(
-      {
-        ...props,
-        mainHeaderIndex: startHeaderIndex,
-      },
-      collectedData,
-      preview,
-      context,
-    ) ?? []
+  return LayoutComponent.selfHeaderCount(
+    {
+      ...props,
+      mainHeaderIndex: startHeaderIndex,
+    },
+    collectedData,
+    preview,
+    context,
   );
+}
+
+export function layoutHeaders(
+  props: LayoutProps,
+  collectedData: Record<string, unknown>,
+  preview: boolean,
+  context: PageContext,
+) {
+  const { type } = props;
+  const LayoutComponent = layouts[type];
+  if (LayoutComponent == null) {
+    return Promise.resolve([]);
+  }
+  return LayoutComponent.headers(props, collectedData, preview, context);
 }

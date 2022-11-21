@@ -1,4 +1,5 @@
 import type {
+  LayoutListEntryProps,
   SavedLayout,
   SavedLayoutLink,
   SavedLayoutListEntry,
@@ -8,6 +9,8 @@ import { SafeValue, isNotLink, safeValue, isLink } from './helpers';
 import { components, isComponent } from 'src/components/contentful/Component';
 import { asyncMapMaxConcurrent } from '../asyncArray.mjs';
 import { PageContext } from './pageContext';
+import { getLayoutHeaderCount } from 'src/components/contentful/Layout/LayoutList';
+import { isLinkProps } from 'src/components/contentful/Layout/helpers';
 
 type InternalLayoutFields<
   LayoutFieldId extends string,
@@ -205,6 +208,11 @@ export default async function parseLayout(
 
   const preCollectedData = context?.collectedData ?? {};
 
+  const collectorRegistrators: Promise<{
+    fetchKey: string;
+    collect: () => unknown;
+  } | null>[] = [];
+
   function valueParser<U>(o: U): SafeValue<U> | undefined {
     let ret = o as SafeValue<typeof o> | typeof o;
     if (isLink(o)) {
@@ -215,13 +223,13 @@ export default async function parseLayout(
     }
     if (isComponent(ret)) {
       const componentRenderer = components[ret.type];
-      const dataCollector = componentRenderer?.registerDataCollector?.(
+      const dataCollectorRegistrator = componentRenderer?.registerDataCollector(
         ret,
         preview,
         context?.pageContext ?? {},
       );
-      if (dataCollector != null) {
-        dataCollectors[dataCollector.fetchKey] = dataCollector;
+      if (dataCollectorRegistrator != null) {
+        collectorRegistrators.push(dataCollectorRegistrator);
       }
     }
     return ret !== o ? (ret as SafeValue<typeof o>) : undefined;
@@ -232,6 +240,15 @@ export default async function parseLayout(
   });
 
   const layoutList = safeValue(layouts, valueParser);
+
+  await Promise.all(collectorRegistrators).then((registrators) => {
+    registrators.forEach((registrator) => {
+      if (registrator == null) {
+        return;
+      }
+      dataCollectors[registrator.fetchKey] = registrator;
+    });
+  });
 
   const collectedData = await asyncMapMaxConcurrent(
     10,
@@ -249,8 +266,74 @@ export default async function parseLayout(
       Object.fromEntries(entries.filter(([, val]) => val !== undefined)),
     )
     .then((collected) => Object.assign(preCollectedData, collected));
+
   return {
     layoutList,
     collectedData,
   };
+}
+export async function savedLayoutListToProps(
+  savedList: SavedLayoutListEntry[],
+  collectedData: Record<string, unknown>,
+  preview: boolean,
+  context?: PageContext,
+  startHeaderIndex = 0,
+): Promise<LayoutListEntryProps[]> {
+  const layoutPropList: LayoutListEntryProps[] = [];
+  let count = startHeaderIndex;
+  for (const savedLayout of savedList) {
+    if (isLinkProps(savedLayout)) {
+      const { target, ...rest } = savedLayout;
+      let targetPageLayout: LayoutListEntryProps[] = [];
+      const mainHeaderIndex = count;
+      if (target != null) {
+        targetPageLayout = await savedLayoutListToProps(
+          target.fields.pageLayout,
+          collectedData,
+          preview,
+          context,
+          count,
+        );
+        const last = targetPageLayout.at(-1);
+        if (last != null) {
+          count =
+            last.mainHeaderIndex +
+            (await getLayoutHeaderCount(
+              last,
+              collectedData,
+              last.mainHeaderIndex,
+              preview,
+              context,
+            )) -
+            count;
+        }
+        layoutPropList.push({
+          ...rest,
+          target: {
+            ...target,
+            fields: {
+              ...target.fields,
+              pageLayout: targetPageLayout,
+            },
+          },
+          mainHeaderIndex,
+        });
+      }
+    } else {
+      const mainHeaderIndex = count;
+      const toAdd = await getLayoutHeaderCount(
+        savedLayout,
+        collectedData,
+        mainHeaderIndex,
+        preview,
+        context,
+      );
+      count += toAdd;
+      layoutPropList.push({
+        ...savedLayout,
+        mainHeaderIndex,
+      });
+    }
+  }
+  return layoutPropList;
 }

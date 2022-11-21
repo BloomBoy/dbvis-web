@@ -1,30 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import buttonComponent from './components/button';
-import imageComponent from './components/image';
-import textComponent from './components/text';
-import userReviewsComponent from './components/userReviews';
-import databaseSearchComponent from './components/databaseSearch';
-import emailSignupFormComponent from './components/emailSignupForm';
-import imageButtonComponent from './components/imageButton';
-import layoutTitleComponent from './components/layoutTitle';
-import titleComponent from './components/title';
-import downloadButtonComponent from './components/downloadButton';
-import reviewSourcesComponent from './components/reviewSources';
-import versionSelectorComponent from './components/versionSelector';
-import badgeComponent from './components/badge';
-import releaseQuickLinksComponent from './components/releaseQuickLinks';
-import releasenotesComponent from './components/releasenotes';
-import installationInstructionsComponent from './components/installationInstructions';
-import {
-  systemRequirementsComponent,
-  allInstallersComponent,
-  recommendedInstallersComponent,
-} from './components/installers';
 import type { LayoutProps } from '../Layout';
 import { PageContext } from 'src/utils/contentful/pageContext';
+import dynamic from 'next/dynamic';
 
 export interface SavedComponentProps<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Data extends Record<string, unknown> = Record<string, any>,
 > {
   id: string;
@@ -33,14 +13,12 @@ export interface SavedComponentProps<
 }
 
 export interface ComponentProps<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Data extends Record<string, unknown> = Record<string, any>,
 > extends SavedComponentProps<Data> {
   layout: LayoutProps;
 }
 
 interface ComponentRenderer<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Data extends Record<string, unknown> = Record<string, any>,
 > extends React.FC<ComponentProps<Data>> {
   headerCount?:
@@ -74,29 +52,187 @@ interface ComponentRenderer<
   } | null;
 }
 
+interface AsyncComponentRenderer<
+  Data extends Record<string, unknown> = Record<string, any>,
+> {
+  component: React.ComponentType<ComponentProps<Data>>;
+  headerCount(
+    ...args: Parameters<
+      Extract<ComponentRenderer<Data>['headerCount'], (...a: any[]) => unknown>
+    >
+  ): Promise<number>;
+  headers(
+    ...args: Parameters<
+      Extract<ComponentRenderer<Data>['headers'], (...a: any[]) => unknown>
+    >
+  ): Promise<
+    NonNullable<
+      ReturnType<
+        Extract<ComponentRenderer<Data>['headers'], (...a: any[]) => unknown>
+      >
+    >
+  >;
+  registerDataCollector(
+    ...args: Parameters<
+      Extract<
+        ComponentRenderer<Data>['registerDataCollector'],
+        (...a: any[]) => unknown
+      >
+    >
+  ): Promise<
+    | ReturnType<
+        Extract<
+          ComponentRenderer<Data>['registerDataCollector'],
+          (...a: any[]) => unknown
+        >
+      >
+    | Exclude<
+        ComponentRenderer<Data>['registerDataCollector'],
+        ((...a: any[]) => unknown) | undefined
+      >
+  >;
+}
+
+export type LoaderComponent<
+  Data extends Record<string, unknown> = Record<string, any>,
+> = Promise<
+  | ComponentRenderer<Data>
+  | {
+      default: ComponentRenderer<Data>;
+    }
+>;
+function makeDynamicComponent<
+  Data extends Record<string, unknown> = Record<string, any>,
+>(
+  loader: (() => LoaderComponent<Data>) | LoaderComponent<Data>,
+  nextDynamicComp: React.ComponentType<ComponentProps<Data>>,
+): AsyncComponentRenderer<Data> {
+  let dynamicPromise: Promise<ComponentRenderer<Data>> | undefined;
+  let comp: ComponentRenderer<Data> | undefined;
+  const realLoader = () => {
+    if (comp != null) return Promise.resolve(comp);
+    if (dynamicPromise == null) {
+      dynamicPromise =
+        typeof loader === 'function'
+          ? loader().then((imported) => {
+              if ('default' in imported) {
+                comp = imported.default;
+                return comp;
+              }
+              comp = imported;
+              return comp;
+            })
+          : loader.then((imported) => {
+              if ('default' in imported) {
+                comp = imported.default;
+                return comp;
+              }
+              comp = imported;
+              return comp;
+            });
+    }
+    return dynamicPromise;
+  };
+  return {
+    component: nextDynamicComp,
+    async headerCount(...args) {
+      const syncComp = await realLoader();
+      if (typeof syncComp.headerCount !== 'function') {
+        return syncComp.headerCount ?? 0;
+      }
+      return syncComp.headerCount(...args);
+    },
+    async headers(...args) {
+      const syncComp = await realLoader();
+      return syncComp.headers?.(...args) ?? [];
+    },
+    async registerDataCollector(...args) {
+      const syncComp = await realLoader();
+      return syncComp.registerDataCollector?.(...args) ?? null;
+    },
+  };
+}
+
 export const components: Record<
   `${string}Component`,
-  ComponentRenderer | undefined
+  AsyncComponentRenderer | undefined
 > = {
-  textComponent,
-  buttonComponent,
-  imageComponent,
-  userReviewsComponent,
-  databaseSearchComponent,
-  emailSignupFormComponent,
-  imageButtonComponent,
-  layoutTitleComponent,
-  titleComponent,
-  downloadButtonComponent,
-  reviewSourcesComponent,
-  versionSelectorComponent,
-  badgeComponent,
-  releaseQuickLinksComponent,
-  releasenotesComponent,
-  recommendedInstallersComponent,
-  allInstallersComponent,
-  installationInstructionsComponent,
-  systemRequirementsComponent,
+  textComponent: makeDynamicComponent(
+    () => import('./components/text'),
+    dynamic(() => import('./components/text')),
+  ),
+  buttonComponent: makeDynamicComponent(
+    () => import('./components/button'),
+    dynamic(() => import('./components/button')),
+  ),
+  imageComponent: makeDynamicComponent(
+    () => import('./components/image'),
+    dynamic(() => import('./components/image')),
+  ),
+  userReviewsComponent: makeDynamicComponent(
+    () => import('./components/userReviews'),
+    dynamic(() => import('./components/userReviews')),
+  ),
+  databaseSearchComponent: makeDynamicComponent(
+    () => import('./components/databaseSearch'),
+    dynamic(() => import('./components/databaseSearch')),
+  ),
+  emailSignupFormComponent: makeDynamicComponent(
+    () => import('./components/emailSignupForm'),
+    dynamic(() => import('./components/emailSignupForm')),
+  ),
+  imageButtonComponent: makeDynamicComponent(
+    () => import('./components/imageButton'),
+    dynamic(() => import('./components/imageButton')),
+  ),
+  layoutTitleComponent: makeDynamicComponent(
+    () => import('./components/layoutTitle'),
+    dynamic(() => import('./components/layoutTitle')),
+  ),
+  titleComponent: makeDynamicComponent(
+    () => import('./components/title'),
+    dynamic(() => import('./components/title')),
+  ),
+  downloadButtonComponent: makeDynamicComponent(
+    () => import('./components/downloadButton'),
+    dynamic(() => import('./components/downloadButton')),
+  ),
+  reviewSourcesComponent: makeDynamicComponent(
+    () => import('./components/reviewSources'),
+    dynamic(() => import('./components/reviewSources')),
+  ),
+  versionSelectorComponent: makeDynamicComponent(
+    () => import('./components/versionSelector'),
+    dynamic(() => import('./components/versionSelector')),
+  ),
+  badgeComponent: makeDynamicComponent(
+    () => import('./components/badge'),
+    dynamic(() => import('./components/badge')),
+  ),
+  releaseQuickLinksComponent: makeDynamicComponent(
+    () => import('./components/releaseQuickLinks'),
+    dynamic(() => import('./components/releaseQuickLinks')),
+  ),
+  releasenotesComponent: makeDynamicComponent(
+    () => import('./components/releasenotes'),
+    dynamic(() => import('./components/releasenotes')),
+  ),
+  recommendedInstallersComponent: makeDynamicComponent(
+    () => import('./components/installers/recommendedInstallers'),
+    dynamic(() => import('./components/installers/recommendedInstallers')),
+  ),
+  allInstallersComponent: makeDynamicComponent(
+    () => import('./components/installers/allInstallers'),
+    dynamic(() => import('./components/installers/allInstallers')),
+  ),
+  installationInstructionsComponent: makeDynamicComponent(
+    () => import('./components/installationInstructions'),
+    dynamic(() => import('./components/installationInstructions')),
+  ),
+  systemRequirementsComponent: makeDynamicComponent(
+    () => import('./components/installers/systemRequirements'),
+    dynamic(() => import('./components/installers/systemRequirements')),
+  ),
 };
 
 export function isComponent(obj: unknown): obj is SavedComponentProps {
@@ -114,7 +250,7 @@ export function isComponent(obj: unknown): obj is SavedComponentProps {
 
 function ComponentComp(props: ComponentProps): JSX.Element | null {
   const { type } = props;
-  const Comp = components[type];
+  const Comp = components[type]?.component;
   if (Comp == null) {
     return null;
   }
@@ -122,18 +258,15 @@ function ComponentComp(props: ComponentProps): JSX.Element | null {
 }
 
 const Component = Object.assign(ComponentComp, {
-  headerCount(props: ComponentProps, collectedData: Record<string, unknown>) {
+  async headerCount(
+    props: ComponentProps,
+    collectedData: Record<string, unknown>,
+  ) {
     const { type } = props;
     const Comp = components[type];
-    if (Comp == null) {
-      return 0;
-    }
-    if (typeof Comp.headerCount === 'function') {
-      return Comp.headerCount(props, collectedData);
-    }
-    return Comp.headerCount ?? 0;
+    return (await Comp?.headerCount(props, collectedData)) ?? 0;
   },
-  headers(
+  async headers(
     props: ComponentProps,
     collectedData: Record<string, unknown>,
     preview: boolean,
@@ -141,10 +274,7 @@ const Component = Object.assign(ComponentComp, {
   ) {
     const { type } = props;
     const Comp = components[type];
-    if (Comp?.headers == null) {
-      return [];
-    }
-    return Comp.headers(props, collectedData, preview, context);
+    return (await Comp?.headers(props, collectedData, preview, context)) ?? [];
   },
 });
 

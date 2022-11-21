@@ -10,9 +10,13 @@ export type SlotProps<
   data: Partial<Data>;
 };
 
-export type BlockFields = {
+export type SavedBlockFields = {
   pageLayout: SavedLayoutListEntry[];
   title: SafeEntryFields.Symbol;
+};
+
+export type BlockFields = Omit<SavedBlockFields, 'pageLayout'> & {
+  pageLayout: LayoutListEntryProps[];
 };
 
 export interface SavedLayout<
@@ -33,12 +37,13 @@ export interface LayoutProps<
 }
 
 export interface SavedLayoutLink {
-  target: SafeEntryFields.SafeEntry<BlockFields>;
+  target: SafeEntryFields.SafeEntry<SavedBlockFields>;
   type: `${string}Link`;
   id: string;
 }
 
 export interface LayoutLinkProps extends SavedLayoutLink {
+  target: SafeEntryFields.SafeEntry<BlockFields>;
   mainHeaderIndex: number;
 }
 

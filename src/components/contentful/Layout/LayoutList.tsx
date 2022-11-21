@@ -1,25 +1,50 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import Layout from './Layout';
 import LayoutLink from './LayoutLink';
 import { LayoutListEntryProps, SavedLayoutListEntry } from './types';
 import { isLinkProps } from './helpers';
-import { layoutHeaderCount } from './LayoutRenderers';
-import useCollectedData from 'src/hooks/useCollectedData';
+import { layoutHeaderCount, layoutHeaders } from './LayoutRenderers';
+import { PageContext } from 'src/utils/contentful/pageContext';
 
 export interface LayoutListProps {
-  layouts: SavedLayoutListEntry[];
-  startMainHeaderIndex?: number;
+  layouts: LayoutListEntryProps[];
 }
 
-function getHeaderCount(
+export function getLayoutHeaderCount(
   layout: SavedLayoutListEntry,
   collectedData: Record<string, unknown>,
   startHeaderIndex: number,
-): number {
+  preview: boolean,
+  context?: PageContext,
+) {
   if (isLinkProps(layout)) {
-    return LayoutLink.headerCount(layout, collectedData, startHeaderIndex);
+    return LayoutLink.headerCount(
+      layout,
+      collectedData,
+      startHeaderIndex,
+      preview,
+      context,
+    );
   }
-  return layoutHeaderCount(layout, collectedData, startHeaderIndex);
+  return layoutHeaderCount(
+    layout,
+    collectedData,
+    startHeaderIndex,
+    preview,
+    context,
+  );
+}
+
+export function getLayoutHeaders(
+  layout: LayoutListEntryProps,
+  collectedData: Record<string, unknown>,
+  preview: boolean,
+  context: PageContext,
+) {
+  if (isLinkProps(layout)) {
+    return LayoutLink.headers(layout, collectedData, preview, context);
+  }
+  return layoutHeaders(layout, collectedData, preview, context);
 }
 
 function LayoutOrLink(props: LayoutListEntryProps) {
@@ -29,65 +54,25 @@ function LayoutOrLink(props: LayoutListEntryProps) {
   return <Layout {...props} />;
 }
 
-export default function LayoutList({
-  layouts,
-  startMainHeaderIndex,
-}: LayoutListProps): JSX.Element {
-  const collectedData = useCollectedData();
-  const layoutsWithHeaderCount = useMemo(() => {
-    let headerCount = startMainHeaderIndex ?? 0;
-    return layouts.map((layout) => {
-      const thisHeaderCount = getHeaderCount(
-        layout,
-        collectedData,
-        startMainHeaderIndex ?? 0,
-      );
-      const currentCount = headerCount;
-      headerCount = currentCount + thisHeaderCount;
-      return [layout, currentCount] as const;
-    });
-  }, [layouts, startMainHeaderIndex, collectedData]);
-
+export default function LayoutList({ layouts }: LayoutListProps): JSX.Element {
   return (
     <>
-      {layoutsWithHeaderCount.map(([layoutProps, mainHeaderIndex]) => (
-        <LayoutOrLink
-          {...layoutProps}
-          key={layoutProps.id}
-          mainHeaderIndex={mainHeaderIndex}
-        />
+      {layouts.map((layoutProps) => (
+        <LayoutOrLink {...layoutProps} key={layoutProps.id} />
       ))}
     </>
   );
 }
 
-export function WhatsNewLayoutList({
-  layouts,
-  startMainHeaderIndex,
-}: LayoutListProps): JSX.Element {
-  const collectedData = useCollectedData();
-  const layoutsWithHeaderCount = useMemo(() => {
-    let headerCount = startMainHeaderIndex ?? 0;
-    return layouts.map((layout) => {
-      const thisHeaderCount = getHeaderCount(
-        layout,
-        collectedData,
-        startMainHeaderIndex ?? 0,
-      );
-      const currentCount = headerCount;
-      headerCount = currentCount + thisHeaderCount;
-      return [layout, currentCount] as const;
-    });
-  }, [layouts, startMainHeaderIndex, collectedData]);
-
+export function WhatsNewLayoutList({ layouts }: LayoutListProps): JSX.Element {
   return (
     <>
-      {layoutsWithHeaderCount.map(([layoutProps, mainHeaderIndex]) => (
+      {layouts.map((layoutProps) => (
         <div
           key={layoutProps.id}
           className="border-t border-dotted border-[#dddddd]"
         >
-          <LayoutOrLink {...layoutProps} mainHeaderIndex={mainHeaderIndex} />
+          <LayoutOrLink {...layoutProps} />
         </div>
       ))}
     </>

@@ -82,14 +82,6 @@ export function patchStaticProps<
   Q extends ParsedUrlQuery = ParsedUrlQuery,
   D extends PreviewData = PreviewData,
 >(
-  getStaticProps: GetStaticProps<P, Q, D>,
-): GetStaticProps<WithGlobals<P>, Q, D>;
-export function patchStaticProps<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  P extends { [key: string]: any } = { [key: string]: any },
-  Q extends ParsedUrlQuery = ParsedUrlQuery,
-  D extends PreviewData = PreviewData,
->(
   getStaticProps?: GetStaticProps<P, Q, D>,
 ): GetStaticProps<WithGlobals<P> | WithGlobals<unknown>, Q, D>;
 export function patchStaticProps<
