@@ -21,6 +21,7 @@ export default function Image(
     data: { asset, classes },
   } = props;
   if (asset == null) return null;
+  const { width, height } = asset.fields.file.details?.image || {};
   const src = `${asset.fields.file.url}?w=1024`;
   const assetType = asset.fields.file.contentType;
 
@@ -56,6 +57,8 @@ export default function Image(
 
         <img
           src={src}
+          width={width}
+          height={height}
           loading="lazy"
           alt={asset.fields.title}
           className={classNames(...(classes || []), 'w-full')}
