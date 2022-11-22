@@ -1,5 +1,5 @@
 /** jetbrainsmono */
-@font-face {
+/* @font-face {
   font-family: 'jetbrainsmono';
   src: url('/fonts/jetbrainsmono/JetBrainsMono-Thin.ttf') format('truetype'),
     url('/fonts/jetbrainsmono/JetBrainsMono-Thin.woff2') format('woff2');
@@ -138,10 +138,10 @@
   font-weight: 800;
   font-style: italic;
   font-display: swap;
-}
+} */
 
 /** AUTHENTIC Sans */
-@font-face {
+/* @font-face {
   font-family: 'AUTHENTIC Sans';
   src: url('/fonts/authentic_sans/woff/AUTHENTICSans-60.woff') format('woff'),
     url('/fonts/authentic_sans/woff/AUTHENTICSans-60.woff2') format('woff2');
@@ -175,4 +175,4 @@
   font-weight: 800;
   font-style: normal;
   font-display: swap;
-}
+} */
