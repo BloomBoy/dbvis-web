@@ -1,9 +1,11 @@
 import { SafeEntryFields } from 'src/utils/contentful';
 import type { ComponentProps } from '..';
 import classNames from 'classnames';
-import { layoutHeaderCount } from '../../Layout/LayoutRenderers';
+import { layoutSelfHeaderCount } from '../../Layout/LayoutRenderers';
 import { useMemo } from 'react';
 import useCollectedData from 'src/hooks/useCollectedData';
+import { useRouter } from 'next/router';
+import usePageContext from 'src/hooks/usePageContex';
 
 export type TitleData = {
   title: SafeEntryFields.Symbol;
@@ -12,38 +14,40 @@ export type TitleData = {
   classes?: SafeEntryFields.Symbol[];
 };
 
+const titleComponentTypes = ['titleComponent', 'layoutTitleComponent'];
+
 function TitleComponent({
   data: { title, subTitle, classes },
   id,
   layout,
 }: ComponentProps<TitleData>): JSX.Element | null {
   const collectedData = useCollectedData();
-  const mainHeaderIndex = useMemo(() => {
-    let foundSelf = false;
-    const { mainHeaderIndex: startIndex, ...savedLayou } = layout;
-    const layoutHeaders = layoutHeaderCount(
+  const { isPreview } = useRouter();
+  const pageContext = usePageContext();
+  const isMainHeader = useMemo(() => {
+    const { mainHeaderIndex: startIndex, ...savedLayout } = layout;
+    if (startIndex > 0) return false;
+    const layoutHeaders = layoutSelfHeaderCount(
       {
-        ...savedLayou,
-        slots: layout.slots.map((slot) => ({
-          ...slot,
-          components: foundSelf
-            ? []
-            : slot.components.filter(({ id: searchId }) => {
-                if (foundSelf === true) return false;
-                if (searchId === id) {
-                  foundSelf = true;
-                  return false;
-                }
-                return true;
-              }),
-        })),
+        ...savedLayout,
       },
       collectedData,
       startIndex ?? 0,
+      isPreview,
+      pageContext,
     );
-    return (layout.mainHeaderIndex ?? 0) + layoutHeaders;
-  }, [collectedData, id, layout]);
-  const HeaderComp = mainHeaderIndex === 0 ? 'h1' : 'h2';
+    if (layoutHeaders !== 0) return false;
+    for (const slot of layout.slots) {
+      for (const component of slot.components) {
+        if (titleComponentTypes.includes(component.type)) {
+          if (component.id === id) return true;
+          return false;
+        }
+      }
+    }
+    return false;
+  }, [collectedData, id, isPreview, layout, pageContext]);
+  const HeaderComp = isMainHeader ? 'h1' : 'h2';
   const hasTitle = title != null && title !== '';
   const hasSubTitle = subTitle != null && subTitle !== '';
   if (!hasTitle && !hasSubTitle) return null;

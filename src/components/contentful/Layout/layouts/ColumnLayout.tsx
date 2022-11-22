@@ -12,7 +12,6 @@ import classNames from 'classnames';
 import getMarginPadding, { Size } from 'src/utils/getGetMarginPadding';
 import LayoutTitle from '../../Component/components/layoutTitle';
 import React from 'react';
-import { isNonNull } from 'src/utils/filters';
 import { PageContext } from 'src/utils/contentful/pageContext';
 
 export type ColumnLayoutData = HeaderData &
@@ -111,35 +110,39 @@ function ColumnLayoutComp(
 }
 
 const ColumnLayout = Object.assign(ColumnLayoutComp, {
+  selfHeaderCount(props: LayoutProps<ColumnLayoutData, ColumnData>) {
+    return canRenderMainHeader(props.data) ? 1 : 0;
+  },
   headerCount(
     props: LayoutProps<ColumnLayoutData, ColumnData>,
     collectedData: Record<string, unknown>,
   ) {
-    let count = 0;
-    if (canRenderMainHeader(props.data)) count += 1;
-    props.slots.forEach((slot) => {
-      if (slot.data.title) count += 1;
-      slot.components.forEach((component) => {
-        count += Component.headerCount(
-          {
-            ...component,
-            layout: props,
-          },
-          collectedData,
-        );
-      });
-    });
-    return count;
+    const layoutCount = this.selfHeaderCount(props);
+    return Promise.all(
+      props.slots.flatMap((slot) =>
+        slot.components.map((component) =>
+          Component.headerCount(
+            {
+              ...component,
+              layout: props,
+            },
+            collectedData,
+          ),
+        ),
+      ),
+    ).then((componentCounts) =>
+      componentCounts.flat().reduce((a, b) => a + b, layoutCount),
+    );
   },
-  headers(
+  async headers(
     props: LayoutProps<ColumnLayoutData, ColumnData>,
     collectedData: Record<string, unknown>,
     preview: boolean,
     context: PageContext,
   ) {
-    const componentHeaders = props.slots
-      .flatMap((slot) =>
-        slot.components.flatMap((component) =>
+    const componentHeaders = await Promise.all(
+      props.slots.flatMap((slot) =>
+        slot.components.map((component) =>
           Component.headers(
             {
               ...component,
@@ -150,8 +153,8 @@ const ColumnLayout = Object.assign(ColumnLayoutComp, {
             context,
           ),
         ),
-      )
-      .filter(isNonNull);
+      ),
+    ).then((headers) => headers.flat());
     return props.data.renderHeader
       ? [
           {

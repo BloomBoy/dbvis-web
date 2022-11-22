@@ -1,6 +1,7 @@
 import { GetStaticPathsResult } from 'next';
-import React, { useMemo } from 'react';
+import React from 'react';
 import LayoutList, {
+  getLayoutHeaders,
   WhatsNewLayoutList,
 } from 'src/components/contentful/Layout/LayoutList';
 import {
@@ -10,45 +11,23 @@ import {
 } from 'src/utils/contentful/content/release';
 import { WithLayoutData } from 'src/utils/types';
 import { Link } from 'react-scroll';
-import { SavedLayoutListEntry } from 'src/components/contentful/Layout';
-import { useHeaderEntries } from 'src/components/contentful/Layout/helpers';
-import { isNonNull } from 'src/utils/filters';
+import { LayoutListEntryProps } from 'src/components/contentful/Layout';
 import { patchStaticProps } from 'src/utils/patchStaticProps';
+import { savedLayoutListToProps } from 'src/utils/contentful/parseLayout';
 
 type ReleaseNotesPageProps = {
-  layouts: SavedLayoutListEntry[];
+  layouts: LayoutListEntryProps[];
+  headers: {
+    title: string;
+    id: string;
+  }[];
 };
 
 export default function ReleaseNotesPage({
   layouts,
+  headers,
 }: ReleaseNotesPageProps): JSX.Element {
-  const headers = useHeaderEntries(layouts);
-  const mappedTitles = useMemo(() => {
-    return headers
-      .map((header) => {
-        if (header.linkText) {
-          return {
-            title: header.linkText,
-            id: header.id,
-          };
-        }
-        if (header.subTitle) {
-          return {
-            title: header.subTitle,
-            id: header.id,
-          };
-        }
-        if (header.mainTitle) {
-          return {
-            title: header.mainTitle,
-            id: header.id,
-          };
-        }
-        return null;
-      })
-      .filter(isNonNull);
-  }, [headers]);
-  if (mappedTitles.length === 0) {
+  if (headers.length === 0) {
     return <LayoutList layouts={layouts} />;
   }
   return (
@@ -56,7 +35,7 @@ export default function ReleaseNotesPage({
       <div className="hidden lg:block fixed w-80 h-full">
         <div className="p-10 flex flex-col items-end">
           <ul>
-            {mappedTitles.map(({ title, id }) => (
+            {headers.map(({ title, id }) => (
               <li key={title} className="cursor-pointer">
                 <Link
                   type="button"
@@ -126,9 +105,27 @@ export const getStaticProps = patchStaticProps<
         revalidate: 12,
       };
     }
+    const layouts = await savedLayoutListToProps(
+      featureVersion.fields.whatsNewLayout,
+      collectedData,
+      preview,
+    );
     return {
       props: {
-        layouts: featureVersion.fields.whatsNewLayout,
+        layouts,
+        headers: await Promise.all(
+          layouts.map((layout) =>
+            getLayoutHeaders(layout, collectedData, preview, pageContext),
+          ),
+        ).then((headers) =>
+          headers
+            .flat()
+            .map(({ id, linkText, mainTitle, subTitle }) => ({
+              id,
+              title: linkText || subTitle || mainTitle,
+            }))
+            .filter((e): e is typeof e & { title: string } => e.title != null),
+        ),
         collectedData,
         pageContext,
       },

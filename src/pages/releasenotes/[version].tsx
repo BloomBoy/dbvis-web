@@ -2,8 +2,7 @@ import { GetStaticPathsResult, GetStaticPropsContext } from 'next';
 import React, { useMemo } from 'react';
 import {
   LayoutList,
-  SavedLayout,
-  SavedLayoutListEntry,
+  LayoutListEntryProps,
 } from 'src/components/contentful/Layout';
 import { SafeValue } from 'src/utils/contentful';
 import { getProductIndex } from 'src/utils/contentful/content/release';
@@ -13,9 +12,10 @@ import {
   ColumnLayoutData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
 import { patchStaticProps } from 'src/utils/patchStaticProps';
+import { savedLayoutListToProps } from 'src/utils/contentful/parseLayout';
 
 type ReleaseNotesPageProps = {
-  layouts: SavedLayoutListEntry[];
+  layouts: LayoutListEntryProps[];
   version: string;
   releaseDate: string;
 };
@@ -26,7 +26,7 @@ export default function ReleaseNotesPage({
   releaseDate,
 }: ReleaseNotesPageProps): JSX.Element {
   const titleLayout = useMemo<
-    SafeValue<SavedLayout<ColumnLayoutData, ColumnData>>
+    SafeValue<LayoutListEntryProps<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
@@ -51,6 +51,7 @@ export default function ReleaseNotesPage({
           id: 'column-1',
         },
       ],
+      mainHeaderIndex: 0,
     };
   }, [releaseDate, version]);
   return <LayoutList layouts={[titleLayout, ...layouts]} />;
@@ -96,7 +97,13 @@ export const getStaticProps = patchStaticProps<
     }
     return {
       props: {
-        layouts: productIndex.fields.changelogLayout,
+        layouts: await savedLayoutListToProps(
+          productIndex.fields.changelogLayout,
+          collectedData,
+          preview,
+          pageContext,
+          1,
+        ),
         version: pageContext.featureVersion.fields.version,
         releaseDate: pageContext.featureVersion.fields.releaseDate,
         collectedData,

@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
-import { LayoutList, SavedLayout } from 'src/components/contentful/Layout';
-import { ContentTypeFieldsMap, SafeValue } from 'src/utils/contentful';
+import {
+  LayoutList,
+  LayoutListEntryProps,
+} from 'src/components/contentful/Layout';
+import { SafeValue } from 'src/utils/contentful';
 import { getProductIndex } from 'src/utils/contentful/content/release';
 import { WithLayoutData } from 'src/utils/types';
 import {
@@ -8,26 +11,18 @@ import {
   ColumnLayoutData,
 } from 'src/components/contentful/Layout/layouts/ColumnLayout';
 import { patchStaticProps } from 'src/utils/patchStaticProps';
+import { savedLayoutListToProps } from 'src/utils/contentful/parseLayout';
 // import EmailSignupForm from 'src/components/contentful/Component/components/emailSignupForm';
 
 type ReleaseNotesPageProps = {
-  productIndex: SafeValue<
-    Pick<
-      ContentTypeFieldsMap['productIndex'],
-      | 'slug'
-      | 'changelogIndexLayout'
-      | 'changelogIndexAssetReferences'
-      | 'changelogIndexEntryReferences'
-      | 'active'
-    >
-  >;
+  layouts: LayoutListEntryProps[];
 };
 
 export default function ReleaseNotesPage({
-  productIndex,
+  layouts,
 }: ReleaseNotesPageProps): JSX.Element {
   const titleLayout = useMemo<
-    SafeValue<SavedLayout<ColumnLayoutData, ColumnData>>
+    SafeValue<LayoutListEntryProps<ColumnLayoutData, ColumnData>>
   >(() => {
     return {
       id: 'injected-titleLayout',
@@ -52,11 +47,10 @@ export default function ReleaseNotesPage({
           id: 'column-1',
         },
       ],
+      mainHeaderIndex: 0,
     };
   }, []);
-  return (
-    <LayoutList layouts={[titleLayout, ...productIndex.changelogIndexLayout]} />
-  );
+  return <LayoutList layouts={[titleLayout, ...layouts]} />;
 }
 
 export const getStaticProps = patchStaticProps<
@@ -90,7 +84,13 @@ export const getStaticProps = patchStaticProps<
     }
     return {
       props: {
-        productIndex: productIndex.fields,
+        layouts: await savedLayoutListToProps(
+          productIndex.fields.changelogIndexLayout,
+          collectedData,
+          preview,
+          pageContext,
+          1,
+        ),
         pageContext,
         collectedData,
       },

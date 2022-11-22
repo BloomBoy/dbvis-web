@@ -1,7 +1,6 @@
 import Component from '../../Component';
 import type { LayoutProps } from '..';
 import React from 'react';
-import { isNonNull } from 'src/utils/filters';
 import { PageContext } from 'src/utils/contentful/pageContext';
 
 export type ColumnLayoutData = Record<string, never>;
@@ -28,34 +27,38 @@ function UnstyledLayoutComp(
 }
 
 const ColumnLayout = Object.assign(UnstyledLayoutComp, {
+  selfHeaderCount() {
+    return 0;
+  },
   headerCount(
     props: LayoutProps<ColumnLayoutData, ColumnData>,
     collectedData: Record<string, unknown>,
   ) {
-    let count = 0;
-    props.slots.forEach((slot) => {
-      if (slot.data.title) count += 1;
-      slot.components.forEach((component) => {
-        count += Component.headerCount(
-          {
-            ...component,
-            layout: props,
-          },
-          collectedData,
-        );
-      });
-    });
-    return count;
+    return Promise.all(
+      props.slots.flatMap((slot) =>
+        slot.components.map((component) =>
+          Component.headerCount(
+            {
+              ...component,
+              layout: props,
+            },
+            collectedData,
+          ),
+        ),
+      ),
+    ).then((componentCounts) =>
+      componentCounts.flat().reduce((a, b) => a + b, 0),
+    );
   },
-  headers(
+  async headers(
     props: LayoutProps<ColumnLayoutData, ColumnData>,
     collectedData: Record<string, unknown>,
     preview: boolean,
     context: PageContext,
   ) {
-    return props.slots
-      .flatMap((slot) =>
-        slot.components.flatMap((component) =>
+    const componentHeaders = await Promise.all(
+      props.slots.flatMap((slot) =>
+        slot.components.map((component) =>
           Component.headers(
             {
               ...component,
@@ -66,8 +69,20 @@ const ColumnLayout = Object.assign(UnstyledLayoutComp, {
             context,
           ),
         ),
-      )
-      .filter(isNonNull);
+      ),
+    ).then((headers) => headers.flat());
+    return props.data.renderHeader
+      ? [
+          {
+            id: `${props.id}-header`,
+            ...(props.data.title != null && { mainTitle: props.data.title }),
+            ...(props.data.subTitle != null && {
+              subtitle: props.data.subTitle,
+            }),
+          },
+          ...componentHeaders,
+        ]
+      : componentHeaders;
   },
 });
 

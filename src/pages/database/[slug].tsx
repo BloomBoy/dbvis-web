@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import {
   LayoutList,
-  SavedLayoutListEntry,
+  LayoutListEntryProps,
 } from 'src/components/contentful/Layout';
 import { WithLayoutData } from 'src/utils/types';
 import { getDatabasePage } from 'src/utils/contentful/content/databasePage';
@@ -9,9 +9,10 @@ import SubHeader from 'src/components/PageLayout/navigation/Header/SubHeader';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { patchStaticProps } from 'src/utils/patchStaticProps';
+import { savedLayoutListToProps } from 'src/utils/contentful/parseLayout';
 
 type Props = {
-  layouts: SavedLayoutListEntry[];
+  layouts: LayoutListEntryProps[];
   logo?: {
     src: string;
     alt: string;
@@ -113,7 +114,11 @@ export const getStaticProps = patchStaticProps<WithLayoutData<Props>>(
       }
       return {
         props: {
-          layouts: page.fields.pageLayout,
+          layouts: await savedLayoutListToProps(
+            page.fields.pageLayout,
+            collectedData,
+            preview,
+          ),
           ...(page.fields.logo && {
             logo: {
               src: page.fields.logo.fields.file.url,

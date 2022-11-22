@@ -28,11 +28,6 @@ const withProviders = composeHOCs(
         weight: ['400', '700'],
         style: 'normal',
       },
-      {
-        family: 'AUTHENTIC Sans',
-        weight: ['400', '700'],
-        style: 'normal',
-      },
     ],
   }),
   asNextHOC(UserAgentProvider),
