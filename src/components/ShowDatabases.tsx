@@ -40,7 +40,12 @@ function DatabaseList({
         <Badge
           key={id}
           href={url}
-          icon={{ url: logo.src, alt: logo.alt || title }}
+          icon={{
+            url: logo.src,
+            alt: logo.alt || title,
+            width: 82,
+            height: 82,
+          }}
           className="px-4 py-5"
           text={title}
         />
