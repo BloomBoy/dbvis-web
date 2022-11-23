@@ -136,7 +136,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      mono: ['jetbrainsmono', 'mono'],
+      mono: ['jetbrainsmono', 'monospace'],
       sans: ['AUTHENTIC Sans', ...defaultTheme.fontFamily.sans],
     },
   },
