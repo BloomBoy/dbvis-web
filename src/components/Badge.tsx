@@ -24,6 +24,7 @@ function renderEl({ icon, text, href }: Pick<Props, 'icon' | 'text' | 'href'>) {
             alt={icon.alt}
             width={icon.width}
             height={icon.height}
+            loading="lazy"
             className="flex-shrink-0 flex-grow-0 w-6 mr-2"
           />
         )}
@@ -44,6 +45,7 @@ function renderEl({ icon, text, href }: Pick<Props, 'icon' | 'text' | 'href'>) {
           alt={icon.alt}
           width={icon.width}
           height={icon.height}
+          loading="lazy"
         />
       </div>
     );

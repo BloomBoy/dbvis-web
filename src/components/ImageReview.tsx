@@ -18,6 +18,7 @@ export default function ReviewSourceScoreRow({
           <img
             src={reviewSource?.logo?.fields.file.url}
             alt={reviewSource?.logo?.fields.title}
+            loading="lazy"
           />
         </div>
         <div>

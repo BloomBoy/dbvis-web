@@ -116,6 +116,7 @@ export default function UserReviewsSwiper({
                       review.source?.fields.logo?.fields.file.details.image
                         ?.height
                     }
+                    loading="lazy"
                   />
                 </div>
                 <div className="ml-4 flex flex-col text-gray-500">
