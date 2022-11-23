@@ -20,6 +20,7 @@ export default function ReviewSourceScoreRow({
             alt={reviewSource?.logo?.fields.title}
             width={reviewSource?.logo?.fields.file.details.image?.width}
             height={reviewSource?.logo?.fields.file.details.image?.height}
+            loading="lazy"
             className="w-8 h-8"
           />
         </span>
