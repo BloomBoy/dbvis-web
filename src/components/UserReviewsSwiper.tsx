@@ -108,6 +108,14 @@ export default function UserReviewsSwiper({
                   <img
                     src={review.source?.fields.logo?.fields?.file?.url}
                     alt={review.source?.fields.logo?.fields?.title}
+                    width={
+                      review.source?.fields.logo?.fields.file.details.image
+                        ?.width
+                    }
+                    height={
+                      review.source?.fields.logo?.fields.file.details.image
+                        ?.height
+                    }
                   />
                 </div>
                 <div className="ml-4 flex flex-col text-gray-500">
