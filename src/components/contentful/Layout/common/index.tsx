@@ -87,5 +87,5 @@ export function Container({
     );
   }
 
-  return <div className="p-8 mx-auto max-w-7xl">{el}</div>;
+  return <div className="py-8 px-6 md:px-8 mx-auto max-w-7xl">{el}</div>;
 }
