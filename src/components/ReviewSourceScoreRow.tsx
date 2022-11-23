@@ -18,6 +18,8 @@ export default function ReviewSourceScoreRow({
           <img
             src={reviewSource?.logo?.fields.file.url}
             alt={reviewSource?.logo?.fields.title}
+            width={reviewSource?.logo?.fields.file.details.image?.width}
+            height={reviewSource?.logo?.fields.file.details.image?.height}
             className="w-8 h-8"
           />
         </span>

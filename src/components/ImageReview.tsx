@@ -33,7 +33,7 @@ export default function ReviewSourceScoreRow({
             <span>{reviewSource?.reviewMaxScore}</span>
             <span className="text-grey-500"> (100+ reviews)</span>
           </div>
-          <div className="font-bold">#1 higest rated</div>
+          <div className="font-bold">#1 highest rated</div>
           <div className="text-grey-500">in database management systems</div>
         </div>
       </div>
