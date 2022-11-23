@@ -44,9 +44,14 @@ export function Wrapper({
   if (style == null && !data.classes) {
     return <>{children}</>;
   }
-
   return (
-    <div className={classNames(data.classes)} style={style}>
+    <div className={classNames(data.classes, 'relative')}>
+      {style && (
+        <div
+          className="invisible lg:visible absolute w-full h-full bg-contain bg-top z-[-1] bg-no-repeat"
+          style={style}
+        />
+      )}
       {children}
     </div>
   );

@@ -6,6 +6,8 @@ type Props = {
   icon?: {
     url: string;
     alt: string;
+    height?: number | undefined;
+    width?: number | undefined;
   };
   text?: string;
   href?: string;
@@ -20,6 +22,8 @@ function renderEl({ icon, text, href }: Pick<Props, 'icon' | 'text' | 'href'>) {
           <img
             src={icon.url}
             alt={icon.alt}
+            width={icon.width}
+            height={icon.height}
             className="flex-shrink-0 flex-grow-0 w-6 mr-2"
           />
         )}
@@ -35,7 +39,12 @@ function renderEl({ icon, text, href }: Pick<Props, 'icon' | 'text' | 'href'>) {
   if (icon) {
     return (
       <div className="flex items-center m-auto justify-center aspect-square max-h-full max-w-full">
-        <img src={icon.url} alt={icon.alt} />
+        <img
+          src={icon.url}
+          alt={icon.alt}
+          width={icon.width}
+          height={icon.height}
+        />
       </div>
     );
   }

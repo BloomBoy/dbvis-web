@@ -31,7 +31,7 @@ export default function badge(
   const iconFields = icon?.fields;
 
   const targetUrl = resolveUrl(linkTarget);
-
+  const { width, height } = icon?.fields.file.details.image || {};
   if (iconFields?.file?.contentType?.startsWith?.('image/')) {
     return (
       <div className="p-3">
@@ -39,6 +39,8 @@ export default function badge(
           icon={{
             url: iconFields.file.url,
             alt: iconFields.title,
+            width: width,
+            height: height,
           }}
           text={text}
           href={targetUrl?.href}
