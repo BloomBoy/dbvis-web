@@ -32,24 +32,28 @@ export function Wrapper({
     : undefined;
   const backgroundURL = data.backgroundImage?.fields.file.url;
 
-  const style: CSSProperties | undefined =
-    backgroundColor || backgroundURL != null
-      ? {
-          backgroundColor,
-          backgroundImage: backgroundURL
-            ? `url(${backgroundURL}?fm=webp&w=1440)`
-            : undefined,
-        }
-      : undefined;
-  if (style == null && !data.classes) {
+  const color: CSSProperties | undefined = backgroundColor
+    ? {
+        backgroundColor,
+      }
+    : undefined;
+  const image: CSSProperties | undefined = backgroundURL
+    ? {
+        backgroundImage: backgroundURL
+          ? `url(${backgroundURL}?fm=webp&w=1440)`
+          : undefined,
+      }
+    : undefined;
+
+  if (image === null && color === null && !data.classes) {
     return <>{children}</>;
   }
   return (
-    <div className={classNames(data.classes, 'relative')}>
-      {style && (
+    <div className={classNames(data.classes, 'relative')} style={color}>
+      {image && (
         <div
-          className="invisible lg:visible absolute w-full h-full bg-contain bg-top z-[-1] bg-no-repeat"
-          style={style}
+          className="hidden lg:block absolute w-full h-full bg-contain bg-top z-[-1] bg-no-repeat"
+          style={image}
         />
       )}
       {children}
