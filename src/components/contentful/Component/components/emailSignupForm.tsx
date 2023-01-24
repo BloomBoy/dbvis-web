@@ -8,7 +8,9 @@ type NewsletterSignupProps = {
   buttonText?: SafeEntryFields.Symbol;
   alignment?: string;
   termsText?: SafeEntryFields.RichText;
+  placeholderText?: SafeEntryFields.Symbol;
 };
+
 function SubmitButton({
   isLoading,
   className,
@@ -85,7 +87,7 @@ export default function NewsletterSignup(
 ): JSX.Element | null {
   const [isLoading, setIsLoading] = useState(false);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-  const { buttonText = 'SUBSCRIBE ->', termsText = '' } = props.data ?? {};
+  const { buttonText = 'SEND ->', termsText = '', placeholderText = 'ENTER EMAIL' } = props.data ?? {};
   return (
     <>
       <div>
@@ -95,7 +97,7 @@ export default function NewsletterSignup(
               <input
                 className="uppercase w-full font-extralight text-xl md:text-5xl py-3 md:py-4 pl-6 pr-6 md:pl-12 md:pr-72 border-grey-300 border rounded-full font-mono outline-none placeholder:text-grey-500"
                 type="email"
-                placeholder="MAIL@MAIL.COM"
+                placeholder={placeholderText}
               />
               <SubmitButton
                 isLoading={isLoading}
